@@ -4,9 +4,12 @@ import Marketing from './src/Marketing';
 class BotHubClass {
 
     constructor(conf) {
+        this._isins = true;
         this.Marketing = new Marketing(this, conf);
     }
 
 }
 
-window.BotHubINS = BotHubClass;
+if (typeof BOTHUB === 'object' && !BOTHUB._isins) {
+    window.BOTHUB = new BotHubClass(BOTHUB);
+}

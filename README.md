@@ -1,18 +1,40 @@
 # Step.1 Config It
 
-> 在`html`中添加如下代码，可以在`https://beta.BOTHUB.Marketing.ai`获得相关配置
+> 在`html`中添加如下代码，可以在`https://beta.bothub.ai`获得相关配置
 
+## load 方式 1
 ```html
-<script src="//sdk.bothub.ai/bothub.js"></script>
 <script>
-window.BOTHUB = new BotHubINS({
-    bot_id: '<VALUE>',                      // beta.BOTHUB.Marketing.ai webhook_id
+window.BOTHUB = window.BOTHUB || {
+    bot_id: '<VALUE>',                      // beta.bothub.ai webhook_id
     custom_user_id: '<VALUE>',              // 网站用户id，没有则为空
     facebook_page_id: '<VALUE>',            // 以该账号发送消息给用户
     messenger_app_id: '<VALUE>',            // 可选 messenger 应用号
     api_server: 'https://xx.xx.xx/',        // 可选 messenger 后台回调url 和 messenger_app_id 配合使用
     platforms: ['facebook', 'bothub'],      // 可选 将log发送到的平台
-});
+};
+</script>
+<script async src="//sdk.bothub.ai/bothub.js"></script>
+```
+
+## load 方式 2
+```html
+<script>
+window.BOTHUB = window.BOTHUB || {
+    bot_id: '<VALUE>',                      // beta.bothub.ai webhook_id
+    custom_user_id: '<VALUE>',              // 网站用户id，没有则为空
+    facebook_page_id: '<VALUE>',            // 以该账号发送消息给用户
+    messenger_app_id: '<VALUE>',            // 可选 messenger 应用号
+    api_server: 'https://xx.xx.xx/',        // 可选 messenger 后台回调url 和 messenger_app_id 配合使用
+    platforms: ['facebook', 'bothub'],      // 可选 将log发送到的平台
+};
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//sdk.bothub.ai/bothub.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'bothub-jssdk'));
 </script>
 ```
 

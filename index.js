@@ -11,5 +11,8 @@ class BotHubClass {
 }
 
 if (typeof BOTHUB === 'object' && !BOTHUB._isins) {
+    let cb = BOTHUB.callback || function() {
+
+        };
     window.BOTHUB = new BotHubClass(BOTHUB);
 }

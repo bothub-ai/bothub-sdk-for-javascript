@@ -12,6 +12,7 @@ window.BOTHUB = window.BOTHUB || {
     messenger_app_id: '<VALUE>',            // 可选 messenger 应用号
     api_server: 'https://xx.xx.xx/',        // 可选 messenger 后台回调url 和 messenger_app_id 配合使用
     platforms: ['facebook', 'bothub'],      // 可选 将log发送到的平台
+    callback: function(self) {}             // 可选 后续动作
 };
 </script>
 <script async src="//sdk.bothub.ai/bothub.js"></script>
@@ -27,6 +28,7 @@ window.BOTHUB = window.BOTHUB || {
     messenger_app_id: '<VALUE>',            // 可选 messenger 应用号
     api_server: 'https://xx.xx.xx/',        // 可选 messenger 后台回调url 和 messenger_app_id 配合使用
     platforms: ['facebook', 'bothub'],      // 可选 将log发送到的平台
+    callback: function(self) {}             // 可选 后续动作
 };
 (function(d, s, id){
     var js, fjs = d.getElementsByTagName(s)[0];

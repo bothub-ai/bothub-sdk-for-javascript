@@ -1,0 +1,21 @@
+{
+  "name": "bothub-sdk-for-javascript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack -w",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "js-cookie": "^2.1.4",
+    "prepack-webpack-plugin": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.0",
+    "babel-preset-env": "^1.5.2",
+    "webpack": "^3.0.0"
+  }
+}

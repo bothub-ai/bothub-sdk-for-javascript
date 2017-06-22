@@ -10,6 +10,7 @@ window.BOTHUB = new BotHubINS({
     custom_user_id: '<VALUE>',              // 网站用户id，没有则为空
     facebook_page_id: '<VALUE>',            // 以该账号发送消息给用户
     messenger_app_id: '<VALUE>',            // 可选 messenger 应用号
+    api_server: 'https://xx.xx.xx/',        // 可选 messenger 后台回调url 和 messenger_app_id 配合使用
     platforms: ['facebook', 'bothub'],      // 可选 将log发送到的平台
 });
 </script>
@@ -19,10 +20,10 @@ window.BOTHUB = new BotHubINS({
 
 ## 商品添加到购物车
 
->- param {string} contentId   产品编号
-- param {string} contentType  物品类型
-- param {string} currency     币种
-- param {number} price        金额
+>- param {string} contentId     产品编号
+>- param {string} contentType   物品类型
+>- param {string} currency      币种
+>- param {number} price         金额
 
 ### demo
 ```js
@@ -37,10 +38,10 @@ $(function() {
 
 ## 商品添加到愿望单
 
->- param {string} contentId   产品编号
-- param {string} contentType  物品类型
-- param {string} currency     币种
-- param {number} price        金额
+>- param {string} contentId     产品编号
+>- param {string} contentType   物品类型
+>- param {string} currency      币种
+>- param {number} price         金额
 
 ### demo
 ```js
@@ -49,12 +50,12 @@ $(function() {
 
 ## 商品进行了支付
 
->- param {string} contentId               订单号
-- param {string} contentType              物品类型
-- param {number} numItems                 数量
-- param {boolean} paymentInfoAvailable    是否完成支付
-- param {string} currency                 币种
-- param {number} totalPrice               总金额
+>- param {string} contentId                 订单号
+>- param {string} contentType               物品类型
+>- param {number} numItems                  数量
+>- param {boolean} paymentInfoAvailable     是否完成支付
+>- param {string} currency                  币种
+>- param {number} totalPrice                总金额
 
 ### demo
 ```js
@@ -63,8 +64,8 @@ $(function() {
 
 # Step.3 自定义事件 `logEvent`
 
->- param {string}   事件名称
-- param {object}    参数
+>- param {string}       事件名称
+>- param {object}       参数
 
 ```js
 BOTHUB.Marketing.logEvent('logined',{sex:'male',age:18});
@@ -73,8 +74,8 @@ BOTHUB.Marketing.logEvent('logined',{sex:'male',age:18});
 # Step.4 回调设置 `addCallback`
 
 > 由于`facebook`组件加载需要一小段时间，当需要页面打开后触发`something`时需要使用该`function`
-- param {string}     定义名字（重复定义只执行一次，避免多次触发）
-- param {funcable}    事件
+>- param {string}     定义名字（重复定义只执行一次，避免多次触发）
+>- param {funcable}    事件
 
 ```js
 // 错误做法

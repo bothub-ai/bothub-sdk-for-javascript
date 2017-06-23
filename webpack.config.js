@@ -36,10 +36,10 @@ module.exports = {
     plugins: [
         new es3ifyPlugin(),
         // new PrepackWebpackPlugin({}),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // }),
     ]
 };

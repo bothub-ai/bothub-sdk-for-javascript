@@ -18,7 +18,7 @@ function urlEncode(param, key, encode) {
 function jsonp(url, cb) {
     let callbackName = 'jsonp_callback_bh' + Math.round(100000 * Math.random());
     window[callbackName] = function(data) {
-        delete window[callbackName];
+        // delete window[callbackName];
         document.body.removeChild(script);
         cb && cb(data);
     };
@@ -45,14 +45,14 @@ function getUserRef(fc = false) {
     let str = fc ? 0 : Cookies.get('__bothub_user_ref');
 
     if (str) {
-        console.log("\\__bothub_user_ref\\new:%s", fc);
+        // console.log("\\__bothub_user_ref\\new:%s", fc);
         return str;
     } else {
         str = location.host.replace(/\./g, '_') + '_' + (new Date).getTime().toString(36) + '_' + Math.random().toString(36).substr(2);
 
         Cookies.set('__bothub_user_ref', str, {expires: 1, path: '/'});
 
-        console.log("\\__bothub_user_ref\\new:%s", fc, str);
+        // console.log("\\__bothub_user_ref\\new:%s", fc, str);
         return str;
     }
 }

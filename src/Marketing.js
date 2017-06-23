@@ -22,17 +22,17 @@ export default class Marketing extends Base {
         this.after_fb_arr = {};
         this.loadUid();
 
-        window.addEventListener('load', () => {
-            this.loadFbSdk();
-        }, false);
+        this.loadFbSdk();
     }
 
     loadFbSdk() {
+        // alert(222);
         let box = document.getElementById('fb-messenger-checkbox');
         if (box) {
             this.msgbox_opt.user_ref = Util.getUserRef(true);
             for (let i in this.msgbox_opt) {
-                box.setAttribute(i, this.msgbox_opt[i]);
+                box.setAttribute(i, '' + this.msgbox_opt[i]);
+                // alert(box.getAttribute(i));
             }
         } else {
             this.msgbox_opt.user_ref = Util.getUserRef();
@@ -103,7 +103,7 @@ export default class Marketing extends Base {
             ev: ename,
             cd: ext,
         };
-        console.log(bothub_event);
+        // console.log(bothub_event);
 
         let q = Util.urlEncode(bothub_event); //$.param(bothub_event)
 

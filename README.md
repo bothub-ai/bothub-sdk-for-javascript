@@ -1,3 +1,10 @@
+# able
+```html
+ie 8+
+firefox 25+
+chrowm 15+
+```
+
 # Step.1 Config It
 
 > 在`html`中添加如下代码，可以在`https://beta.bothub.ai`获得相关配置

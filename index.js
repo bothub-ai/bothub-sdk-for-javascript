@@ -1,18 +1,5 @@
-import "babel-polyfill";
-import Marketing from './src/Marketing';
-
-class BotHubClass {
-
-    constructor(conf) {
-        this._isins = true;
-        this.Marketing = new Marketing(this, conf);
-    }
-
-}
+import BotHubClass from './src/Main';
 
 if (typeof BOTHUB === 'object' && !BOTHUB._isins) {
-    let cb = BOTHUB.callback || function() {
-
-        };
     window.BOTHUB = new BotHubClass(BOTHUB);
 }

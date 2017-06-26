@@ -1,118 +1,35 @@
-const Cookies = require('js-cookie');
+import Cookies from 'js-cookie';
 
 import Util from './Util';
-import Base from './Base';
 
-export default class Marketing extends Base {
-    constructor(parent, conf) {
-        super();
+export default class Marketing {
 
-        this.bot_id = conf.bot_id || 0;
-        this.custom_user_id = conf.custom_user_id || '';
-        this.api_server = conf.api_server || this.api_server;
-        this.platforms = conf.platforms || ['facebook', 'bothub'];
-        this.msgbox_opt = {
-            page_id: conf.facebook_page_id,
-            messenger_app_id: conf.messenger_app_id || '1724119764514436',
-            prechecked: "true",
-            allow_login: "true",
-            size: "xlarge",
-            origin: location.protocol + '//' + location.host,
-        };
-        this.after_fb_arr = {};
-        this.loadUid();
-
-        this.loadFbSdk();
-    }
-
-    loadFbSdk() {
-        // alert(222);
-        let box = document.getElementById('fb-messenger-checkbox');
-        if (box) {
-            this.msgbox_opt.user_ref = Util.getUserRef(true);
-            for (let i in this.msgbox_opt) {
-                box.setAttribute(i, '' + this.msgbox_opt[i]);
-                // alert(box.getAttribute(i));
-            }
-        } else {
-            this.msgbox_opt.user_ref = Util.getUserRef();
-        }
-
-        (function(d, s, id) {
-            let js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) return;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-        window.fbAsyncInit = () => {
-            // console.info('fbAsyncInit success');
-            FB.init({
-                appId: this.msgbox_opt.messenger_app_id,
-                xfbml: true,
-                version: 'v2.6'
-            });
-            this.fbsdk_loaded = true;
-            this.do_after_fb();
-        };
-    }
-
-    /**
-     * 注册 回调 函数 在fb init 后执行, name 需要唯一
-     * @param {string} name
-     * @param {function} func
-     */
-    addCallback(name, func) {
-        this.after_fb_arr[name] = func;
-        this.do_after_fb();
-    }
-
-    do_after_fb() {
-        if (this.fbsdk_loaded) {
-            for (let i in this.after_fb_arr) {
-                if (this.after_fb_arr[i]) {
-                    this.after_fb_arr[i]();
-                    this.after_fb_arr[i] = null;
-                }
-            }
-        }
-    }
-
-    loadUid() {
-        this.uid = Cookies.get('__bothub_user_id');
-        if (!this.uid) {
-            Util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/users?action=store&custom_user_id=${this.custom_user_id}`, (uid) => {
-                this.uid = '' + uid;
-                Cookies.set('__bothub_user_id', this.uid, {expires: 365, path: '/'});
-            });
-        }
+    constructor(parent) {
+        this.base = parent;
     }
 
     _logEvent(ename, value, ext = {}) {
         let event_id = Util.getEventId();
 
-        ext.page_id = this.msgbox_opt.page_id;
-        ext.app_id = this.msgbox_opt.messenger_app_id;
-        ext.user_ref = this.msgbox_opt.user_ref;
+        ext.page_id = this.base.msgbox_opt.page_id;
+        ext.app_id = this.base.msgbox_opt.messenger_app_id;
+        ext.user_ref = this.base.msgbox_opt.user_ref;
 
-        let bothub_event = {
+        let event_obj = {
             id: event_id,
-            user_id: this.uid,
+            user_id: this.base.uid,
             ev: ename,
             cd: ext,
         };
-        // console.log(bothub_event);
 
-        let q = Util.urlEncode(bothub_event); //$.param(bothub_event)
+        let q = Util.urlEncode(event_obj); //$.param(event_obj)
 
-        if (this.platforms.indexOf('facebook') >= 0) {
-            ext.ref = JSON.stringify(bothub_event);
+        if (this.base.platforms.indexOf('facebook') >= 0) {
+            ext.ref = JSON.stringify(event_obj);
             FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, ext);
         }
-        if (this.platforms.indexOf('bothub') >= 0) {
-            Util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/events?action=store${q}`);
+        if (this.base.platforms.indexOf('bothub') >= 0) {
+            Util.jsonp(`${this.base.api_server}webhooks/${this.base.bot_id}/analytics/events?action=store${q}`);
         }
     }
 
@@ -122,6 +39,7 @@ export default class Marketing extends Base {
      * @param {object}  params
      */
     logEvent(ename = '', value, params = {}) {
+        console.log(this.base.msgbox_opt);
         this._logEvent(ename, value, params);
     }
 

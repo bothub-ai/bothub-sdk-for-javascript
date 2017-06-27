@@ -69,7 +69,9 @@ export default class BotHubClass {
                 version: 'v2.6'
             });
 
-            cb && cb(this);
+            setTimeout(() => {
+                cb && cb(this);
+            }, 0);
         };
     }
 

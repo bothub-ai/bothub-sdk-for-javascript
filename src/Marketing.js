@@ -39,7 +39,7 @@ export default class Marketing {
      * @param {object}  params
      */
     logEvent(ename = '', value, params = {}) {
-        console.log(this.base.msgbox_opt);
+        // console.log(this.base.msgbox_opt);
         this._logEvent(ename, value, params);
     }
 

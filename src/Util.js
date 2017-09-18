@@ -58,15 +58,21 @@ function getUserRef(fc = false) {
 }
 
 function getFbUserId() {
-    var fb_user_id = Cookies.get('__fb_user_id');
-    if (!fb_user_id) {
-        var url = new URL(location.href);
-        fb_user_id = url.searchParams.get("fb_user_id");
-        if (fb_user_id) {
-            Cookies.set('__fb_user_id', fb_user_id, { expires: 1, path: '/' });
-        }
+    const fb_user_id = Cookies.get('__fb_user_id') || getParameterByName('fb_user_id');;
+    if (fb_user_id) {
+        Cookies.set('__fb_user_id', fb_user_id, { expires: 1, path: '/' });
     }
     return fb_user_id;
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 export default {
@@ -75,4 +81,5 @@ export default {
     getEventId,
     getUserRef,
     getFbUserId,
+    getParameterByName,
 }

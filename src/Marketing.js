@@ -14,6 +14,7 @@ export default class Marketing {
         ext.page_id = this.base.msgbox_opt.page_id;
         ext.app_id = this.base.msgbox_opt.messenger_app_id;
         ext.user_ref = this.base.msgbox_opt.user_ref;
+        ext.fb_user_id = this.base.msgbox_opt.fb_user_id;
 
         let event_obj = {
             id: event_id,

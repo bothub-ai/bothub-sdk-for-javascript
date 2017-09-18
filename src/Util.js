@@ -57,9 +57,22 @@ function getUserRef(fc = false) {
     }
 }
 
+function getFbUserId() {
+    var fb_user_id = Cookies.get('__fb_user_id');
+    if (!fb_user_id) {
+        var url = new URL(location.href);
+        fb_user_id = url.searchParams.get("fb_user_id");
+        if (fb_user_id) {
+            Cookies.set('__fb_user_id', fb_user_id, { expires: 1, path: '/' });
+        }
+    }
+    return fb_user_id;
+}
+
 export default {
     urlEncode,
     jsonp,
     getEventId,
     getUserRef,
+    getFbUserId,
 }

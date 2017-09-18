@@ -13,8 +13,11 @@ export default class Marketing {
 
         ext.page_id = this.base.msgbox_opt.page_id;
         ext.app_id = this.base.msgbox_opt.messenger_app_id;
-        ext.user_ref = this.base.msgbox_opt.user_ref;
-        ext.fb_user_id = this.base.msgbox_opt.fb_user_id;
+        if (this.base.msgbox_opt.fb_user_id) {
+            ext.fb_user_id = this.base.msgbox_opt.fb_user_id;
+        } else if (this.base.msgbox_opt.user_ref) {
+            ext.user_ref = this.base.msgbox_opt.user_ref;
+        }
 
         let event_obj = {
             id: event_id,

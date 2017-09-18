@@ -19,6 +19,7 @@ export default class BotHubClass {
         this.msgbox_opt = {
             page_id: conf.facebook_page_id,
             messenger_app_id: conf.messenger_app_id || '1724119764514436',
+            fb_user_id: Util.getFbUserId(),
             prechecked: "true",
             allow_login: "true",
             size: "xlarge",
@@ -52,7 +53,6 @@ export default class BotHubClass {
         } else {
             this.msgbox_opt.user_ref = Util.getUserRef();
         }
-        this.msgbox_opt.fb_user_id = Util.getFbUserId();
 
         (function(d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];

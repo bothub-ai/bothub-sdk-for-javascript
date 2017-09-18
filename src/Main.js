@@ -12,12 +12,14 @@ export default class BotHubClass {
         this.uid = 0;
         this.bot_id = conf.bot_id || 0;
         this.custom_user_id = conf.custom_user_id || '';
+        this.fb_user_id = Util.getFbUserId();
         this.api_server = conf.api_server || 'https://t.bothub.ai/';
         this.platforms = conf.platforms || ['facebook', 'bothub'];
 
         this.msgbox_opt = {
             page_id: conf.facebook_page_id,
             messenger_app_id: conf.messenger_app_id || '1724119764514436',
+            fb_user_id: Util.getFbUserId(),
             prechecked: "true",
             allow_login: "true",
             size: "xlarge",
@@ -33,7 +35,7 @@ export default class BotHubClass {
     loadUid() {
         this.uid = Cookies.get('__bothub_user_id');
         if (!this.uid) {
-            Util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/users?action=store&custom_user_id=${this.custom_user_id}`, (uid) => {
+            Util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/users?action=store&custom_user_id=${this.custom_user_id}&fb_user_id=${this.fb_user_id}`, (uid) => {
                 this.uid = '' + uid;
                 Cookies.set('__bothub_user_id', this.uid, {expires: 365, path: '/'});
             });

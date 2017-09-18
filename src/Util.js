@@ -57,9 +57,32 @@ function getUserRef(fc = false) {
     }
 }
 
+function getFbUserId() {
+    const fb_user_id = Cookies.get('__fb_user_id') || getParameterByName('fb_user_id');;
+    if (fb_user_id) {
+        Cookies.set('__fb_user_id', fb_user_id, { expires: 1, path: '/' });
+    }
+    return fb_user_id;
+}
+
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, "\\$&");
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+        results = regex.exec(url);
+    if (!results) {
+        return null;
+    }
+    if (!results[2]) {
+        return '';
+    }
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 export default {
     urlEncode,
     jsonp,
     getEventId,
     getUserRef,
+    getFbUserId,
+    getParameterByName,
 }

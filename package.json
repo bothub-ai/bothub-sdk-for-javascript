@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "webpack -w",
-    "build": "webpack"
+    "dev": "node build/webpack.dev.js",
+    "build": "node build/webpack.prod.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
@@ -27,6 +27,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.2",
     "eslint": "^4.7.1",
+    "shelljs": "^0.7.8",
     "webpack": "^3.0.0"
   }
 }

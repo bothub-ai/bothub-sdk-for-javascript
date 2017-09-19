@@ -1,10 +1,10 @@
-const path = require('path');
-const Es3ifyPlugin = require('es3ify-webpack-plugin');
+const path = require('path'),
+    Es3ifyPlugin = require('es3ify-webpack-plugin');
 
 module.exports = {
     entry: './main.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, '../dist'),
         filename: 'bothub.js',
     },
     module: {
@@ -14,7 +14,6 @@ module.exports = {
             use: {
                 loader: 'babel-loader',
                 options: {
-                    // presets: ['env']
                     presets: [
                         'es2015',
                     ],
@@ -32,11 +31,5 @@ module.exports = {
     },
     plugins: [
         new Es3ifyPlugin(),
-        // new PrepackWebpackPlugin({}),
-        // new webpack.optimize.UglifyJsPlugin({
-        //     compress: {
-        //         warnings: false
-        //     }
-        // }),
     ],
 };

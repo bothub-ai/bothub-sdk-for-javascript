@@ -27,7 +27,7 @@ export default class Marketing {
         const q = util.urlEncode(event_obj);
         if (this.base.platforms.indexOf('facebook') >= 0) {
             ext.ref = JSON.stringify(event_obj);
-            util.logEvent('MessengerCheckboxUserConfirmation', null, ext);
+            FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, ext);
         }
         if (this.base.platforms.indexOf('bothub') >= 0) {
             util.jsonp(`${this.base.api_server}webhooks/${this.base.bot_id}/analytics/events?action=store${q}`);

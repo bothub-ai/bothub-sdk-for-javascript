@@ -31,6 +31,8 @@ export default class BotHubClass {
 
         if (this.platforms.indexOf('facebook') >= 0) {
             this.loadFbSdk(conf.callback);
+        } else {
+            conf.callback && conf.callback(this);
         }
     }
 
@@ -67,7 +69,7 @@ export default class BotHubClass {
 
             setTimeout(() => {
                 cb && cb(this);
-            }, 0);
+            });
         };
 
         // load sdk

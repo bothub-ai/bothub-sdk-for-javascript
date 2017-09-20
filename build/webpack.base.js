@@ -5,6 +5,7 @@ module.exports = {
     entry: './main.js',
     output: {
         path: path.resolve(__dirname, '../dist'),
+        // path: path.resolve(__dirname, '../../../site-temp-file'),
         filename: 'bothub.js',
     },
     module: {

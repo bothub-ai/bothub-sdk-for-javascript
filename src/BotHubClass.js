@@ -11,7 +11,7 @@ export default class BotHubClass {
         this.uid = 0;
         this.bot_id = conf.bot_id || 0;
         this.custom_user_id = conf.custom_user_id || '';
-        this.fb_user_id_key = conf.fb_user_id_key || 'fb_user_id',
+        this.fb_user_id_key = conf.fb_user_id_key || 'fb_user_id';
         this.fb_user_id = util.getFbUserId(this.fb_user_id_key);
         this.api_server = conf.api_server || 'https://t.bothub.ai/';
         this.platforms = conf.platforms || ['facebook', 'bothub'];
@@ -19,7 +19,7 @@ export default class BotHubClass {
         this.msgbox_opt = {
             page_id: conf.facebook_page_id,
             messenger_app_id: conf.messenger_app_id || '1724119764514436',
-            fb_user_id: util.getFbUserId(),
+            fb_user_id: util.getFbUserId(this.fb_user_id_key),
             prechecked: 'true',
             allow_login: 'true',
             size: 'xlarge',

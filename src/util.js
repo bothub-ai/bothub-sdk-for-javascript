@@ -60,11 +60,11 @@ export function getParameterByName(name, url = window.location.href) {
 }
 
 export function getFbUserId(key) {
-    const cooks = `__${key}`,
-        fb_user_id = getParameterByName(key) || Cookies.get(cooks);
+    const cookies_key = `__${key}`,
+        fb_user_id = getParameterByName(key) || Cookies.get(cookies_key);
 
     if (fb_user_id) {
-        Cookies.set(cooks, fb_user_id, { expires: 1, path: '/' });
+        Cookies.set(cookies_key, fb_user_id, { expires: 1, path: '/' });
     }
     return fb_user_id;
 }

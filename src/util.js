@@ -59,11 +59,12 @@ export function getParameterByName(name, url = window.location.href) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-export function getFbUserId() {
-    const fb_user_id = getParameterByName('fb_user_id') || Cookies.get('__fb_user_id');
+export function getFbUserId(key) {
+    const cookies_key = `__${key}`,
+        fb_user_id = getParameterByName(key) || Cookies.get(cookies_key);
 
     if (fb_user_id) {
-        Cookies.set('__fb_user_id', fb_user_id, { expires: 1, path: '/' });
+        Cookies.set(cookies_key, fb_user_id, { expires: 1, path: '/' });
     }
     return fb_user_id;
 }

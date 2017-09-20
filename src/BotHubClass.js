@@ -11,7 +11,8 @@ export default class BotHubClass {
         this.uid = 0;
         this.bot_id = conf.bot_id || 0;
         this.custom_user_id = conf.custom_user_id || '';
-        this.fb_user_id = util.getFbUserId();
+        this.fb_user_id_key = conf.fb_user_id_key || 'fb_user_id',
+        this.fb_user_id = util.getFbUserId(this.fb_user_id_key);
         this.api_server = conf.api_server || 'https://t.bothub.ai/';
         this.platforms = conf.platforms || ['facebook', 'bothub'];
 

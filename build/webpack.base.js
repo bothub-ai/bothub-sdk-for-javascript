@@ -6,7 +6,9 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '../dist'),
         // path: path.resolve(__dirname, '../../../site-temp-file'),
-        filename: 'bothub.js',
+        filename: process.env.NODE_ENV === 'development'
+            ? 'bothub.js'
+            : 'bothub.[chunkhash].js',
     },
     module: {
         loaders: [{

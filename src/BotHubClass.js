@@ -40,9 +40,15 @@ export default class BotHubClass {
     loadUid() {
         this.uid = Cookies.get('__bothub_user_id');
         if (!this.uid) {
-            util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/users?action=store&custom_user_id=${this.custom_user_id}&fb_user_id=${this.fb_user_id}`, (uid) => {
-                this.uid = '' + uid;
-                Cookies.set('__bothub_user_id', this.uid, { expires: 365, path: '/' });
+            util.jsonp(`${this.api_server}webhooks/${this.bot_id}/analytics/users?action=store&custom_user_id=${this.custom_user_id}&fb_user_id=${this.fb_user_id}`, (data) => {
+                if (data instanceof Object) {
+                    if (data.hasOwnProperty('id')) {
+                        this.uid = String(data.id);
+                    }
+                } else {
+                    this.uid = String(data);
+                    Cookies.set('__bothub_user_id', this.uid, { expires: 365, path: '/' });
+                }
             });
         }
     }

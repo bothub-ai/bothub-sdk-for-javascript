@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import * as util from './util';
 
 export default class Marketing {
@@ -19,10 +20,14 @@ export default class Marketing {
 
         const event_obj = {
             id: event_id,
-            user_id: this.base.uid,
+            user_id: Cookies.get('__bothub_user_id'),
             ev: ename,
             cd: ext,
         };
+
+        if (!event_obj.user_id) {
+            return;
+        }
 
         const q = util.urlEncode(event_obj);
         if (this.base.platforms.indexOf('facebook') >= 0) {

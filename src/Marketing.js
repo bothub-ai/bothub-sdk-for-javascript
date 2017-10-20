@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import * as util from './util';
 
 export default class Marketing {
@@ -19,7 +20,7 @@ export default class Marketing {
 
         const event_obj = {
             id: event_id,
-            user_id: this.base.uid,
+            user_id: Cookies.get('__bothub_user_id'),
             ev: ename,
             cd: ext,
         };

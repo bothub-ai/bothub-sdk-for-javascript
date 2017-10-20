@@ -39,7 +39,8 @@ function dataHasCookies(data) {
  */
 function validateCookies(data) {
     return (
-        data.name && data.value &&
+        data.name &&
+        (data.value || data.value === '') &&
         (/(string|number)/.test(typeof data.name)) &&
         (/(string|number)/.test(typeof data.value)) &&
         ((data.attributes instanceof Object) || (!data.attributes))

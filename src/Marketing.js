@@ -24,6 +24,10 @@ export default class Marketing {
             cd: ext,
         };
 
+        if (!event_obj.user_id) {
+            return;
+        }
+
         const q = util.urlEncode(event_obj);
         if (this.base.platforms.indexOf('facebook') >= 0) {
             ext.ref = JSON.stringify(event_obj);

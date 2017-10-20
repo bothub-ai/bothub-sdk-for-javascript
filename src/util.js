@@ -17,12 +17,50 @@ export function urlEncode(param, key, encode = true) {
     return paramStr;
 }
 
+/**
+ * Whether the data has a property of cookie
+ * 
+ * @param {any} data 
+ * @returns {boolean}
+ */
+function dataHasCookies(data) {
+    return (
+        (data instanceof Object) &&
+        (data.hasOwnProperty('cookies')) &&
+        (data.cookies instanceof Array)
+    );
+}
+
+/**
+ * Whether the data is a standard cookie format
+ * 
+ * @param {any} data 
+ * @returns {boolean}
+ */
+function validateCookies(data) {
+    return (
+        data.name && data.value &&
+        (/(string|number)/.test(typeof data.name)) &&
+        (/(string|number)/.test(typeof data.value)) &&
+        ((data.attributes instanceof Object) || (!data.attributes))
+    );
+}
+
 export function jsonp(url, cb) {
-    const script = document.createElement('script'),
-        callbackName = 'jsonp_callback_bh' + Math.round(100000 * Math.random());
+    const script = document.createElement('script');
+    const callbackName = 'jsonp_callback_bh' + Math.round(100000 * Math.random());
 
     window[callbackName] = function(data) {
         document.body.removeChild(script);
+
+        if (dataHasCookies(data)) {
+            data.cookies.forEach((item) => {
+                if (validateCookies(item)) {
+                    Cookies.set(`__bothub_${item.name}`, item.value, item.attributes);
+                }
+            });
+        }
+
         cb && cb(data);
     };
 
@@ -61,7 +99,7 @@ export function getParameterByName(name, url = window.location.href) {
 
 export function getFbUserId(key) {
     const cookies_key = `__${key}`,
-        fb_user_id = getParameterByName(key) || Cookies.get(cookies_key);
+        fb_user_id = getParameterByName(key) || Cookies.get(cookies_key) || '';
 
     if (fb_user_id) {
         Cookies.set(cookies_key, fb_user_id, { expires: 1, path: '/' });

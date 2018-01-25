@@ -37,10 +37,12 @@ module.exports = class Marketing {
 
         if (this.config.uid) {
             event.user_id = this.config.uid;
-        } else if (this.config.fb_user_id) {
-            event.fb_user_id = this.config.fb_user_id;
         } else if (this.config.custom_user_id) {
             event.custom_user_id = this.config.custom_user_id;
+        }
+
+        if (this.config.fb_user_id) {
+            event.fb_user_id = this.config.fb_user_id;
         }
 
         if (!event.user_id && !event.fb_user_id && !event.custom_user_id) {

@@ -25,11 +25,15 @@ module.exports = class Marketing {
         if (!(params instanceof Object)) params = {};
         const Messenger = this.config.Messenger;
 
-        const event = {
+        let event = {
             id: getEventId(),
             ev: eventName,
             params: copy(params),
         };
+
+        if (this.config.entrance.fb_messenger_checkbox_ref) {
+            event = Object.assign(event, this.config.entrance.fb_messenger_checkbox_ref);
+        }
 
         if (Messenger.fb_user_id) {
             params.fb_user_id = Messenger.fb_user_id;

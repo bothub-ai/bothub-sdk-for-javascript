@@ -2,13 +2,13 @@
 
 在网站上部署 Bothub Remarketing SDK 后（以下简称SDK)，就可以轻松的在Messenger上进行订单回执发送、购物车提醒、优惠信息提示等再营销。SDK可集成在用户自行部署的各种主流电商网站上。
 
-SDK提供了将商品加入购物车、愿望清单、下订单等事件的跟踪，可根据事件进行相应的消息推送。事件和Facebook Analytics的相应事件保持了最大程度的一致以便于开发以及在Facebook Analytics中查看事件统计。
+SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件推送消息。事件和Facebook Analytics的相应事件保持了最大程度的一致以便于开发以及在Facebook Analytics中查看事件统计。
 
 **浏览器最低兼容版本 IE 9，Firefox 15，Chrome 15** 
 
 # 配置
 
-在 `<body>` 标签内最底部添加如下代码，用于配置及加载sdk
+1. 在 `<body>` 标签内最底部添加如下代码，用于配置及加载sdk
 
 ```html
 <script>
@@ -18,9 +18,8 @@ SDK提供了将商品加入购物车、愿望清单、下订单等事件的跟�
     api_server: 'https://xx.xx.xx/',   // 必选 API地址
     custom_user_id: 'value',           // 可选 网站用户id
     messenger_app_id: 'value',         // 可选 Messenger 应用号id
-    debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
-    messenger_prechecked: false,       // 可选 勾选后消息会发送到 Messenger
     platforms: ['facebook', 'bothub'], // 可选 将事件发送到的平台
+    debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
     callback: function(self) {}        // 可选 后续动作
   };
   (function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
@@ -28,12 +27,18 @@ SDK提供了将商品加入购物车、愿望清单、下订单等事件的跟�
 </script>
 ```
 
-如果需要发送Messenger消息给用户，则需要在 `<body>` 标签里合适位置添加如下代码：
+根据需要在 `<body>` 标签里合适位置添加如下代码：
 
 ```html
-<div class="fb-messenger-checkbox"></div>
-```
+<!-- 如果需要发送Messenger消息给用户 添加这段代码 -->
+<div class="fb-messenger-checkbox" prechecked="true" size="small"></div>
 
+<!-- 如果需要在网页中集成聊天插件 添加这段代码 -->
+<div class="fb-customerchat"></div>
+
+<!-- 如果需要将指定消息发送给Messenger 添加这段代码 -->
+<div class="fb-send-to-messenger" color="blue" size="standard"></div>
+```
 
 # 使用
 

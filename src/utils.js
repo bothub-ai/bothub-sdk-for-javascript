@@ -156,46 +156,6 @@ export function getUserRef(force) {
 }
 
 export function loadFacebookSdk(bothub) {
-    const checkbox = document.getElementsByClassName('fb-messenger-checkbox')[0];
-
-    if (checkbox) {
-        bothub.Messenger.user_ref = getUserRef(true);
-        for (const key in bothub.Messenger) {
-            checkbox.setAttribute(key, bothub.Messenger[key]);
-        }
-    } else {
-        bothub.Messenger.user_ref = getUserRef();
-    }
-
-    window.fbAsyncInit = () => {
-        log('facebook sdk loaded.');
-
-        FB.init({
-            appId: bothub.Messenger.messenger_app_id,
-            xfbml: true,
-            version: 'v2.6',
-        });
-
-        if (window.bothubDebug) {
-            FB.Event.subscribe('messenger_checkbox', function(e) {
-                log('messenger_checkbox event:', e);
-                if (e.event === 'rendered') {
-                    log('Messenger plugin was rendered');
-                } else if (e.event === 'checkbox') {
-                    const checkboxState = e.state;
-                    log('Checkbox state: ' + checkboxState);
-                } else if (e.event === 'not_you') {
-                    log('User clicked not you');
-                } else if (e.event === 'hidden') {
-                    log('Messenger plugin was hidden');
-                }
-            });
-        }
-
-        log('run callback');
-        bothub.callback(bothub);
-    };
-
     if (window['facebook-jssdk']) {
         log('duplicate load facebook-jssdk, see https://github.com/bothub-ai/bothub-sdk-for-javascript');
     } else {

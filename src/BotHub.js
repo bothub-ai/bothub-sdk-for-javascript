@@ -24,6 +24,8 @@ module.exports = class BotHub {
         this.platforms = config.platforms || ['facebook', 'bothub'];
         this.callback = config.callback || function() {},
         this.entrance = config.entrance || {},
+        this.language = config.language || 'zh_CN',
+
         this.Messenger = {
             origin: `${location.protocol}//${location.host}`,
             page_id: config.facebook_page_id,

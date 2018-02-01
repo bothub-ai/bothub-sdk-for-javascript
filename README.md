@@ -19,6 +19,7 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
     custom_user_id: 'value',           // 可选 网站用户id
     messenger_app_id: 'value',         // 可选 Messenger 应用号id
     platforms: ['facebook', 'bothub'], // 可选 将事件发送到的平台
+    language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
     debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
     callback: function(self) {}        // 可选 后续动作
   };
@@ -185,5 +186,20 @@ logEvent: function(
 )
 ```
 
+HTML代码可选值
 
+```html
+<!-- Checkbox Plugin -->
+<div class="fb-messenger-checkbox"  
+  prechecked="<true | false>"
+  allow_login="<true>"
+  size="<small | medium | large | standard | xlarge>">
+</div>
+
+<!-- Message Us Plugin -->
+<div class="fb-messengermessageus" 
+  color="<blue | white>"
+  size="<standard | large | xlarge>">
+</div>
+```
 

@@ -156,6 +156,10 @@ export function getUserRef(force) {
 }
 
 export function loadFacebookSdk(bothub) {
+    if (['zh_CN', 'zh_TW', 'en_US'].indexOf(bothub.language) === -1) {
+        bothub.language = 'zh_CN';
+    }
+
     if (window['facebook-jssdk']) {
         log('duplicate load facebook-jssdk, see https://github.com/bothub-ai/bothub-sdk-for-javascript');
     } else {
@@ -163,8 +167,8 @@ export function loadFacebookSdk(bothub) {
         const facebook_script = document.createElement('script');
         facebook_script.id = 'facebook-jssdk';
         facebook_script.src = bothub.debug
-            ? 'https://connect.facebook.net/en_US/sdk/debug.js'
-            : 'https://connect.facebook.net/en_US/sdk.js';
+            ? `https://connect.facebook.net/${bothub.language}/sdk/debug.js`
+            : `https://connect.facebook.net/${bothub.language}/sdk.js`;
         document.body.appendChild(facebook_script);
     }
 }

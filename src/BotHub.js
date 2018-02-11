@@ -51,6 +51,7 @@ function initPlugin(bothub) {
     const messenger_checkbox = document.getElementsByClassName('fb-messenger-checkbox')[0];
     const customerchat = document.getElementsByClassName('fb-customerchat')[0];
     const send_to_messenger = document.getElementsByClassName('fb-send-to-messenger')[0];
+    const messageus = document.getElementsByClassName('fb-messengermessageus')[0];
 
     if (messenger_checkbox) {
         bothub.Messenger.user_ref = getUserRef(true);
@@ -74,6 +75,11 @@ function initPlugin(bothub) {
         if (bothub.entrance.fb_send_to_messenger_data_ref) {
             send_to_messenger.setAttribute('data-ref', bothub.entrance.fb_send_to_messenger_data_ref);
         }
+    }
+
+    if (messageus) {
+        messageus.setAttribute('messenger_app_id', bothub.Messenger.messenger_app_id);
+        messageus.setAttribute('page_id', bothub.Messenger.page_id);
     }
 }
 

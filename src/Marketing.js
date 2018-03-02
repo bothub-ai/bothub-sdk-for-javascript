@@ -11,7 +11,7 @@ import {
 
 module.exports = class Marketing {
     constructor(parent) {
-        this.config = parent;
+        this.parent = parent;
     }
 
     /**
@@ -23,7 +23,7 @@ module.exports = class Marketing {
         if (!eventName) return;
         if (!valueToSum) valueToSum = null;
         if (!(params instanceof Object)) params = {};
-        const Messenger = this.config.Messenger;
+        const Messenger = this.parent.Messenger;
 
         let event = {
             id: getEventId(),
@@ -31,22 +31,15 @@ module.exports = class Marketing {
             params: copy(params),
         };
 
-        if (this.config.entrance.fb_messenger_checkbox_ref) {
-            event = Object.assign(event, this.config.entrance.fb_messenger_checkbox_ref);
+        if (this.parent.entrance.fb_messenger_checkbox_ref) {
+            event = Object.assign(event, this.parent.entrance.fb_messenger_checkbox_ref);
         }
 
-        if (Messenger.fb_user_id) {
-            params.fb_user_id = Messenger.fb_user_id;
-        }
+        event.custom_user_id = this.parent.custom_user_id;
 
-        if (this.config.uid) {
-            event.user_id = this.config.uid;
-        } else if (this.config.custom_user_id) {
-            event.custom_user_id = this.config.custom_user_id;
-        }
-
-        if (this.config.fb_user_id) {
-            event.fb_user_id = this.config.fb_user_id;
+        if (this.parent.fb_user_id) {
+            params.fb_user_id = this.parent.fb_user_id;
+            event.fb_user_id = this.parent.fb_user_id;
         }
 
         if (!event.user_id && !event.fb_user_id && !event.custom_user_id) {
@@ -63,7 +56,7 @@ module.exports = class Marketing {
             'ref': params.ref,
         };
 
-        if (this.config.platforms.indexOf('facebook') >= 0) {
+        if (this.parent.platforms.indexOf('facebook') >= 0) {
             FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
             const analyticsParams = copy(params);
             delete analyticsParams.user_ref;
@@ -75,12 +68,10 @@ module.exports = class Marketing {
                 FB.AppEvents.logEvent(eventName, valueToSum, analyticsParams);
                 log('FB.AppEvents.logEvent', { eventName, valueToSum, analyticsParams });
             }
-        } else if (this.config.platforms.indexOf('bothub') >= 0) {
+        } else if (this.parent.platforms.indexOf('bothub') >= 0) {
             delete MessengerParams.user_ref;
-            const server = this.config.api_server;
-            const bot_id = this.config.bot_id;
             const query = urlEncode({ cd: MessengerParams });
-            jsonp(`${server}webhooks/${bot_id}/analytics/events?action=store${query}`);
+            jsonp(`${this.parent.api_server}analytics/events?action=store${query}`);
         }
     }
 

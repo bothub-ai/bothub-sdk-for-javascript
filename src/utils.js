@@ -53,8 +53,8 @@ export function copy(obj) {
 
 /**
  * Whether the data has a property of cookie
- * 
- * @param {any} data 
+ *
+ * @param {any} data
  * @returns {boolean}
  */
 function dataHasCookies(data) {
@@ -67,8 +67,8 @@ function dataHasCookies(data) {
 
 /**
  * Whether the data is a standard cookie format
- * 
- * @param {any} data 
+ *
+ * @param {any} data
  * @returns {boolean}
  */
 function validateCookies(data) {
@@ -83,10 +83,10 @@ function validateCookies(data) {
 
 /**
  * log when debug mode
- * @param {string} str 
+ * @param {string} str
  */
 export function log() {
-    if (window.bothubDebug) {
+    if (BOTHUB.debug) {
         for (const key in arguments) {
             console.log(arguments[key]);
         }
@@ -116,9 +116,24 @@ export function jsonp(url, callback) {
     document.body.appendChild(script);
 }
 
-export function getUserId() {
-    return Cookies.get('__bothub_user_id') || null;
+function ajax(type, url, data) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open(type, url);
+
+    if (type === 'POST') {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+    }
+
+    xhr.send(type === 'GET' ? null : JSON.stringify(data));
+
+    return xhr;
 }
+
+export const Http = {
+    get: (url, data) => ajax('GET', url, data),
+    post: (url, data) => ajax('POST', url, data),
+};
 
 export function getCustomUserId() {
     let custom_user_id = getUrlParam('custom_user_id') || Cookies.get('bothub_custom_user_id') || '';
@@ -171,6 +186,10 @@ export function loadFacebookSdk(bothub) {
             : `https://connect.facebook.net/${bothub.language}/sdk.js`;
         document.body.appendChild(facebook_script);
     }
+}
+
+export function getPlugin(name) {
+    return document.getElementsByClassName(name)[0];
 }
 
 export const EventNames = {

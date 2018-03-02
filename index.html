@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body {padding: 40px}
-      button {padding: 8px 12px;cursor: pointer;background: #3273dc;border: none;color: white}
+      button {padding: 8px 12px;cursor: pointer;background: #3273dc;border: none;color: white;border-radius: 3px}
       button:hover {background: #4384ed}
+      h2 {margin-top: 20px;border-bottom: 1px solid #ddd;font-size: 15px;line-height: 34px;font-weight: noraml}
       h3 {margin-top: 30px}
       .row {margin-top: 15px}
       .fb-messenger-checkbox {margin-left: -12px}
@@ -23,6 +23,8 @@
         <a href="https://docs.bothub.ai/audience/sdk-integration.html" target="_blank">查看文档</a>
       </p>
     </section>
+    
+    <h2>插件</h2>
     <!-- 加载 Checkbox Plugin -->
     <div class="fb-messenger-checkbox" prechecked="true" size="small"></div>
     <!-- 加载 Customer Chat Plugin -->
@@ -31,6 +33,8 @@
     <div class="fb-send-to-messenger" color="blue" size="standard"></div>
     <!-- 加载 Message Us Plugin -->
     <div class="fb-messengermessageus" color="blue" size="standard"></div>
+    
+    <h2>事件</h2>
     <section>
       <h3>标准事件</h3>
       <button onclick="BOTHUB.Marketing.logAddedToCartEvent('1', 'T-shirt', 'USD', 26.99)">加入购物车</button>
@@ -47,19 +51,43 @@
       <p>通知事件是自定义事件的一个特殊用法，需要在第三个参数传递通知时间戳。</p>
       <button onclick="BOTHUB.Marketing.logEvent('scheduled_interview', null, { trigger_time: Date.parse(new Date())/1000 })">面试通知</button>
     </section>
+
+    <h2>电商</h2>
+    <!-- 电商相关数据 按需使用-->
+    <script src="https://sdk.bothub.ai/data/ecommerce.js?v=1"></script>
+    <section>
+      <button onclick="BOTHUB.ECommerce.resetSendToMessengerReceipt(receipt_reset)">重置订单回执</button>
+      <button onclick="BOTHUB.ECommerce.resetSendToMessengerFeed(feed_reset)">重置商品列表</button>
+      Send to Messenger
+    </section>
+    <br>
+    <section>
+      <button onclick="BOTHUB.ECommerce.resetMessengerCheckboxReceipt(receipt_reset)">重置订单回执</button>
+      Messenger Checkbox
+    </section>
+
     <!-- 在body最底部加入sdk代码 -->
     <script>
       window.BOTHUB = {
-        bot_id: "146",
-        facebook_page_id: "123987121483060",
+        facebook_page_id: "387214325054678",
         messenger_app_id: "1724119764514436",
         api_server: "https://uat-api.bothub.ai/",
-        platforms: ['facebook', 'bothub'],
         language: 'en_US',
+        // entrance 为可选参数
         entrance: {
-          fb_messenger_checkbox_ref: { "gateway": "engagement", "code": "j", "psid": 0 },
+          fb_messenger_checkbox_ref: { gateway: "engagement"},
           fb_send_to_messenger_data_ref: "base64:eyJnYXRld2F5IjoiZW5nYWdlbWVudCIsImNvZGUiOiJrIiwicHNpZCI6MH0=",
           fb_customerchat_ref: "base64:eyJnYXRld2F5IjoiZW5nYWdlbWVudCIsImNvZGUiOiJuIiwicHNpZCI6MH0="
+        },
+        // ecommerce 为可选参数
+        ecommerce: {
+          messenger_checkbox: {
+            receipt: receipt_data
+          },
+          send_to_messenger: {
+            receipt: receipt_data,
+            feed: feed_data
+          },
         },
         debug: false,
       };

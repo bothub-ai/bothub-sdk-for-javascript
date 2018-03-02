@@ -13,12 +13,8 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 ```html
 <script>
   window.BOTHUB = {
-    bot_id: 'value',                   // 必选 机器人id
-    facebook_page_id: 'value',         // 必选 以该账号发送消息给用户
-    api_server: 'https://xx.xx.xx/',   // 必选 API地址
+    facebook_page_id: 'value',         // 必选 Facebook 页面id
     custom_user_id: 'value',           // 可选 网站用户id
-    messenger_app_id: 'value',         // 可选 Messenger 应用号id
-    platforms: ['facebook', 'bothub'], // 可选 将事件发送到的平台
     language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
     debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
     callback: function(self) {}        // 可选 后续动作
@@ -41,7 +37,7 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 <div class="fb-send-to-messenger" color="blue" size="standard"></div>
 ```
 
-# 使用
+# 基本使用
 
 ### 使用方法
 
@@ -90,7 +86,47 @@ BOTHUB.Marketing.logInitiatedCheckoutEvent('1', 'music', 5, true, 'USD', 6);
 BOTHUB.Marketing.logEvent('logined', null, { sex: 'male', age: 18 });
 ```
 
+# 电商
 
+配置商品信息后可通过 messenger_checkbox 或 send_to_messenger 插件将订单信息发送到用户Messenger
+
+### 配置方式
+
+```js
+window.BOTHUB = {
+  ecommerce: {
+    messenger_checkbox: {
+      receipt: 订单回执数据,
+    },
+    send_to_messenger: {
+      receipt: 订单回执数据,
+      feed: 商品列表数据,
+    }
+  }
+};
+```
+
+数据示例请参考：[数据示例](https://sdk.bothub.ai/data/ecommerce.js)
+
+注：messenger_checkbox 只允许配置 receipt 数据，send_to_messenger 只允许配置 receipt 或 feed 其中一种
+
+使用步骤：
+
+messenger_checkbox 插件
+1. 配置 BOTHUB.ecommerce.messenger_checkbox.receipt
+2. 勾选 "send to messsenger" 并触发自定义事件后，用户将受到订单回执信息
+
+send_to_messenger 插件
+1. 配置 BOTHUB.ecommerce.send_to_messenger.receipt
+2. 用户点击”send to messenger“后，将会收到订单回执信息
+
+当商品信息更新后可通过以下接口重置插件（sdk初始化完成之后才能调用，请不要在sdk未加载完时调用）
+
+```js
+BOTHUB.ECommerce.resetMessengerCheckboxReceipt(data)
+BOTHUB.ECommerce.resetSendToMessengerReceipt(data)
+BOTHUB.ECommerce.resetSendToMessengerFeed(data)
+```
 
 # 附录
 
@@ -98,7 +134,7 @@ BOTHUB.Marketing.logEvent('logined', null, { sex: 'male', age: 18 });
 
 完整示例请参考源码：
 
-https://demo.bothub.ai/analytics/
+https://demo.bothub.ai/sdk/
 
 ### 使用声明
 
@@ -111,7 +147,7 @@ https://demo.bothub.ai/analytics/
 若未集成 facebook sdk 请忽略本节！如果原有网站已集成 facebook sdk 请进行以下操作：
 
 
-```javascript
+```js
 // 删除这段
 (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -138,6 +174,17 @@ window.BOTHUB = window.BOTHUB || {
      */
   }
 };
+```
+
+### 异步调用方式
+
+有些时候当sdk尚未加载完成时需要调用sdk接口，可通过异步方式来调用：
+
+```js
+window.bhAsyncInit = function() {
+  // 下面的代码sdk加载完成后会立即被调用
+  BOTHUB.ECommerce.resetMessengerCheckboxReceipt(data)
+}
 ```
 
 ### API 参考文档
@@ -186,20 +233,9 @@ logEvent: function(
 )
 ```
 
-HTML代码可选值
+插件样式设置
 
-```html
-<!-- Checkbox Plugin -->
-<div class="fb-messenger-checkbox"  
-  prechecked="<true | false>"
-  allow_login="<true>"
-  size="<small | medium | large | standard | xlarge>">
-</div>
+[参考这里](https://developers.facebook.com/docs/messenger-platform/discovery)
 
-<!-- Message Us Plugin -->
-<div class="fb-messengermessageus" 
-  color="<blue | white>"
-  size="<standard | large | xlarge>">
-</div>
-```
+
 

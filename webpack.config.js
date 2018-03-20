@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const config = {
     entry: './main.js',
     output: {
-        path: path.resolve(__dirname, './dist'),
+        path: path.resolve(__dirname, './public/dist'),
         filename: 'bothub.js',
     },
     module: {

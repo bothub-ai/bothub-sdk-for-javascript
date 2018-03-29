@@ -15,7 +15,6 @@ module.exports = class BotHub {
         this.fb_user_id = fb_user_id;
         this.api_server = config.api_server || 'https://t.bothub.ai/';
         this.platforms = config.platforms || ['facebook', 'bothub'];
-        this.callback = config.callback || function() {},
         this.entrance = config.entrance || {},
         this.ecommerce = config.ecommerce || {},
         this.language = config.language || 'zh_CN',
@@ -32,15 +31,11 @@ module.exports = class BotHub {
         this.ECommerce = new ECommerce(this);
         this.Marketing = new Marketing(this);
 
-        if (this.platforms.indexOf('facebook') > -1) {
-            this.Plugin = new Plugin(this);
-            this.Plugin.initMessengerCheckbox();
-            this.Plugin.initSendToMessenger();
-            this.Plugin.initMessageUs();
-            this.Plugin.initCustomerChat();
-        } else {
-            this.callback(this);
-        }
+        this.Plugin = new Plugin(this);
+        this.Plugin.initMessengerCheckbox();
+        this.Plugin.initSendToMessenger();
+        this.Plugin.initMessageUs();
+        this.Plugin.initCustomerChat();
     }
 };
 

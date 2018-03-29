@@ -1,13 +1,4 @@
-import {
-    getEventId,
-    urlEncode,
-    jsonp,
-    copy,
-    ParameterNames,
-    EventNames,
-    log,
-    getUserRef,
-} from './utils';
+import { getEventId, urlEncode, jsonp, copy, log, getUserRef } from './utils';
 
 module.exports = class Marketing {
     constructor(parent) {
@@ -58,18 +49,30 @@ module.exports = class Marketing {
 
         if (this.parent.platforms.indexOf('facebook') >= 0) {
             FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
+
             const analyticsParams = copy(params);
             delete analyticsParams.user_ref;
             delete analyticsParams.ref;
-            if (eventName === EventNames.INITIATED_CHECKOUT) {
-                FB.AppEvents.logPurchase(valueToSum, params[ParameterNames.CURRENCY], analyticsParams);
-                log('FB.AppEvents.logPurchase', { valueToSum, 'fb_currency': params[ParameterNames.CURRENCY], analyticsParams });
+
+            if (eventName === FB.AppEvents.EventNames.INITIATED_CHECKOUT) {
+                FB.AppEvents.logPurchase(
+                    valueToSum,
+                    params[FB.AppEvents.ParameterNames.CURRENCY],
+                    analyticsParams
+                );
+
+                log('FB.AppEvents.logPurchase', {
+                    valueToSum,
+                    'fb_currency': params[FB.AppEvents.ParameterNames.CURRENCY],
+                    analyticsParams,
+                });
             } else {
                 FB.AppEvents.logEvent(eventName, valueToSum, analyticsParams);
                 log('FB.AppEvents.logEvent', { eventName, valueToSum, analyticsParams });
             }
         } else if (this.parent.platforms.indexOf('bothub') >= 0) {
             delete MessengerParams.user_ref;
+            window.query = { cd: MessengerParams };
             const query = urlEncode({ cd: MessengerParams });
             jsonp(`${this.parent.api_server}analytics/events?action=store${query}`);
         }
@@ -84,10 +87,11 @@ module.exports = class Marketing {
      */
     logAddedToCartEvent(contentId, contentType, currency, price) {
         const params = {};
-        params[ParameterNames.CONTENT_ID] = contentId;
-        params[ParameterNames.CONTENT_TYPE] = contentType;
-        params[ParameterNames.CURRENCY] = currency;
-        this.logEvent(EventNames.ADDED_TO_CART, price, params);
+        const p = FB.AppEvents.ParameterNames;
+        params[p.CONTENT_ID] = contentId;
+        params[p.CONTENT_TYPE] = contentType;
+        params[p.CURRENCY] = currency;
+        this.logEvent(FB.AppEvents.EventNames.ADDED_TO_CART, price, params);
     }
 
     /**
@@ -99,10 +103,11 @@ module.exports = class Marketing {
      */
     logAddedToWishlistEvent(contentId, contentType, currency, price) {
         const params = {};
-        params[ParameterNames.CONTENT_ID] = contentId;
-        params[ParameterNames.CONTENT_TYPE] = contentType;
-        params[ParameterNames.CURRENCY] = currency;
-        this.logEvent(EventNames.ADDED_TO_WISHLIST, price, params);
+        const p = FB.AppEvents.ParameterNames;
+        params[p.CONTENT_ID] = contentId;
+        params[p.CONTENT_TYPE] = contentType;
+        params[p.CURRENCY] = currency;
+        this.logEvent(FB.AppEvents.EventNames.ADDED_TO_WISHLIST, price, params);
     }
 
     /**
@@ -116,11 +121,12 @@ module.exports = class Marketing {
      */
     logInitiatedCheckoutEvent(contentId, contentType, numItems, paymentInfoAvailable, currency, totalPrice) {
         const params = {};
-        params[ParameterNames.CONTENT_ID] = contentId;
-        params[ParameterNames.CONTENT_TYPE] = contentType;
-        params[ParameterNames.NUM_ITEMS] = numItems;
-        params[ParameterNames.PAYMENT_INFO_AVAILABLE] = paymentInfoAvailable ? 1 : 0;
-        params[ParameterNames.CURRENCY] = currency;
-        this.logEvent(EventNames.INITIATED_CHECKOUT, totalPrice, params);
+        const p = FB.AppEvents.ParameterNames;
+        params[p.CONTENT_ID] = contentId;
+        params[p.CONTENT_TYPE] = contentType;
+        params[p.NUM_ITEMS] = numItems;
+        params[p.PAYMENT_INFO_AVAILABLE] = paymentInfoAvailable ? 1 : 0;
+        params[p.CURRENCY] = currency;
+        this.logEvent(FB.AppEvents.EventNames.INITIATED_CHECKOUT, totalPrice, params);
     }
 };

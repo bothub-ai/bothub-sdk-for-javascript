@@ -1,9 +1,3 @@
-const Cookies = require('js-cookie');
-
-export function isOldIE() {
-    return navigator.appName === 'Microsoft Internet Explorer' && parseInt(navigator.appVersion.split(';')[1].replace(/[ ]/g, '').replace('MSIE', '')) < 9;
-}
-
 /**
  * @param {object}  param
  * @param {string}  key
@@ -52,36 +46,6 @@ export function copy(obj) {
 }
 
 /**
- * Whether the data has a property of cookie
- *
- * @param {any} data
- * @returns {boolean}
- */
-function dataHasCookies(data) {
-    return (
-        (data instanceof Object) &&
-        (data.hasOwnProperty('cookies')) &&
-        (data.cookies instanceof Array)
-    );
-}
-
-/**
- * Whether the data is a standard cookie format
- *
- * @param {any} data
- * @returns {boolean}
- */
-function validateCookies(data) {
-    return (
-        data.name &&
-        (data.value || data.value === '') &&
-        (/(string|number)/.test(typeof data.name)) &&
-        (/(string|number)/.test(typeof data.value)) &&
-        ((data.attributes instanceof Object) || (!data.attributes))
-    );
-}
-
-/**
  * log when debug mode
  * @param {string} str
  */
@@ -99,16 +63,6 @@ export function jsonp(url, callback) {
 
     window[callbackName] = function(data) {
         document.body.removeChild(script);
-
-        if (dataHasCookies(data)) {
-            const cookies = data.cookies;
-            for (const key in cookies) {
-                if (validateCookies(cookies[key])) {
-                    Cookies.set(`__bothub_${cookies[key].name}`, cookies[key].value, cookies[key].attributes);
-                }
-            }
-        }
-
         callback && callback(data);
     };
 
@@ -136,19 +90,18 @@ export const Http = {
 };
 
 export function getCustomUserId() {
-    let custom_user_id = getUrlParam('custom_user_id') || Cookies.get('bothub_custom_user_id') || '';
+    let custom_user_id = getUrlParam('custom_user_id') || localStorage.getItem('bothub_custom_user_id') || '';
     if (custom_user_id) return custom_user_id;
     custom_user_id = uuid();
-    Cookies.set('bothub_custom_user_id', custom_user_id, { expires: 365, path: '/' });
+    localStorage.setItem('bothub_custom_user_id', custom_user_id);
     return custom_user_id;
 }
 
 export function getFacebookUserId(key) {
-    const cookies_key = `__${key}`;
-    const fb_user_id = getUrlParam(key) || Cookies.get(cookies_key) || '';
+    const fb_user_id = getUrlParam(key) || localStorage.getItem(key) || '';
 
     if (fb_user_id) {
-        Cookies.set(cookies_key, fb_user_id, { expires: 1, path: '/' });
+        localStorage.setItem(key, fb_user_id);
     }
 
     return fb_user_id;
@@ -160,66 +113,40 @@ export function getEventId() {
 
 export function getUserRef(force) {
     force = force || false;
-    let user_ref = Cookies.get('__bothub_user_ref');
+
+    let user_ref = localStorage.getItem('bothub_user_ref');
 
     if (force || !user_ref) {
         user_ref = location.host.replace(/\./g, '_') + '_' + uuid();
-        Cookies.set('__bothub_user_ref', user_ref, { expires: 1, path: '/' });
+        localStorage.setItem('bothub_user_ref', user_ref);
     }
 
     return user_ref;
 }
 
+export function getPlugin(name) {
+    const id = name.replace('fb', 'bothub');
+    const plugin = window[id];
+
+    if (plugin) {
+        plugin.setAttribute('class', name);
+        return plugin;
+    }
+
+    return document.getElementsByClassName(name)[0];
+}
+
 export function loadFacebookSdk(bothub) {
+    if (window['facebook-jssdk']) return;
+
     if (['zh_CN', 'zh_TW', 'en_US'].indexOf(bothub.language) === -1) {
         bothub.language = 'zh_CN';
     }
 
-    if (window['facebook-jssdk']) {
-        log('duplicate load facebook-jssdk, see https://github.com/bothub-ai/bothub-sdk-for-javascript');
-    } else {
-        log('start load facebook sdk...');
-        const facebook_script = document.createElement('script');
-        facebook_script.id = 'facebook-jssdk';
-        facebook_script.src = bothub.debug
-            ? `https://connect.facebook.net/${bothub.language}/sdk/debug.js`
-            : `https://connect.facebook.net/${bothub.language}/sdk.js`;
-        document.body.appendChild(facebook_script);
-    }
+    log('start load facebook sdk...');
+
+    const facebook_script = document.createElement('script');
+    facebook_script.id = 'facebook-jssdk';
+    facebook_script.src = `https://connect.facebook.net/${bothub.language}/${bothub.debug ? 'sdk/debug' : 'sdk'}.js`;
+    document.body.appendChild(facebook_script);
 }
-
-export function getPlugin(name) {
-    return document.getElementsByClassName(name)[0];
-}
-
-export const EventNames = {
-    ACHIEVED_LEVEL: 'fb_mobile_level_achieved',
-    ADDED_PAYMENT_INFO: 'fb_mobile_add_payment_info',
-    ADDED_TO_CART: 'fb_mobile_add_to_cart',
-    ADDED_TO_WISHLIST: 'fb_mobile_add_to_wishlist',
-    COMPLETED_REGISTRATION: 'fb_mobile_complete_registration',
-    COMPLETED_TUTORIAL: 'fb_mobile_tutorial_completion',
-    INITIATED_CHECKOUT: 'fb_mobile_initiated_checkout',
-    PAGE_VIEW: 'fb_page_view',
-    RATED: 'fb_mobile_rate',
-    SEARCHED: 'fb_mobile_search',
-    SPENT_CREDITS: 'fb_mobile_spent_credits',
-    UNLOCKED_ACHIEVEMENT: 'fb_mobile_achievement_unlocked',
-    VIEWED_CONTENT: 'fb_mobile_content_view',
-};
-
-export const ParameterNames = {
-    APP_USER_ID: '_app_user_id',
-    APP_VERSION: '_appVersion',
-    CURRENCY: 'fb_currency',
-    REGISTRATION_METHOD: 'fb_registration_method',
-    CONTENT_TYPE: 'fb_content_type',
-    CONTENT_ID: 'fb_content_id',
-    SEARCH_STRING: 'fb_search_string',
-    SUCCESS: 'fb_success',
-    MAX_RATING_VALUE: 'fb_max_rating_value',
-    PAYMENT_INFO_AVAILABLE: 'fb_payment_info_available',
-    NUM_ITEMS: 'fb_num_items',
-    LEVEL: 'fb_level',
-    DESCRIPTION: 'fb_description',
-};

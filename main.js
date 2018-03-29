@@ -1,23 +1,13 @@
 import BotHub from './src/botHub';
-import { isOldIE, log, loadFacebookSdk } from './src/utils';
+import { log, loadFacebookSdk } from './src/utils';
 
-if (typeof BOTHUB === 'object' && !BOTHUB._isins) {
-    if (isOldIE()) {
-        const doNothing = () => {};
-        BOTHUB.Marketing = {
-            logAddedToCartEvent: doNothing,
-            logAddedToWishlistEvent: doNothing,
-            logInitiatedCheckoutEvent: doNothing,
-            logEvent: doNothing,
-        };
-    } else {
-        window.BOTHUB = new BotHub(BOTHUB);
-        initFacebook(window.BOTHUB);
-        loadFacebookSdk(window.BOTHUB);
-    }
+if (!BOTHUB._isins) {
+    window.BOTHUB = new BotHub(BOTHUB);
+    initFacebook(window.BOTHUB);
 }
 
 function initFacebook(bothub) {
+    const prev = window.fbAsyncInit;
     window.fbAsyncInit = () => {
         log('facebook sdk loaded.');
 
@@ -27,38 +17,18 @@ function initFacebook(bothub) {
             version: 'v2.6',
         });
 
-        FB.Event.subscribe('messenger_checkbox', function(e) {
-            log('messenger_checkbox event:', e);
-            if (e.event === 'rendered') {
-                log('Messenger plugin was rendered');
-                bothub.ECommerce.sendToMessenger('messenger_checkbox');
-            } else if (e.event === 'checkbox') {
-                const checkboxState = e.state;
-                log('Checkbox state: ' + checkboxState);
-            } else if (e.event === 'not_you') {
-                log('User clicked not you');
-            } else if (e.event === 'hidden') {
-                log('Messenger plugin was hidden');
-            }
-        });
+        FB.Event.subscribe('messenger_checkbox', bothub.Plugin.checkboxListener);
+        FB.Event.subscribe('send_to_messenger', bothub.Plugin.sendToMessengerListener);
 
-        FB.Event.subscribe('send_to_messenger', function(e) {
-            log('send_to_messenger event:', e);
-            if (e.event === 'rendered') {
-                log('Send to messenger plugin was rendered');
-                bothub.ECommerce.sendToMessenger('send_to_messenger');
-            } else if (e.event === 'clicked') {
-                log('User clicked send to messenger');
-            } else if (e.event === 'not_you') {
-                log('User clicked not you');
-            } else if (e.event === 'hidden') {
-                log('Send to messenger plugin was hidden');
-            }
-        });
-
-        log('run callback');
-
-        bothub.callback(bothub);
         window.bhAsyncInit && window.bhAsyncInit();
+
+        if (typeof prev === 'function') {
+            eval(`window.oldCb = ${prev.toString().replace('xfbml', 'fbml')}`);
+            window.oldCb();
+        }
     };
+
+    if (window.FB) window.fbAsyncInit();
+
+    loadFacebookSdk(bothub);
 }

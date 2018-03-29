@@ -28,13 +28,13 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 
 ```html
 <!-- 如果需要发送Messenger消息给用户 添加这段代码 -->
-<div class="fb-messenger-checkbox" prechecked="true" size="small"></div>
+<div id="bothub-messenger-checkbox" prechecked="true" size="small"></div>
 
 <!-- 如果需要在网页中集成聊天插件 添加这段代码 -->
-<div class="fb-customerchat"></div>
+<div id="bothub-customerchat"></div>
 
 <!-- 如果需要将指定消息发送给Messenger 添加这段代码 -->
-<div class="fb-send-to-messenger" color="blue" size="standard"></div>
+<div id="bothub-send-to-messenger" color="blue" size="standard"></div>
 ```
 
 # 基本使用
@@ -141,40 +141,6 @@ https://demo.bothub.ai/sdk/
 1. SDK中所有函数参数若无特别声明均为 `string` 类型，使用单引号引入
 2. 货币符号请参考文档 [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
 3. API详情文档请参看附录
-
-### 与 Facebook SDK 集成
-
-若未集成 facebook sdk 请忽略本节！如果原有网站已集成 facebook sdk 请进行以下操作：
-
-
-```js
-// 删除这段
-(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-
-// 删除这段
-window.fbAsyncInit = function() {
-  FB.init({
-    appId: '<messenger_app_id>',
-    xfbml: true,
-    version: 'v2.6'
-  });
-}
-
-window.BOTHUB = window.BOTHUB || {
-  callback: function(self) {
-    /* 
-     * 将上面函数中 FB.init() 部分之外的代码放到这 
-     */
-  }
-};
-```
 
 ### 异步调用方式
 

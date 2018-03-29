@@ -1,4 +1,4 @@
-import { getPlugin, getUserRef } from './utils';
+import { getPlugin, getUserRef, log } from './utils';
 
 module.exports = class Plugin {
     constructor(parent) {
@@ -7,6 +7,35 @@ module.exports = class Plugin {
         this.send_to_messenger = getPlugin('fb-send-to-messenger');
         this.messageus = getPlugin('fb-messengermessageus');
         this.customerchat = getPlugin('fb-customerchat');
+    }
+
+    checkboxListener(e) {
+        log('messenger_checkbox event:', e);
+        if (e.event === 'rendered') {
+            log('Messenger plugin was rendered');
+            BOTHUB.ECommerce.sendToMessenger('messenger_checkbox');
+        } else if (e.event === 'checkbox') {
+            const checkboxState = e.state;
+            log('Checkbox state: ' + checkboxState);
+        } else if (e.event === 'not_you') {
+            log('User clicked not you');
+        } else if (e.event === 'hidden') {
+            log('Messenger plugin was hidden');
+        }
+    }
+
+    sendToMessengerListener(e) {
+        log('send_to_messenger event:', e);
+        if (e.event === 'rendered') {
+            log('Send to messenger plugin was rendered');
+            BOTHUB.ECommerce.sendToMessenger('send_to_messenger');
+        } else if (e.event === 'clicked') {
+            log('User clicked send to messenger');
+        } else if (e.event === 'not_you') {
+            log('User clicked not you');
+        } else if (e.event === 'hidden') {
+            log('Send to messenger plugin was hidden');
+        }
     }
 
     initMessengerCheckbox() {
@@ -31,6 +60,7 @@ module.exports = class Plugin {
 
     initSendToMessenger() {
         if (!this.send_to_messenger) return;
+
         this.send_to_messenger.setAttribute('messenger_app_id', this.parent.Messenger.messenger_app_id);
         this.send_to_messenger.setAttribute('page_id', this.parent.Messenger.page_id);
 

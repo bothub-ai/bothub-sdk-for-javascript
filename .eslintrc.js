@@ -141,7 +141,7 @@ module.exports = {
         // 解构模式不允许为空
         'no-empty-pattern': 2,
         // 禁用 eval()
-        'no-eval': 2,
+        'no-eval': 0,
         // 禁止对 catch 子句中的异常重新赋值
         'no-ex-assign': 2,
         // 禁止不必要的函数绑定 bind

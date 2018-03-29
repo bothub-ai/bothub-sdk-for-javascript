@@ -6,15 +6,15 @@ module.exports = class ECommerce {
         this.ecommerce = this.parent.ecommerce;
         this.plugin = {
             messenger_checkbox: {
-                receipt: undefined,
-                receipt_id: undefined,
+                receipt: '',
+                receipt_id: '',
                 sent: false,
             },
             send_to_messenger: {
-                receipt: undefined,
-                receipt_id: undefined,
-                feed: undefined,
-                feed_id: undefined,
+                receipt: '',
+                receipt_id: '',
+                feed: '',
+                feed_id: '',
                 sent: false,
             },
         };
@@ -70,7 +70,7 @@ module.exports = class ECommerce {
         if (!MessengerCheckbox) return;
         MessengerCheckbox.removeAttribute('fb-iframe-plugin-query');
         this.plugin.messenger_checkbox.receipt = data;
-        this.plugin.messenger_checkbox.receipt_id = undefined;
+        this.plugin.messenger_checkbox.receipt_id = '';
         BOTHUB.Plugin.initMessengerCheckbox();
         window.FB.XFBML.parse();
         this.plugin.messenger_checkbox.sent = false;
@@ -83,15 +83,15 @@ module.exports = class ECommerce {
         if (!sendToMessenger) return;
         sendToMessenger.removeAttribute('fb-iframe-plugin-query');
         this.plugin.send_to_messenger[type] = data;
-        this.plugin.send_to_messenger[type + '_id'] = undefined;
+        this.plugin.send_to_messenger[type + '_id'] = '';
         BOTHUB.Plugin.initSendToMessenger();
         window.FB.XFBML.parse();
         this.plugin.send_to_messenger.sent = false;
     }
 
     resetSendToMessengerFeed(data) {
-        this.plugin.send_to_messenger.receipt = undefined;
-        this.plugin.send_to_messenger.receipt_id = undefined;
+        this.plugin.send_to_messenger.receipt = '';
+        this.plugin.send_to_messenger.receipt_id = '';
         this.resetSendToMessengerReceipt(data);
     }
 };

@@ -134,6 +134,7 @@ module.exports = class Marketing {
         const p = FB.AppEvents.ParameterNames;
         params[p.CONTENT_ID] = contentId;
         params[p.CURRENCY] = currency;
+        params['value_to_sum'] = totalPrice;
         this.logEvent('fb_mobile_purchase', totalPrice, params);
     }
 };

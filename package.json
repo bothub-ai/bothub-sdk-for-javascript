@@ -9,8 +9,8 @@
     "build": "npm run clean && cross-env NODE_ENV=production webpack --hide-modules",
     "clean": "rm -rf ./dist"
   },
-  "dependencies": {},
   "devDependencies": {
+    "abab": "^1.0.4",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.3",
     "babel-plugin-transform-regenerator": "^6.26.0",

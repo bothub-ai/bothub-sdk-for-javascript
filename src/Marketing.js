@@ -48,25 +48,18 @@ module.exports = class Marketing {
         };
 
         if (this.parent.platforms.indexOf('facebook') >= 0) {
-            FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
-
             const analyticsParams = copy(params);
             delete analyticsParams.user_ref;
             delete analyticsParams.ref;
 
-            if (eventName === FB.AppEvents.EventNames.INITIATED_CHECKOUT) {
+            if (eventName === 'fb_mobile_purchase') {
                 FB.AppEvents.logPurchase(
                     valueToSum,
                     params[FB.AppEvents.ParameterNames.CURRENCY],
                     analyticsParams
                 );
-
-                log('FB.AppEvents.logPurchase', {
-                    valueToSum,
-                    'fb_currency': params[FB.AppEvents.ParameterNames.CURRENCY],
-                    analyticsParams,
-                });
             } else {
+                FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
                 FB.AppEvents.logEvent(eventName, valueToSum, analyticsParams);
                 log('FB.AppEvents.logEvent', { eventName, valueToSum, analyticsParams });
             }
@@ -128,5 +121,19 @@ module.exports = class Marketing {
         params[p.PAYMENT_INFO_AVAILABLE] = paymentInfoAvailable ? 1 : 0;
         params[p.CURRENCY] = currency;
         this.logEvent(FB.AppEvents.EventNames.INITIATED_CHECKOUT, totalPrice, params);
+    }
+
+    /**
+     * This function will log purchase App Event
+     * @param {string} contentId
+     * @param {string} currency
+     * @param {number} totalPrice
+     */
+    logPurchaseEvent(contentId, currency, totalPrice) {
+        const params = {};
+        const p = FB.AppEvents.ParameterNames;
+        params[p.CONTENT_ID] = contentId;
+        params[p.CURRENCY] = currency;
+        this.logEvent('fb_mobile_purchase', totalPrice, params);
     }
 };

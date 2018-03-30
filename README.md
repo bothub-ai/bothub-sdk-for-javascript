@@ -66,12 +66,20 @@ BOTHUB.Marketing.logAddedToCartEvent('1', 'T-shirt', 'USD', 26.99);
 BOTHUB.Marketing.logAddedToWishlistEvent('1', '背包', 'CNY', 599);
 ```
 
-### 商品支付
+### 商品发起付款
 
 参数说明：订单号, 物品类型, 数量, 支付成功(bool), 币种, 总金额(number)
 
 ```js
 BOTHUB.Marketing.logInitiatedCheckoutEvent('1', 'music', 5, true, 'USD', 6);
+```
+
+### 商品付款成功
+
+参数说明：订单号, 币种, 总金额(number)
+
+```js
+BOTHUB.Marketing.logPurchaseEvent('1', 'USD', 100);
 ```
 
 ### 自定义事件
@@ -92,8 +100,13 @@ BOTHUB.Marketing.logEvent('logined', null, { sex: 'male', age: 18 });
 
 ### 配置方式
 
+方式一：在sdk配置中配置要发送的消息数据
+
+数据示例请参考：[数据示例](https://sdk.bothub.ai/data/ecommerce.js)
+
 ```js
 window.BOTHUB = {
+  // ...
   ecommerce: {
     messenger_checkbox: {
       receipt: 订单回执数据,
@@ -106,27 +119,23 @@ window.BOTHUB = {
 };
 ```
 
-数据示例请参考：[数据示例](https://sdk.bothub.ai/data/ecommerce.js)
-
-注：messenger_checkbox 只允许配置 receipt 数据，send_to_messenger 只允许配置 receipt 或 feed 其中一种
-
-使用步骤：
-
-messenger_checkbox 插件
-1. 配置 BOTHUB.ecommerce.messenger_checkbox.receipt
-2. 勾选 "send to messsenger" 并触发自定义事件后，用户将受到订单回执信息
-
-send_to_messenger 插件
-1. 配置 BOTHUB.ecommerce.send_to_messenger.receipt
-2. 用户点击”send to messenger“后，将会收到订单回执信息
-
-当商品信息更新后可通过以下接口重置插件（sdk初始化完成之后才能调用，请不要在sdk未加载完时调用）
+方式二：通过接口来设置要发送的消息数据（参考附录异步调用方式）
 
 ```js
 BOTHUB.ECommerce.resetMessengerCheckboxReceipt(data)
 BOTHUB.ECommerce.resetSendToMessengerReceipt(data)
 BOTHUB.ECommerce.resetSendToMessengerFeed(data)
 ```
+
+### 使用步骤：
+
+messenger_checkbox 插件
+1. 设置要发送的数据
+2. 勾选 "send to messsenger" 并触发自定义事件后，用户将受到订单回执信息
+
+send_to_messenger 插件
+1. 设置要发送的数据
+2. 用户点击”send to messenger“后，将会收到订单回执信息
 
 # 附录
 
@@ -176,7 +185,7 @@ logAddedToWishlistEvent: function(
 ) 
 ```
 
-商品进行了支付
+商品发起付款
 
 ```js
 logInitiatedCheckoutEvent: function(
@@ -187,6 +196,16 @@ logInitiatedCheckoutEvent: function(
   currency,              /* required {string} currency */
   totalPrice             /* required {number} totalPrice */
 )
+```
+
+商品支付成功
+
+```js
+logPurchaseEvent: function(
+  orderId,               /* required {string} orderId */
+  currency,              /* required {string} currency */
+  totalPrice             /* required {number} totalPrice */
+}
 ```
 
 自定义事件

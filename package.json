@@ -9,9 +9,7 @@
     "build": "npm run clean && cross-env NODE_ENV=production webpack --hide-modules",
     "clean": "rm -rf ./dist"
   },
-  "dependencies": {
-    "js-cookie": "^2.1.4"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.3",

@@ -1,4 +1,4 @@
-import BotHub from './src/botHub';
+import BotHub from './bothub';
 import { log, loadFacebookSdk } from './src/utils';
 import './src/polyfilll';
 

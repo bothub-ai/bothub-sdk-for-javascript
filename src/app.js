@@ -1,6 +1,6 @@
 import BotHub from './bothub';
-import { log, loadFacebookSdk } from './src/utils';
-import './src/polyfilll';
+import { log, loadFacebookSdk } from './utils';
+import './polyfilll';
 
 if (!BOTHUB._isins) {
     window.BOTHUB = new BotHub(BOTHUB);

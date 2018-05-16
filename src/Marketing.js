@@ -27,6 +27,7 @@ module.exports = class Marketing {
         }
 
         event.custom_user_id = this.parent.custom_user_id;
+        event.user_agent = window.navigator && window.navigator.userAgent;
 
         if (this.parent.fb_user_id) {
             params.fb_user_id = this.parent.fb_user_id;
@@ -129,11 +130,12 @@ module.exports = class Marketing {
      * @param {string} currency
      * @param {number} totalPrice
      */
-    logPurchaseEvent(contentId, currency, totalPrice) {
+    logPurchaseEvent(contentId, currency, totalPrice, contentType) {
         const params = {};
         const p = FB.AppEvents.ParameterNames;
         params[p.CONTENT_ID] = contentId;
         params[p.CURRENCY] = currency;
+        params[p.CONTENT_TYPE] = contentType;
         params['value_to_sum'] = totalPrice;
         this.logEvent('fb_mobile_purchase', totalPrice, params);
     }

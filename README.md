@@ -12,15 +12,14 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 
 ```html
 <script>
-  window.BOTHUB = {
-    facebook_page_id: 'value',         // 必选 Facebook 页面id
-    custom_user_id: 'value',           // 可选 网站用户id
-    language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
-    debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
-    callback: function(self) {}        // 可选 后续动作
-  };
-  (function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
-  (document.createElement('script'),'bothub-sdk','//sdk.bothub.ai/bothub.js');
+window.BOTHUB = {
+  facebook_page_id: 'value',         // 必选 Facebook 页面id
+  custom_user_id: 'value',           // 可选 网站用户 id
+  language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
+  debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
+};
+(function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
+(document.createElement('script'),'bothub-sdk','//sdk.bothub.ai/bothub.js');
 </script>
 ```
 
@@ -35,6 +34,13 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 
 <!-- 如果需要将指定消息发送给Messenger 添加这段代码 -->
 <div id="bothub-send-to-messenger" color="blue" size="standard"></div>
+```
+
+我们的有些操作必须要在插件和`SDK`加载完成之后进行，此时我们可以定义全局的初始化完成函数，该函数将会在插件和`SDK`加载完成后自动调用：
+```JavaScript
+window.bhAsyncInit = function() {
+  // 相关代码写在此处
+}
 ```
 
 # 基本使用
@@ -222,5 +228,41 @@ logEvent: function(
 
 [参考这里](https://developers.facebook.com/docs/messenger-platform/discovery)
 
+# 针对 GTM 部署的补充说明
+如果您是使用 GTM 来部署代码的，那么就需要做一些额外的配置和修改，因为 GTM 并不支持自定义的 DOM 元素属性，所以直接将 HTML 代码放入 GTM 中是不可行的，我们需要另外做些处理。
 
+不能再直接把 DOM 元素放至页面中，需要手动创建。以放置在页面末尾的`send-to-messenger`插件为例，部署代码应该是：
 
+```html
+<script>
+(function() {
+  var el = document.createElement('div');
+
+  // 具体渲染什么元素，更改这里就行
+  el.innerHTML = '<div id="bothub-send-to-messenger" color="blue" size="standard"></div>';
+
+  // 这里将会控制该元素插入页面的哪里，在这里是放在了页面底部
+  document.body.appendChild(el);
+})();
+
+window.BOTHUB = {
+  facebook_page_id: 'value',         // 必选 Facebook 页面id
+  custom_user_id: 'value',           // 可选 网站用户 id
+  language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
+};
+
+(function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
+(document.createElement('script'),'bothub-sdk','//sdk.bothub.ai/bothub.js');
+</script>
+```
+
+对于`messenger-checkbox`插件，它一般并不会插入到页面底部，而是需要插入页面中的某个位置，对于这种情况，你需要定位到它将要插入位置后方的元素，例如：
+```JavaScript
+(function() {
+  var el = document.createElement('div');
+  el.innerHTML = '<div id="bothub-messenger-checkbox" prechecked="true" size="small"></div>';
+
+  var before = document.querySelector('#before');   // 定位至 before 元素
+  before.parentElement.insertBefore(el, before);    // 插入 before 元素之前
+})();
+```

@@ -28,14 +28,15 @@ module.exports = class BotHub {
             allow_login: true,
         };
 
-        this.ECommerce = new ECommerce(this);
         this.Marketing = new Marketing(this);
 
-        this.Plugin = new Plugin(this);
-        this.Plugin.initMessengerCheckbox();
-        this.Plugin.initSendToMessenger();
-        this.Plugin.initMessageUs();
-        this.Plugin.initCustomerChat();
+        if (this.platforms.indexOf('facebook') > -1) {
+            this.ECommerce = new ECommerce(this);
+            this.Plugin = new Plugin(this);
+            this.Plugin.initMessengerCheckbox();
+            this.Plugin.initSendToMessenger();
+            this.Plugin.initMessageUs();
+            this.Plugin.initCustomerChat();
+        }
     }
 };
-

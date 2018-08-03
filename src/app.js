@@ -4,11 +4,20 @@ import './polyfilll';
 
 if (!BOTHUB._isins) {
     window.BOTHUB = new BotHub(BOTHUB);
-    initFacebook(window.BOTHUB);
+
+    if (BOTHUB.platforms.indexOf('facebook') > -1) {
+        initFacebook(BOTHUB);
+    } else {
+        const fbAsyncInitPrev = window.fbAsyncInit;
+        window.fbAsyncInit = () => {
+            window.bhAsyncInit && window.bhAsyncInit();
+            fbAsyncInitPrev && fbAsyncInitPrev();
+        };
+    }
 }
 
 function initFacebook(bothub) {
-    const prev = window.fbAsyncInit;
+    const fbAsyncInitPrev = window.fbAsyncInit;
     window.fbAsyncInit = () => {
         log('facebook sdk loaded.');
 
@@ -23,13 +32,13 @@ function initFacebook(bothub) {
 
         window.bhAsyncInit && window.bhAsyncInit();
 
-        if (typeof prev === 'function') {
-            eval(`window.oldCb = ${prev.toString().replace('xfbml', 'fbml')}`);
+        if (fbAsyncInitPrev) {
+            eval(`window.oldCb = ${fbAsyncInitPrev.toString().replace('xfbml', 'fbml')}`);
             window.oldCb();
         }
     };
 
     if (window.FB) window.fbAsyncInit();
 
-    loadFacebookSdk(bothub);
+    loadFacebookSdk(BOTHUB);
 }

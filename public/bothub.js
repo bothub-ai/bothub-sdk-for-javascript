@@ -1,3 +1,5 @@
+"use strict";
+
 (function polyfill() {
   if (!Object.assign) {
     Object.defineProperty(Object, 'assign', {
@@ -28,6 +30,111 @@
       }
     })
   }
+
+  function atob(input) {
+    input = String(input);
+    input = input.replace(/[ \t\n\f\r]/g, '');
+    if (input.length % 4 == 0 && /==?$/.test(input)) {
+      input = input.replace(/==?$/, '');
+    }
+    if (input.length % 4 == 1 || !/^[+/0-9A-Za-z]*$/.test(input)) {
+      return null;
+    }
+    var output = '';
+    var buffer = 0;
+    var accumulatedBits = 0;
+    for (var i = 0; i < input.length; i++) {
+      buffer <<= 6;
+      buffer |= atobLookup(input[i]);
+      accumulatedBits += 6;
+      if (accumulatedBits == 24) {
+        output += String.fromCharCode((buffer & 0xff0000) >> 16);
+        output += String.fromCharCode((buffer & 0xff00) >> 8);
+        output += String.fromCharCode(buffer & 0xff);
+        buffer = accumulatedBits = 0;
+      }
+    }
+    if (accumulatedBits == 12) {
+      buffer >>= 4;
+      output += String.fromCharCode(buffer);
+    } else if (accumulatedBits == 18) {
+      buffer >>= 2;
+      output += String.fromCharCode((buffer & 0xff00) >> 8);
+      output += String.fromCharCode(buffer & 0xff);
+    }
+    return output;
+  }
+
+  function atobLookup(chr) {
+    if (/[A-Z]/.test(chr)) {
+      return chr.charCodeAt(0) - 'A'.charCodeAt(0);
+    }
+    if (/[a-z]/.test(chr)) {
+      return chr.charCodeAt(0) - 'a'.charCodeAt(0) + 26;
+    }
+    if (/[0-9]/.test(chr)) {
+      return chr.charCodeAt(0) - '0'.charCodeAt(0) + 52;
+    }
+    if (chr == '+') {
+      return 62;
+    }
+    if (chr == '/') {
+      return 63;
+    }
+  }
+
+  function btoa(s) {
+    var i;
+    s = String(s);
+    for (i = 0; i < s.length; i++) {
+      if (s.charCodeAt(i) > 255) {
+        return null;
+      }
+    }
+    var out = '';
+    for (i = 0; i < s.length; i += 3) {
+      var groupsOfSix = [undefined, undefined, undefined, undefined];
+      groupsOfSix[0] = s.charCodeAt(i) >> 2;
+      groupsOfSix[1] = (s.charCodeAt(i) & 0x03) << 4;
+      if (s.length > i + 1) {
+        groupsOfSix[1] |= s.charCodeAt(i + 1) >> 4;
+        groupsOfSix[2] = (s.charCodeAt(i + 1) & 0x0f) << 2;
+      }
+      if (s.length > i + 2) {
+        groupsOfSix[2] |= s.charCodeAt(i + 2) >> 6;
+        groupsOfSix[3] = s.charCodeAt(i + 2) & 0x3f;
+      }
+      for (var j = 0; j < groupsOfSix.length; j++) {
+        if (typeof groupsOfSix[j] == 'undefined') {
+          out += '=';
+        } else {
+          out += btoaLookup(groupsOfSix[j]);
+        }
+      }
+    }
+    return out;
+  }
+
+  function btoaLookup(idx) {
+    if (idx < 26) {
+      return String.fromCharCode(idx + 'A'.charCodeAt(0));
+    }
+    if (idx < 52) {
+      return String.fromCharCode(idx - 26 + 'a'.charCodeAt(0));
+    }
+    if (idx < 62) {
+      return String.fromCharCode(idx - 52 + '0'.charCodeAt(0));
+    }
+    if (idx == 62) {
+      return '+';
+    }
+    if (idx == 63) {
+      return '/';
+    }
+  }
+
+  if (!window.atob) window.atob = atob
+  if (!window.btoa) window.btoa = btoa
 })();
 
 (function() {
@@ -44,16 +151,16 @@
       encode = encode || true
       if (!param) return ''
       var paramStr = ''
-  
+
       if ((/string|number|boolean/).test(typeof param)) {
-        return (paramStr += `&${key}=${(encode ? encodeURIComponent(param) : param)}`)
+        return (paramStr += "&" + key + "=" + (encode ? encodeURIComponent(param) : param))
       }
-  
+
       for (var i in param) {
-        var k = (!key) ? i : `${key}[${i}]`
+        var k = !key ? i : key + "[" + i + "]"
         paramStr += urlEncode(param[i], k, encode)
       }
-  
+
       return paramStr
     },
     getUrlParam: function(name) {
@@ -77,26 +184,29 @@
     jsonp: function(url, callback) {
       var script = document.createElement('script')
       var callbackName = 'jsonp_callback_bh' + Math.round(100000 * Math.random())
-  
+
       window[callbackName] = function(data) {
         document.body.removeChild(script)
         callback && callback(data)
       }
-  
+
       script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName
       document.body.appendChild(script)
     },
     ajax: function(type, url, data) {
-      var xhr = new XMLHttpRequest()
-  
+      var xhr
+      if (window.XDomainRequest) xhr = new XDomainRequest()
+      else if (window.XMLHttpRequest) xhr = new XMLHttpRequest()
+      else xhr = new ActiveXObject("Microsoft.XMLHTTP")
+
       xhr.open(type, url)
-  
+
       if (type === 'POST') {
-        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.setRequestHeader && xhr.setRequestHeader('Content-Type', 'application/json')
       }
-  
+
       xhr.send(type === 'GET' ? null : JSON.stringify(data))
-  
+
       return xhr
     },
     Http: {
@@ -107,7 +217,7 @@
         return Utils.ajax('POST', url, data)
       }
     },
-    getCustomUserId() {
+    getCustomUserId: function() {
       var custom_user_id = this.getUrlParam('custom_user_id') || localStorage.getItem('bothub_custom_user_id') || ''
       if (custom_user_id) return custom_user_id
       custom_user_id = this.uuid()
@@ -120,7 +230,7 @@
       if (fb_user_id) {
         localStorage.setItem(key, fb_user_id)
       }
-  
+
       return fb_user_id
     },
     getEventId: function () {
@@ -135,7 +245,7 @@
         user_ref = location.host.replace(/\./g, '_') + '_' + this.uuid()
         localStorage.setItem('bothub_user_ref', user_ref)
       }
-  
+
       return user_ref
     },
     getPlugin: function(name) {
@@ -146,7 +256,7 @@
         plugin.setAttribute('class', name)
         return plugin
       }
-  
+
       return document.getElementsByClassName(name)[0]
     },
     loadFacebookSdk: function() {
@@ -154,14 +264,14 @@
       Utils.log('start load facebook sdk...')
       var facebook_script = document.createElement('script')
       facebook_script.id = 'facebook-jssdk'
-      facebook_script.src = `https://connect.facebook.net/${language}/${debug ? 'sdk/debug' : 'sdk'}.js`
+      facebook_script.src = 'https://connect.facebook.net/' + language + '/' + (debug ? 'sdk/debug' : 'sdk') + '.js';
       document.body.appendChild(facebook_script)
     }
   }
 
   function BotHub() {
     var config = BOTHUB
-  
+
     config.page_id = config.facebook_page_id
     config.custom_user_id = Utils.getCustomUserId()
     config.fb_user_id = Utils.getFacebookUserId('fb_user_id')
@@ -170,7 +280,7 @@
     config.ecommerce = config.ecommerce || {}
 
     var Messenger = {
-      origin: `${location.protocol}//${location.host}`,
+      origin: location.protocol + "//" + location.host,
       page_id: config.facebook_page_id,
       messenger_app_id: config.messenger_app_id || '985673201550272',
       user_ref: Utils.getUserRef(),
@@ -179,7 +289,7 @@
     }
 
     this.Messenger = Messenger
-  
+
     this.Marketing = {
       /**
        * @param {string}  eventName
@@ -195,6 +305,10 @@
           id: Utils.getEventId(),
           ev: eventName,
           params: Utils.copy(params)
+        }
+
+        if (config.ecommerce) {
+          delete event.ev
         }
 
         if (config.entrance.fb_messenger_checkbox_ref) {
@@ -237,13 +351,18 @@
           } else {
             FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams)
             FB.AppEvents.logEvent(eventName, valueToSum, analyticsParams)
-            Utils.log({ eventName, valueToSum, analyticsParams })
+
+            Utils.log({
+              eventName: eventName,
+              valueToSum: valueToSum,
+              analyticsParams: analyticsParams
+            })
           }
         } else if (platforms.indexOf('bothub') >= 0) {
           delete MessengerParams.user_ref
           window.query = { cd: MessengerParams }
           var query = Utils.urlEncode({ cd: MessengerParams })
-          Utils.jsonp(`${this.parent.api_server}analytics/events?action=store${query}`)
+          Utils.jsonp(config.api_server + "analytics/events?action=store" + query)
         }
       },
 
@@ -288,7 +407,7 @@
        * @param {string} currency
        * @param {number} totalPrice
        */
-      logInitiatedCheckoutEvent(contentId, contentType, numItems, paymentInfoAvailable, currency, totalPrice) {
+      logInitiatedCheckoutEvent: function(contentId, contentType, numItems, paymentInfoAvailable, currency, totalPrice) {
         var params = {}
         var p = FB.AppEvents.ParameterNames
         params[p.CONTENT_ID] = contentId
@@ -338,20 +457,20 @@
 
       Object.assign(plugins.messenger_checkbox, config.ecommerce.messenger_checkbox)
       Object.assign(plugins.send_to_messenger, config.ecommerce.send_to_messenger)
-      
+
       return {
         'plugins': plugins,
         getReceiptId: function(name) {
           var receipt_id = plugins[name].receipt_id
           if (receipt_id) return receipt_id
-          receipt_id = Utils.uuid()
-          return receipt_id
+          plugins[name].receipt_id = Utils.uuid()
+          return plugins[name].receipt_id
         },
         getFeedId: function(name) {
           var feed_id = plugins[name].feed_id
           if (feed_id) return feed_id
-          feed_id = Utils.uuid()
-          return feed_id
+          plugins[name].feed_id = Utils.uuid()
+          return plugins[name].feed_id
         },
         sendToMessenger: function(name) {
           var plugin = plugins[name]
@@ -427,7 +546,7 @@
                 receipt_id: ECommerce.getReceiptId('messenger_checkbox')
               })
             }
-  
+
             Messenger.user_ref = Utils.getUserRef(true)
   
             for (var key in Messenger) {
@@ -437,7 +556,7 @@
             Messenger.user_ref = Utils.getUserRef()
           }
         },
-      
+
         initSendToMessenger: function() {
           if (!send_to_messenger) return
   
@@ -467,13 +586,13 @@
             send_to_messenger.setAttribute('data-ref', dataRef)
           }
         },
-      
+
         initMessageUs: function() {
           if (!messageus) return
           messageus.setAttribute('messenger_app_id', Messenger.messenger_app_id)
           messageus.setAttribute('page_id', Messenger.page_id)
         },
-    
+
         initCustomerChat: function() {
           if (!customerchat) return
           customerchat.setAttribute('page_id', Messenger.page_id)
@@ -540,19 +659,18 @@
         window.bhAsyncInit && window.bhAsyncInit()
 
         if (fbAsyncInitPrev) {
-          eval(`window.oldCb = ${fbAsyncInitPrev.toString().replace('xfbml', 'fbml')}`)
+          eval('window.oldCb = ' + fbAsyncInitPrev.toString().replace('xfbml', 'fbml'))
           window.oldCb()
         }
       }
 
       if (window.FB) window.fbAsyncInit()
-
-      return Utils.loadFacebookSdk()
+    } else {
+      window.fbAsyncInit = function() {
+        window.bhAsyncInit && window.bhAsyncInit()
+      }
     }
 
-    window.fbAsyncInit = function() {
-      window.bhAsyncInit && window.bhAsyncInit()
-      fbAsyncInitPrev && fbAsyncInitPrev()
-    }
+    Utils.loadFacebookSdk()
   }
 })()

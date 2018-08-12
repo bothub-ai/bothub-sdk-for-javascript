@@ -33,103 +33,103 @@
 
   function atob(input) {
     input = String(input);
-    input = input.replace(/[ \t\n\f\r]/g, '');
+    input = input.replace(/[ \t\n\f\r]/g, '')
     if (input.length % 4 == 0 && /==?$/.test(input)) {
-      input = input.replace(/==?$/, '');
+      input = input.replace(/==?$/, '')
     }
     if (input.length % 4 == 1 || !/^[+/0-9A-Za-z]*$/.test(input)) {
-      return null;
+      return null
     }
-    var output = '';
-    var buffer = 0;
+    var output = ''
+    var buffer = 0
     var accumulatedBits = 0;
     for (var i = 0; i < input.length; i++) {
-      buffer <<= 6;
-      buffer |= atobLookup(input[i]);
-      accumulatedBits += 6;
+      buffer <<= 6
+      buffer |= atobLookup(input[i])
+      accumulatedBits += 6
       if (accumulatedBits == 24) {
-        output += String.fromCharCode((buffer & 0xff0000) >> 16);
-        output += String.fromCharCode((buffer & 0xff00) >> 8);
-        output += String.fromCharCode(buffer & 0xff);
-        buffer = accumulatedBits = 0;
+        output += String.fromCharCode((buffer & 0xff0000) >> 16)
+        output += String.fromCharCode((buffer & 0xff00) >> 8)
+        output += String.fromCharCode(buffer & 0xff)
+        buffer = accumulatedBits = 0
       }
     }
     if (accumulatedBits == 12) {
-      buffer >>= 4;
-      output += String.fromCharCode(buffer);
+      buffer >>= 4
+      output += String.fromCharCode(buffer)
     } else if (accumulatedBits == 18) {
-      buffer >>= 2;
-      output += String.fromCharCode((buffer & 0xff00) >> 8);
-      output += String.fromCharCode(buffer & 0xff);
+      buffer >>= 2
+      output += String.fromCharCode((buffer & 0xff00) >> 8)
+      output += String.fromCharCode(buffer & 0xff)
     }
-    return output;
+    return output
   }
 
   function atobLookup(chr) {
     if (/[A-Z]/.test(chr)) {
-      return chr.charCodeAt(0) - 'A'.charCodeAt(0);
+      return chr.charCodeAt(0) - 'A'.charCodeAt(0)
     }
     if (/[a-z]/.test(chr)) {
-      return chr.charCodeAt(0) - 'a'.charCodeAt(0) + 26;
+      return chr.charCodeAt(0) - 'a'.charCodeAt(0) + 26
     }
     if (/[0-9]/.test(chr)) {
-      return chr.charCodeAt(0) - '0'.charCodeAt(0) + 52;
+      return chr.charCodeAt(0) - '0'.charCodeAt(0) + 52
     }
     if (chr == '+') {
-      return 62;
+      return 62
     }
     if (chr == '/') {
-      return 63;
+      return 63
     }
   }
 
   function btoa(s) {
-    var i;
-    s = String(s);
+    var i
+    s = String(s)
     for (i = 0; i < s.length; i++) {
       if (s.charCodeAt(i) > 255) {
-        return null;
+        return null
       }
     }
-    var out = '';
+    var out = ''
     for (i = 0; i < s.length; i += 3) {
       var groupsOfSix = [undefined, undefined, undefined, undefined];
-      groupsOfSix[0] = s.charCodeAt(i) >> 2;
-      groupsOfSix[1] = (s.charCodeAt(i) & 0x03) << 4;
+      groupsOfSix[0] = s.charCodeAt(i) >> 2
+      groupsOfSix[1] = (s.charCodeAt(i) & 0x03) << 4
       if (s.length > i + 1) {
-        groupsOfSix[1] |= s.charCodeAt(i + 1) >> 4;
-        groupsOfSix[2] = (s.charCodeAt(i + 1) & 0x0f) << 2;
+        groupsOfSix[1] |= s.charCodeAt(i + 1) >> 4
+        groupsOfSix[2] = (s.charCodeAt(i + 1) & 0x0f) << 2
       }
       if (s.length > i + 2) {
-        groupsOfSix[2] |= s.charCodeAt(i + 2) >> 6;
-        groupsOfSix[3] = s.charCodeAt(i + 2) & 0x3f;
+        groupsOfSix[2] |= s.charCodeAt(i + 2) >> 6
+        groupsOfSix[3] = s.charCodeAt(i + 2) & 0x3f
       }
       for (var j = 0; j < groupsOfSix.length; j++) {
         if (typeof groupsOfSix[j] == 'undefined') {
-          out += '=';
+          out += '='
         } else {
-          out += btoaLookup(groupsOfSix[j]);
+          out += btoaLookup(groupsOfSix[j])
         }
       }
     }
-    return out;
+    return out
   }
 
   function btoaLookup(idx) {
     if (idx < 26) {
-      return String.fromCharCode(idx + 'A'.charCodeAt(0));
+      return String.fromCharCode(idx + 'A'.charCodeAt(0))
     }
     if (idx < 52) {
-      return String.fromCharCode(idx - 26 + 'a'.charCodeAt(0));
+      return String.fromCharCode(idx - 26 + 'a'.charCodeAt(0))
     }
     if (idx < 62) {
-      return String.fromCharCode(idx - 52 + '0'.charCodeAt(0));
+      return String.fromCharCode(idx - 52 + '0'.charCodeAt(0))
     }
     if (idx == 62) {
-      return '+';
+      return '+'
     }
     if (idx == 63) {
-      return '/';
+      return '/'
     }
   }
 
@@ -195,6 +195,7 @@
     },
     ajax: function(type, url, data) {
       var xhr
+
       if (window.XDomainRequest) xhr = new XDomainRequest()
       else if (window.XMLHttpRequest) xhr = new XMLHttpRequest()
       else xhr = new ActiveXObject("Microsoft.XMLHTTP")
@@ -608,8 +609,6 @@
     this.Plugins.initSendToMessenger()
     this.Plugins.initMessageUs()
     this.Plugins.initCustomerChat()
-
-    return this
   }
 
   if (!(BOTHUB && BOTHUB.Messenger)) {

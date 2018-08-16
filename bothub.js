@@ -308,7 +308,7 @@
           params: Utils.copy(params)
         }
 
-        if (config.ecommerce) {
+        if (JSON.stringify(config.ecommerce) !== '{}') {
           delete event.ev
         }
 

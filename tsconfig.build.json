@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": false,
+        "esModuleInterop": false,
+        "target": "es3"
+    },
+    "include": ["src", "types"],
+    "exclude": ["node_modules", "dist", "build"]
+}

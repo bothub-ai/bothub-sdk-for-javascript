@@ -2,11 +2,26 @@
 
 在网站上部署 Bothub Remarketing SDK 后（以下简称SDK)，就可以轻松的在 Messenger 上进行订单回执发送、购物车提醒、优惠信息提示等再营销。SDK可集成在用户自行部署的各种主流电商网站上。
 
-SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件推送消息。事件和 Facebook Analytics 的相应事件保持了最大程度的一致以便于开发以及在 Facebook Analytics 中查看事件统计。
+SDK 提供了聊天插件、事件跟踪等功能，并能够根据相关事件推送消息。事件和 Facebook Analytics 的相应事件保持了最大程度的一致以便于开发以及在 Facebook Analytics 中查看事件统计。
 
 **浏览器最低兼容版本 IE 9，Firefox 15，Chrome 15** 
 
-# 示例代码
+# 开发说明
+命令行说明
+```bash
+# 调试
+npm run dev <project name> <mode>
+# 构建
+npm run build <project name> <mode>
+# （构建后）上传
+npm run deploy <project name> <mode>
+```
+
+其中：
+1. `project name`可填`bothub`和`discount`
+2. `mode`可填`uat`和`uat2`和`prod`
+
+# 使用说明
 
 为了更容易理解 SDK 使用方式，请参考示例代码：https://demo.bothub.ai/sdk/
 
@@ -17,10 +32,10 @@ SDK提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 ```html
 <script>
 window.BOTHUB = {
-  facebook_page_id: 'value',         // 必选 Facebook 页面id
-  custom_user_id: 'value',           // 可选 网站用户 id
-  language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
-  debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
+    facebook_page_id: 'value',         // 必选 Facebook 页面id
+    custom_user_id: 'value',           // 可选 网站用户 id
+    language: 'zh_CN'                  // 可选 显示语言，默认中文，可选 ['zh_CN', 'zh_TW', 'en_US']
+    debug: true,                       // 可选 调试模式 开启后可在控制台查看日志
 };
 (function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
 (document.createElement('script'),'bothub-sdk','//sdk.bothub.ai/bothub.js');

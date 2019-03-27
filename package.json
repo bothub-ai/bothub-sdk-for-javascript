@@ -5,21 +5,40 @@
   "private": true,
   "main": "bothub.main.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack --hide-modules --watch",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack --hide-modules",
-    "clean": "rm -rf ./dist"
-  },
-  "devDependencies": {
-    "@types/rollup-plugin-node-resolve": "^4.0.0",
-    "rollup": "^1.7.3",
-    "rollup-plugin-node-resolve": "^4.0.1",
-    "rollup-plugin-replace": "^2.1.1",
-    "rollup-plugin-typescript2": "^0.20.1",
-    "ts-node": "^8.0.3",
-    "tslint": "^5.14.0",
-    "typescript": "^3.3.4000"
+    "ts-node": "node node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
+    "dev": "npm run ts-node ./build/webpack.dev.ts",
+    "build": "npm run ts-node ./build/webpack.prod.ts",
+    "deploy": "npm run ts-node ./build/webpack.prod.ts --deploy"
   },
   "dependencies": {
-    "core-js": "^3.0.0"
+    "axios": "^0.18.0",
+    "core-js": "^3.0.0",
+    "preact": "^8.4.2"
+  },
+  "devDependencies": {
+    "@types/friendly-errors-webpack-plugin": "^0.1.1",
+    "@types/koa": "^2.0.48",
+    "@types/memory-fs": "^0.3.2",
+    "@types/node": "^11.11.5",
+    "@types/terser-webpack-plugin": "^1.2.1",
+    "@types/webpack": "^4.4.26",
+    "@types/webpack-bundle-analyzer": "^2.13.1",
+    "css-loader": "^2.1.1",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "koa": "^2.7.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "memory-fs": "^0.4.1",
+    "mime": "^2.4.0",
+    "progress-bar-webpack-plugin": "^1.12.1",
+    "style-loader": "^0.23.1",
+    "terser-webpack-plugin": "^1.2.3",
+    "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.4000",
+    "webpack": "^4.29.6",
+    "webpack-bundle-analyzer": "^3.1.0",
+    "webpack-google-cloud-storage-plugin": "^0.9.0"
   }
 }

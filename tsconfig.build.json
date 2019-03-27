@@ -3,8 +3,8 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": false,
         "esModuleInterop": false,
-        "target": "es3"
+        "target": "es5"
     },
-    "include": ["src", "types"],
+    "include": ["src", "typings"],
     "exclude": ["node_modules", "dist", "build"]
 }

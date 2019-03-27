@@ -10,6 +10,8 @@
         "module": "esnext",
         "moduleResolution": "node",
         "target": "esnext",
+        "jsxFactory": "h",
+        "jsx": "react",
         "isolatedModules": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -23,8 +25,12 @@
         "suppressImplicitAnyIndexErrors": true,
         "allowJs": true,
         "lib": ["es2015", "es2016", "es2017", "dom"],
-        "baseUrl": "."
+        "baseUrl": ".",
+        "paths": {
+            "*": ["src/bothub/*", "src/discount/*"],
+            "utils/*": ["src/utils/*"]
+        }
     },
-    "include": ["src", "types", "build"],
+    "include": ["src", "typings", "build"],
     "exclude": ["node_modules", "dist"]
 }

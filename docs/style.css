@@ -1,0 +1,8 @@
+body {padding: 40px}
+button {padding: 8px 12px;cursor: pointer;background: #3273dc;border: none;color: white;border-radius: 3px}
+button:hover {background: #4384ed}
+h2 {margin-top: 20px;border-bottom: 1px solid #ddd;font-size: 15px;line-height: 34px;font-weight: noraml}
+h3 {margin-top: 30px}
+.row {margin-top: 15px}
+.fb-messenger-checkbox {margin-left: -12px}
+.fb_iframe_widget {display: block !important; margin-bottom: 20px}

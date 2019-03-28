@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK 使用示例 - UAT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="env.js"></script>
+  </head>
+  <body>
+    <section>
+      <h1>Bothub SDK 使用示例</h1>
+      <p>
+        SDK提供了将商品加入购物车、愿望清单、下订单等事件，并且可以根据事件推送消息。
+        <a href="https://docs.bothub.ai/audience/sdk-integration.html" target="_blank">查看文档</a>
+      </p>
+      <p>
+        事件相关示例： <a href="events.html">查看事件示例</a>
+      </p>
+      <p>
+        电商相关示例： <a href="ecommerce.html">查看电商示例</a>
+      </p>
+    </section>
+
+    <h2>网页插件</h2>
+    <!-- 加载 Checkbox Plugin -->
+    <div id="bothub-messenger-checkbox" prechecked="true" size="small"></div>
+    <!-- 加载 Customer Chat Plugin -->
+    <div id="bothub-customerchat"></div>
+    <!-- 加载 Send to Messenger Plugin -->
+    <div id="bothub-send-to-messenger" color="blue" size="standard"></div>
+    <!-- 加载 Message Us Plugin -->
+    <div id="bothub-messengermessageus" color="blue" size="standard"></div>
+
+    <!-- 在body最底部加入sdk代码 -->
+    <script>
+      window.BOTHUB = {
+        facebook_page_id: $ENV.facebook_page_id,
+        messenger_app_id: $ENV.messenger_app_id,
+        debug: $ENV.debug,
+      };
+      (function(s,id,l){s.id=id;s.src=l;window[id]||document.body.appendChild(s)})
+      (document.createElement('script'),'bothub-sdk','./dist/bothub.js');
+    </script>
+  </body>
+</html>

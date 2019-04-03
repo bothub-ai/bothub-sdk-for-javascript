@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Facebook SDK 使用示例</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js"></script>
+</head>
+<body>
+    <script>
+        function share() {
+            FB.ui({
+                method: 'share',
+                href: 'https://developers.facebook.com/docs/',
+            }, function(response){
+                console.log(response);
+            });
+        }
+
+        function sendMessage() {
+            window.BOTHUB.Marketing.logAddedToCartEvent('10007-1', 'T-shirt', 'USD', 26.99);
+        }
+    </script>
+
+    <button onclick="share()">分享</button>
+
+    <script>
+    function addCheckbox() {
+        const dom = document.createElement('div');
+        const userRef = `checkbox_user_ref_${new Date().getTime()}`;
+
+        dom.innerHTML = `
+            <div
+                prechecked="true"
+                size="small"
+                class="fb-messenger-checkbox"
+                origin="https://bothub-ai.github.io"
+                page_id="1844967669048324"
+                messenger_app_id="985673201550272"
+                user_ref="${userRef}"
+                fb_user_id=""
+                allow_login="true">
+            </div>
+            <button onclick="sendMessage()">加入购物车</button>
+        `;
+
+        document.body.appendChild(dom);
+    }
+
+    addCheckbox();
+    </script>
+
+    <script>
+    window.FB.init({
+        appId: '985673201550272',
+        xfbml: true,
+        version: 'v2.11'
+    });
+
+    setTimeout(function() {
+        console.log('reload');
+        window.FB.init({
+            appId: '611599205958417',
+            xfbml: true,
+            version: 'v2.11'
+        });
+    }, 3000);
+    </script>
+</body>
+</html>

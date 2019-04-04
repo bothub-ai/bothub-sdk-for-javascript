@@ -36,7 +36,7 @@ export function getUserRef(force = false) {
     let userRef = localStorage.getItem('bothub_user_ref');
 
     if (force || !userRef) {
-        userRef = `${location.host.replace(/\./g, '_')}_${uuid()}`;
+        userRef = `${location.host.replace(/[\.-]/g, '_')}_${uuid()}`;
         localStorage.setItem('bothub_user_ref', userRef);
     }
 

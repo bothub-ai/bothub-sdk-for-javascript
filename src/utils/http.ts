@@ -14,6 +14,7 @@ export function getQueryString(name: string) {
 
 /**
  * 由输入对象创建 url 链接参数
+ * TODO: 输入参数的属性值为对象
  * @param {object} params 参数对象
  * @returns {string}
  */
@@ -37,9 +38,7 @@ export function createUrlParam(params: any) {
     return result.join('&');
 }
 
-/**
- * jsonp 请求接口
- */
+/** jsonp 请求接口 */
 export function jsonp<T>(url: string, params: AnyObject = {}): Promise<T> {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');

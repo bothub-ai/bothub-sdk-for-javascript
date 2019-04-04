@@ -7,8 +7,8 @@
   "scripts": {
     "ts-node": "node node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
     "dev": "npm run ts-node ./build/webpack.dev.ts",
-    "build": "npm run ts-node ./build/webpack.prod.ts",
-    "deploy": "npm run ts-node ./build/webpack.prod.ts --deploy"
+    "build": "npm run ts-node ./build/webpack.prod.ts prod",
+    "deploy": "npm run ts-node ./build/webpack.prod.ts prod --deploy"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -19,9 +19,9 @@
     "@types/friendly-errors-webpack-plugin": "^0.1.1",
     "@types/koa": "^2.0.48",
     "@types/memory-fs": "^0.3.2",
-    "@types/node": "^11.11.5",
+    "@types/node": "^11.13.0",
     "@types/terser-webpack-plugin": "^1.2.1",
-    "@types/webpack": "^4.4.26",
+    "@types/webpack": "^4.4.27",
     "@types/webpack-bundle-analyzer": "^2.13.1",
     "css-loader": "^2.1.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
@@ -29,14 +29,14 @@
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "memory-fs": "^0.4.1",
-    "mime": "^2.4.0",
+    "mime": "^2.4.1",
     "progress-bar-webpack-plugin": "^1.12.1",
     "style-loader": "^0.23.1",
     "terser-webpack-plugin": "^1.2.3",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
-    "tslint": "^5.14.0",
-    "typescript": "^3.3.4000",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.1",
     "webpack": "^4.29.6",
     "webpack-bundle-analyzer": "^3.1.0",
     "webpack-google-cloud-storage-plugin": "^0.9.0"

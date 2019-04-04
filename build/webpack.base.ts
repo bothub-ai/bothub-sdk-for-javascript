@@ -12,17 +12,16 @@ type WebpackConfig = GetArrayItem<Parameters<typeof Webpack>[0]>;
 
 const baseConfig: WebpackConfig = {
     mode: Env.mode,
-    entry: resolve('src', command.project, 'index.ts'),
+    entry: resolve('src/init/index.ts'),
     output: {
         path: output,
-        filename: `${command.project}.js`,
+        filename: 'sdk.js',
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.json', '.less', '.css'],
         mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.less', 'index.css'],
         alias: {
-            '^src': resolve('src', command.project),
-            '^utils': resolve('src/utils'),
+            src: resolve('src'),
         },
     },
     module: {
@@ -49,7 +48,7 @@ const baseConfig: WebpackConfig = {
         new ProgressBarPlugin({ width: 40 }),
         new Webpack.optimize.ModuleConcatenationPlugin(),
         new Webpack.BannerPlugin({
-            banner: `Project: Shopify Cartsbot Plugin\nAuthor: ${new Date().getFullYear()} © Bothub\nBuild: ${version}`,
+            banner: `Project: Bothub SDK for JavaScript\nAuthor: ${new Date().getFullYear()} © Bothub\nBuild: ${version}`,
             entryOnly: false,
         }),
         new Webpack.DefinePlugin({
@@ -60,7 +59,7 @@ const baseConfig: WebpackConfig = {
         new Webpack.HashedModuleIdsPlugin({
             hashFunction: 'sha256',
             hashDigest: 'hex',
-            hashDigestLength: 4,
+            hashDigestLength: 6,
         }),
     ],
 };

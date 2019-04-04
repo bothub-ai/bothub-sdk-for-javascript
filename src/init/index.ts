@@ -20,6 +20,6 @@ setTimeout(() => {
         bhAsyncInit.forEach((cb) => cb());
     }
     else {
-        bhAsyncInit();
+        bhAsyncInit && bhAsyncInit();
     }
 });

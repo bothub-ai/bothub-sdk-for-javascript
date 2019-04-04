@@ -1,4 +1,4 @@
-process.env.NODE_MODE = 'development';
+process.env.NODE_ENV = 'development';
 
 import Webpack from 'webpack';
 import MemoryFS from 'memory-fs';
@@ -38,7 +38,7 @@ const indexHtml = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Remaket Plugin</title>
+    <title>Bothub SDK for JavaScript</title>
     <style>
         html,body {
             height: 100%;
@@ -55,7 +55,7 @@ const indexHtml = `
     <script>
         window.__st = { a: 27251026 }
     </script>
-    <script src="/app.js"></script>
+    <script src="/sdk.js"></script>
 </body>
 </html>`;
 

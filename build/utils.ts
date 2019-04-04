@@ -72,37 +72,29 @@ export function parseTsconfig(cwd: string, baseConfig: TsConfig) {
 /** 获取当前命令行参数 */
 function getCommand() {
     const args = process.argv.slice(2, 4);
-    const Mode = process.argv[2] || '';
 
     type EnvType = keyof typeof Env;
 
     // 命令行参数
     const result = {
         isDeploy: false,
-        project: 'bothub',
         env: 'uat' as EnvType,
         mode: process.env.NODE_ENV as 'development' | 'production' | 'none',
     };
 
     // 上传
-    if (args[0] === '--deploy') {
+    if (args[1] === '--deploy') {
         result.isDeploy = true;
-        result.project = args[1];
-        result.env = args[2] as EnvType;
+        result.env = (args[0] || 'prod') as EnvType;
     }
     // 构建或调试
     else {
         result.isDeploy = false;
-        result.project = args[0];
-        result.env = args[1] as EnvType;
+        result.env = (args[0] || 'uat') as EnvType;
     }
 
     if (!/(uat2?)|(prod)/.test(result.env)) {
         throw new Error('只允许 uat、uat2、prod 三种环境变量');
-    }
-
-    if (!/bothub|discount/.test(result.project)) {
-        throw new Error('只允许 bothub、discount 两个项目');
     }
 
     return result;

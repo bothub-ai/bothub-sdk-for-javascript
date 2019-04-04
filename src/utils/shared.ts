@@ -59,11 +59,11 @@ export function copy(obj: any) {
 }
 
 /** debug 模式下输出日志 */
-export function log(...args: any[]) {
-    if (BOTHUB.debug) {
-        console.log(args.join('\n'));
-    }
-}
+// export function log(...args: any[]) {
+//     if (BOTHUB.debug) {
+//         console.log(args.join('\n'));
+//     }
+// }
 
 /** 获取网页中的插件元素 */
 export function getPlugin(name: string) {

@@ -1,4 +1,4 @@
-process.env.NODE_MODE = 'production';
+process.env.NODE_ENV = 'production';
 
 import chalk from 'chalk';
 import webpack from 'webpack';
@@ -7,11 +7,8 @@ import TerserPlugin from 'terser-webpack-plugin';
 import GoogleCloudStorage from 'webpack-google-cloud-storage-plugin';
 
 import { join } from 'path';
-import { resolve } from './utils';
+import { resolve, command } from './utils';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-
-/** 是否上传 */
-const isDeploy = process.argv[3] === '--deploy';
 
 if (!baseConfig.optimization) {
     baseConfig.optimization = {};
@@ -39,7 +36,7 @@ baseConfig.optimization.minimizer.push(
 );
 
 // 需要上传，则添加上传插件
-if (isDeploy) {
+if (command.isDeploy) {
     baseConfig.plugins!.push(
         new GoogleCloudStorage({
             directory: './dist/',

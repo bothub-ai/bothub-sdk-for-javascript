@@ -2,4 +2,6 @@
 .idea/
 .vscode/
 _old/
-node_modules
+node_modules/
+draft/
+out/

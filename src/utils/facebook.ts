@@ -25,28 +25,28 @@ function hasFacebookSDK(type: SDKType) {
 }
 
 /** 加载 facebook SDK 文件 */
-export function loadFacebookSdk(bothub: Bothub, type: SDKType) {
-    if (hasFacebookSDK(type)) {
-        return;
-    }
+// export function loadFacebookSdk(bothub: Bothub, type: SDKType) {
+//     if (hasFacebookSDK(type)) {
+//         return;
+//     }
 
-    // 默认为中文简体
-    if (!/^(zh_CN|zh_TW|en_US)$/.test(bothub.language)) {
-        bothub.language = 'zh_CN';
-    }
+//     // 默认为中文简体
+//     if (!/^(zh_CN|zh_TW|en_US)$/.test(bothub.language)) {
+//         bothub.language = 'zh_CN';
+//     }
 
-    let scriptName: string;
-    const facebookScript = document.createElement('script');
+//     let scriptName: string;
+//     const facebookScript = document.createElement('script');
 
-    if (type === SDKType.Main) {
-        scriptName = bothub.debug ? 'sdk/debug' : 'sdk';
-    }
-    else {
-        scriptName = 'sdk/xfbml.customerchat';
-    }
+//     if (type === SDKType.Main) {
+//         scriptName = bothub.debug ? 'sdk/debug' : 'sdk';
+//     }
+//     else {
+//         scriptName = 'sdk/xfbml.customerchat';
+//     }
 
-    facebookScript.id = 'facebook-jssdk';
-    facebookScript.src = `https://connect.facebook.net/${bothub.language}/${scriptName}.js`;
+//     facebookScript.id = 'facebook-jssdk';
+//     facebookScript.src = `https://connect.facebook.net/${bothub.language}/${scriptName}.js`;
 
-    document.body.appendChild(facebookScript);
-}
+//     document.body.appendChild(facebookScript);
+// }

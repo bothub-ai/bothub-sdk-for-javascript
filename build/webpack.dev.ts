@@ -1,5 +1,6 @@
 process.env.NODE_ENV = 'development';
 
+import Fs from 'fs';
 import Webpack from 'webpack';
 import MemoryFS from 'memory-fs';
 import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
@@ -7,6 +8,8 @@ import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
 import { join } from 'path';
 import { getType } from 'mime';
 import { output } from './config';
+import { resolve } from './utils';
+import { createServer } from 'https';
 import { default as Koa, Context } from 'koa';
 
 import baseConfig from './webpack.base';
@@ -30,7 +33,7 @@ baseConfig.plugins!.push(
 );
 
 const compiler = Webpack(baseConfig);
-const fs = compiler.outputFileSystem = new MemoryFS();
+const ffs = compiler.outputFileSystem = new MemoryFS();
 const indexHtml = `
 <!DOCTYPE html>
 <html lang="en">
@@ -45,23 +48,42 @@ const indexHtml = `
             min-height: 2000px;
         }
     </style>
+    <script>
+    if (!window.bhAsyncInit) {
+        window.bhAsyncInit = [];
+    }
+
+    // 初始化函数
+    window.bhAsyncInit.push(function() {
+        window.BOTHUB.init({
+            debug: true,
+            language: "zh_CN",
+            widgets: [
+                {
+                    id: "bothub-widget-100010-1",
+                    type: 1 /* Customerchat */,
+                    pageId: 374118179628713,
+                },
+            ],
+        });
+    });
+
+    (function(d){
+        var js, id = 'bothub-jssdk'; if (d.getElementById(id)) {return;}
+        js = d.createElement('script'); js.id = id;
+        js.async = true; js.src = "/sdk.js";
+        d.getElementsByTagName('head')[0].appendChild(js);
+    }(document));
+    </script>
 </head>
 <body>
-    <div class="page-container">
-        <form action="/cart/add">
-            <button type="submit" name="add">Add To Cart</button>
-        </form>
-    </div>
-    <script>
-        window.__st = { a: 27251026 }
-    </script>
-    <script src="/sdk.js"></script>
+    <h1>Bothub SDK for JavaScript 测试页面</h1>
 </body>
 </html>`;
 
 // 首页写入内存
-fs.mkdirpSync(output);
-fs.writeFileSync(join(output, 'index.html'), indexHtml);
+ffs.mkdirpSync(output);
+ffs.writeFileSync(join(output, 'index.html'), indexHtml);
 
 compiler.watch(
     { ignored: /node_modules/ },
@@ -70,8 +92,6 @@ compiler.watch(
         (err && (err as any).details && console.error((err as any).details))
     ),
 );
-
-app.listen(port);
 
 app.use((ctx: Context, next: Function) => {
     if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
@@ -86,7 +106,7 @@ app.use((ctx: Context, next: Function) => {
         ? join(output, ctx.path, 'index.html')
         : join(output, ctx.path);
 
-    if (!fs.existsSync(filePath)) {
+    if (!ffs.existsSync(filePath)) {
         ctx.status = 404;
         ctx.length = 0;
         next();
@@ -99,8 +119,15 @@ app.use((ctx: Context, next: Function) => {
     ctx.set('Accept-Ranges', 'bytes');
     ctx.set('Cache-Control', 'max-age=0');
 
-    ctx.length = Buffer.from(fs.readFileSync(filePath)).length;
-    ctx.body = fs.createReadStream(filePath);
+    ctx.length = Buffer.from(ffs.readFileSync(filePath)).length;
+    ctx.body = ffs.createReadStream(filePath);
 
     next();
 });
+
+const options = {
+    key: Fs.readFileSync(resolve('cert/key.pem')),
+    cert: Fs.readFileSync(resolve('cert/cert.pem')),
+};
+
+createServer(options, app.callback()).listen(port);

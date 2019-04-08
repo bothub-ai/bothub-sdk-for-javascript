@@ -1,8 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "module": "commonjs",
-        "paths": {}
+        "module": "commonjs"
     },
     "include": ["typings", "build"],
     "exclude": ["node_modules", "dist", "src"]

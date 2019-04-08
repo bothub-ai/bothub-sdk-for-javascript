@@ -65,7 +65,7 @@ else {
 
 baseConfig.performance = {
     hints: false,
-    // 以下两个选项单位为 bytes
+    // 大小限制为 80Kb（单位为 bytes）
     maxAssetSize: 80000,
     maxEntrypointSize: 80000,
 };

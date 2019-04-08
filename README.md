@@ -20,3 +20,15 @@ npm run deploy <mode>
 
 其中`mode`为选填，表示编译的模式，可填`uat`、`uat2`、`prod`。
 `dev`模式下默认为`uat`，`build`和`deploy`默认为`prod`。
+
+### 安装证书
+由于 SDK 需要运行在`https`环境下，所以在开始调试之前需要安装证书。  
+使用 mkcerts 工具生成本地证书：https://github.com/FiloSottile/mkcert  
+
+```shell
+# 安装受信任的根证书
+mkcert -install
+
+# 生成域名证书
+mkcert local-fe.bothub.ai localhost 127.0.0.1
+```

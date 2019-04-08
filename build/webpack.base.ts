@@ -18,7 +18,7 @@ const baseConfig: WebpackConfig = {
         filename: 'sdk.js',
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.json', '.less', '.css'],
+        extensions: ['.tsx', '.ts', '.js', '.json', '.less', '.css'],
         mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.less', 'index.css'],
         alias: {
             src: resolve('src'),

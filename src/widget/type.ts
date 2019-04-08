@@ -11,7 +11,7 @@ export const enum WidgetType {
 export const WidgetFbClass = {
     [WidgetType.Checkbox]: 'fb-messenger-checkbox',
     [WidgetType.Customerchat]: 'fb-customerchat',
-    [WidgetType.Discount]: '',
+    [WidgetType.Discount]: 'bothub-discount',
     [WidgetType.SendToMessenger]: 'fb-send-to-messenger',
     [WidgetType.MessageUs]: 'fb-messengermessageus',
 };

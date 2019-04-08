@@ -7,6 +7,8 @@ export let debug = false;
 export let messengerAppId = process.env.NODE_MODE === 'development' ? 611599205958417 : 985673201550272;
 /** 语言类型 */
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
+// /** 渲染平台 */
+// export let platforms: ('facebook' | 'bothub')[] = ['facebook', 'bothub'];
 /** 插件配置 */
 export let widgets: WidgetData[] = [];
 
@@ -21,7 +23,7 @@ interface BothubInitParams {
     appId?: typeof messengerAppId;
     /** 语言类型 */
     language?: typeof language;
-    /** TODO: 渲染平台 */
+    // /** 渲染平台 */
     // platforms?: ('facebook' | 'bothub')[];
     /** 页面插件数据 */
     widgets?: typeof widgets;
@@ -33,9 +35,13 @@ export function setGlobalParams(param: BothubInitParams) {
         language = param.language;
     }
 
-    if (param.debug && param.appId) {
+    if (param.debug) {
         debug = param.debug;
-        messengerAppId = param.appId;
+
+        // 只有调试模式允许
+        if (param.appId) {
+            messengerAppId = param.appId;
+        }
     }
 
     // 合并插件列表

@@ -67,7 +67,7 @@ export function isDef(x: any): x is string | number | boolean | symbol | object 
  * @returns {x is () => any}
  */
 /* tslint:disable-next-line:ban-types  */
-export function isFunction(x: any): x is Function {
+export function isFunc(x: any): x is Function {
     return (typeof x === 'function');
 }
 

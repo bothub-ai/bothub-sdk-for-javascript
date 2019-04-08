@@ -1,8 +1,7 @@
 import './polyfill';
 
 import Bothub from './bothub';
-
-import { isArray } from 'src/utils';
+import { isArray } from 'src/lib/assert';
 
 // 初始化入口
 if (!('BOTHUB' in window)) {

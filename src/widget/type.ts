@@ -20,6 +20,8 @@ export const WidgetFbClass = {
 interface BaseWidgetData {
     /** 当前插件的唯一编号 */
     id: string;
+    /** Facebook 主页编号 */
+    pageId: number;
 }
 
 /**
@@ -30,8 +32,6 @@ export interface CheckboxData extends BaseWidgetData {
     type: WidgetType.Checkbox;
     /** 插件加载网址的基域 */
     origin: string;
-    /** Facebook 主页编号 */
-    pageId: string;
     /** 指代用户的唯一标识符 */
     userRef: string;
     /**
@@ -64,8 +64,6 @@ export interface CheckboxData extends BaseWidgetData {
  */
 export interface CustomerchatData extends BaseWidgetData {
     type: WidgetType.Customerchat;
-    /** Facebook 主页编号 */
-    pageId: string;
     /** 主题颜色 */
     themeColor?: string;
     /**
@@ -105,8 +103,6 @@ export interface DiscountData extends BaseWidgetData {
  */
 export interface SendToMessengerData extends BaseWidgetData {
     type: WidgetType.SendToMessenger;
-    /** Facebook 主页编号 */
-    pageId: string;
     /**
      * 主题颜色
      *  - 默认为`blue`
@@ -137,8 +133,6 @@ export interface SendToMessengerData extends BaseWidgetData {
  */
 export interface MessageUsData extends BaseWidgetData {
     type: WidgetType.MessageUs;
-    /** Facebook 主页编号 */
-    pageId: string;
     /**
      * 主题颜色
      *  - 默认为`blue`

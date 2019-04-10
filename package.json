@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "description": "bothub sdk",
   "private": true,
-  "main": "bothub.main.js",
+  "main": "sdk.js",
   "scripts": {
     "ts-node": "node node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
     "dev": "npm run ts-node ./build/webpack.dev.ts",

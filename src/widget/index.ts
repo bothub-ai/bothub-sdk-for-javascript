@@ -36,7 +36,7 @@ function setAttributes<
 }
 
 /**
- * Checkbox 渲染
+ * 确认框插件渲染
  * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox
  */
 function renderCheckbox(data: Type.CheckboxData) {
@@ -59,7 +59,7 @@ function renderCheckbox(data: Type.CheckboxData) {
 }
 
 /**
- * Customerchat 渲染
+ * 顾客聊天插件渲染
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/
  */
 function renderCustomerchat(data: Type.CustomerchatData) {
@@ -79,7 +79,7 @@ function renderCustomerchat(data: Type.CustomerchatData) {
 }
 
 /**
- * Message Us 渲染
+ * “给我们发消息”插件
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin
  */
 function renderMessageUs(data: Type.MessageUsData) {
@@ -90,9 +90,18 @@ function renderMessageUs(data: Type.MessageUsData) {
         return;
     }
 
+    addClass(dom, Type.WidgetFbClass[Type.WidgetType.MessageUs]);
+    addClass(dom, Type.WidgetBhClass[Type.WidgetType.MessageUs]);
+
     setAttributes(dom, data, ['size', 'color']);
+
+    renderDom(dom);
 }
 
+/**
+ * “发送至 Messenger”插件渲染
+ * @link https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/
+ */
 function renderSendToMessenger(data: Type.SendToMessengerData) {
     const dom = document.getElementById(data.id);
 
@@ -101,9 +110,20 @@ function renderSendToMessenger(data: Type.SendToMessengerData) {
         return;
     }
 
+    addClass(dom, Type.WidgetFbClass[Type.WidgetType.SendToMessenger]);
+    addClass(dom, Type.WidgetBhClass[Type.WidgetType.SendToMessenger]);
+
+    setAttributes(dom, data, ['size', 'color', 'enforceLogin']);
+
     dom.setAttribute('data-ref', window.btoa(data.id));
+
+    renderDom(dom);
 }
 
+/**
+ * 砍价插件渲染
+ * @link
+ */
 function renderDiscount(data: Type.DiscountData) {
 
 }

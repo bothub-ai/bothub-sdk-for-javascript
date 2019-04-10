@@ -33,7 +33,7 @@ interface BaseWidgetData {
     pageId: string;
 }
 
-/** 确认框数据接口 */
+/** 确认框插件数据接口 */
 export interface CheckboxData extends BaseWidgetData {
     type: WidgetType.Checkbox;
     /**
@@ -60,17 +60,17 @@ export interface CheckboxData extends BaseWidgetData {
     centerAlign?: boolean;
     /**
      * Checkbox 点击选中事件
-     * @param userRef 当前用户编号
+     * @param {string} userRef 当前用户编号
      */
     checked?(userRef: string): void;
     /**
      * Checkbox 点击取消事件
-     * @param userRef 当前用户编号
+     * @param {string} userRef 当前用户编号
      */
     unChecked?(userRef: string): void;
 }
 
-/** 聊天插件数据接口 */
+/** 顾客聊天插件数据接口 */
 export interface CustomerchatData extends BaseWidgetData {
     type: WidgetType.Customerchat;
     /** 主题颜色 */
@@ -134,6 +134,10 @@ export interface SendToMessengerData extends BaseWidgetData {
      * 默认为`false`
      */
     enforceLogin?: boolean;
+    /**
+     * 点击事件
+     */
+    click?(): void;
 }
 
 /** “给我们发消息”插件 */

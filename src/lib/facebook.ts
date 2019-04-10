@@ -9,11 +9,6 @@ interface FbAsyncInit {
     hasRun: boolean;
 }
 
-/** Checkbox 事件回调堆栈 */
-const checkboxCallback = [];
-/** Send To Messenger 事件回调堆栈 */
-const sendToMessengerCallbacks = [];
-
 /** 加载 facebook SDK */
 export function loadFacebookSDK() {
     const id = 'facebook-jssdk';
@@ -58,7 +53,11 @@ function bothubFacebookInit() {
     if (Store.widgets.some(({ type }) => type === WidgetType.Checkbox)) {
         FB.Event.subscribe('messenger_checkbox', (ev: FacebookCheckboxEvent) => {
             if (!ev.ref) {
-                Print.warn(`Can not found 'ref' attrubite, find 'user_ref': ${ev.user_ref}`, true);
+                Print.warn(
+                    'Can not found \'ref\' attrubite in this Checkbox Plugin, ' +
+                    `find 'user_ref': ${ev.user_ref}`,
+                    true,
+                );
                 return;
             }
 
@@ -83,7 +82,22 @@ function bothubFacebookInit() {
     // 插件中含有 Send To Messenger
     if (Store.widgets.some(({ type }) => type === WidgetType.SendToMessenger)) {
         FB.Event.subscribe('send_to_messenger', (ev: FacebookSendToMessengerEvent) => {
-            debugger;
+            if (!ev.ref) {
+                Print.warn('Can not found \'ref\' attrubite in this Checkbox Plugin.', true);
+                return;
+            }
+
+            const getId = window.atob(ev.ref);
+            const widget = Store.widgets.find(({ id }) => id === getId) as SendToMessengerData;
+
+            if (!widget) {
+                Print.warn(`Invalid Widget ID: ${getId}`, true);
+                return;
+            }
+
+            if (ev.event === 'clicked' && widget.click) {
+                widget.click();
+            }
         });
     }
 }

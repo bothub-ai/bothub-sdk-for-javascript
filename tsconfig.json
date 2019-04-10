@@ -24,8 +24,13 @@
         "listFiles": false,
         "removeComments": false,
         "suppressImplicitAnyIndexErrors": true,
-        "lib": ["es5", "dom"],
-        "baseUrl": "."
+        "baseUrl": ".",
+        "lib": [
+            "dom",
+            "es5",
+            "es2015.promise",
+            "es2015.core"
+        ]
     },
     "include": ["src", "typings", "build"],
     "exclude": ["node_modules", "dist"]

@@ -8,10 +8,19 @@ export const enum WidgetType {
 }
 
 /** 插件对应的 facebook 渲染的 class 名称 */
+export const WidgetBhClass = {
+    [WidgetType.Checkbox]: 'bothub-messenger-checkbox',
+    [WidgetType.Customerchat]: 'bothub-customerchat',
+    [WidgetType.Discount]: 'bothub-discount',
+    [WidgetType.SendToMessenger]: 'bothub-send-to-messenger',
+    [WidgetType.MessageUs]: 'bothub-messengermessageus',
+};
+
+/** 插件对应的 facebook 渲染的 class 名称 */
 export const WidgetFbClass = {
     [WidgetType.Checkbox]: 'fb-messenger-checkbox',
     [WidgetType.Customerchat]: 'fb-customerchat',
-    [WidgetType.Discount]: 'bothub-discount',
+    [WidgetType.Discount]: WidgetBhClass[WidgetType.Discount],
     [WidgetType.SendToMessenger]: 'fb-send-to-messenger',
     [WidgetType.MessageUs]: 'fb-messengermessageus',
 };
@@ -21,19 +30,12 @@ interface BaseWidgetData {
     /** 当前插件的唯一编号 */
     id: string;
     /** Facebook 主页编号 */
-    pageId: number;
+    pageId: string;
 }
 
-/**
- * 确认框数据接口
- * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox
- */
+/** 确认框数据接口 */
 export interface CheckboxData extends BaseWidgetData {
     type: WidgetType.Checkbox;
-    /** 插件加载网址的基域 */
-    origin: string;
-    /** 指代用户的唯一标识符 */
-    userRef: string;
     /**
      * 让用户能够在没有现有会话的情况下登录，同时启用“不是你”选项
      *  - 默认为`true`
@@ -55,13 +57,20 @@ export interface CheckboxData extends BaseWidgetData {
      * 插件内容是否居中对齐
      *  - 默认为`false`
      */
-    center_align?: boolean;
+    centerAlign?: boolean;
+    /**
+     * Checkbox 点击选中事件
+     * @param userRef 当前用户编号
+     */
+    checked?(userRef: string): void;
+    /**
+     * Checkbox 点击取消事件
+     * @param userRef 当前用户编号
+     */
+    unChecked?(userRef: string): void;
 }
 
-/**
- * 聊天插件数据接口
- * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins/#customer_chat
- */
+/** 聊天插件数据接口 */
 export interface CustomerchatData extends BaseWidgetData {
     type: WidgetType.Customerchat;
     /** 主题颜色 */
@@ -85,22 +94,28 @@ export interface CustomerchatData extends BaseWidgetData {
     greetingDialogDisplay?: 'show' | 'hide' | 'fade';
     /** 设置插件加载后延迟多少秒才显示欢迎对话框 */
     greetingDialogDelay?: number;
-    /** 传回其他上下文的参考参数。 */
-    ref?: number;
 }
 
-/**
- * 砍价插件数据接口
- * @link TODO:
- */
+/** 砍价插件数据接口 */
 export interface DiscountData extends BaseWidgetData {
     type: WidgetType.Discount;
+    /** 砍价标题 */
+    title: string;
+    /** 砍价副标题 */
+    subTitle: string;
+    /** 砍价文本 */
+    discountText: string;
+    /** 当前砍价编码 */
+    discountCode: string;
+    /** “砍价”按钮文本 */
+    couponButtonText: string;
+    /** “复制”按钮文本 */
+    copyButtonText: string;
+    /** 砍价数量 */
+    notice: string;
 }
 
-/**
- * “发送至Messenger”插件
- * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins/#send_to_messenger
- */
+/** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends BaseWidgetData {
     type: WidgetType.SendToMessenger;
     /**
@@ -114,23 +129,14 @@ export interface SendToMessengerData extends BaseWidgetData {
      */
     size?: 'standard' | 'large' | 'xlarge';
     /**
-     * 自定义状态参数。最多 250 个字符
-     *  - 有效字符为`a-z A-Z 0-9 +/=-._`
-     *  - 出于安全考虑，应编码和加密
-     */
-    dataRef?: string;
-    /**
      * 如果为 true，则点击该按钮时，
      * 已登录用户必须重新登录，
-     * 默认为 false
+     * 默认为`false`
      */
     enforceLogin?: boolean;
 }
 
-/**
- * “给我们发消息”插件
- * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins/#message_us
- */
+/** “给我们发消息”插件 */
 export interface MessageUsData extends BaseWidgetData {
     type: WidgetType.MessageUs;
     /**

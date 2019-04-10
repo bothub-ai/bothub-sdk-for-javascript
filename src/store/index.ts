@@ -4,11 +4,11 @@ import { unique } from 'src/lib/native';
 /** 是否是调试模式 */
 export let debug = false;
 /** APP 编号 */
-export let messengerAppId = process.env.NODE_MODE === 'development' ? 611599205958417 : 985673201550272;
+export let messengerAppId = process.env.appId as string;
+/** 是否强行禁用 Facebook 相关事件 */
+export let disableFacebook = false;
 /** 语言类型 */
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
-// /** 渲染平台 */
-// export let platforms: ('facebook' | 'bothub')[] = ['facebook', 'bothub'];
 /** 插件配置 */
 export let widgets: WidgetData[] = [];
 
@@ -21,10 +21,10 @@ interface BothubInitParams {
      *  - debug 选项为 true 时才会生效
      */
     appId?: typeof messengerAppId;
+    /** 是否禁用 Facebook 相关功能 */
+    disableFacebook?: typeof disableFacebook;
     /** 语言类型 */
     language?: typeof language;
-    // /** 渲染平台 */
-    // platforms?: ('facebook' | 'bothub')[];
     /** 页面插件数据 */
     widgets?: typeof widgets;
 }

@@ -2,6 +2,8 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 允许 interface 中只有一个函数索引
+        "callable-types": false,
         // 不强制要求使用 for of 循环
         "prefer-for-of": false,
         // 复杂数组类型，不强制使用 Array<T> 形式

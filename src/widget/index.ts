@@ -14,16 +14,35 @@ function renderWarn(name: string, id: string) {
     );
 }
 
+/** 获取并创建本体以及包装 */
+function getWarpperById(name: string, id: string) {
+    const warpper = document.getElementById(id);
+
+    // 未找到包装的 DOM
+    if (!warpper) {
+        renderWarn(name, id);
+        return {};
+    }
+
+    addClass(warpper, 'WarpperClassName');
+
+    const dom = Boolean(warpper.firstElementChild)
+        ? warpper.firstElementChild
+        : warpper.appendChild(document.createElement('div'));
+
+    return { warpper, dom };
+}
+
 function renderDom(...args: Parameters<FacebookSDK['XFBML']['parse']>) {
-    if ((window as any).FB) {
-        FB.XFBML.parse(...args);
+    if (window.FB) {
+        window.FB.XFBML.parse(...args);
     }
 }
 
 function setAttributes<
     U extends Type.WidgetData,
     T extends keyof U
->(dom: HTMLElement, data: U, props: T[]) {
+>(dom: Element, data: U, props: T[]) {
     props.forEach((key) => {
         const name = (key as string).replace(/([A-Z])/g, (_, item1: string) => {
             return `_${item1.toLowerCase()}`;
@@ -40,10 +59,9 @@ function setAttributes<
  * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox
  */
 function renderCheckbox(data: Type.CheckboxData) {
-    const dom = document.getElementById(data.id);
+    const { warpper, dom } = getWarpperById('Checkbox', data.id);
 
-    if (!dom) {
-        renderWarn('Checkbox', data.id);
+    if (!warpper || !dom) {
         return;
     }
 
@@ -56,6 +74,8 @@ function renderCheckbox(data: Type.CheckboxData) {
     dom.setAttribute('messenger_app_id', Store.messengerAppId);
 
     setAttributes(dom, data, ['pageId', 'allowLogin', 'size', 'skin', 'centerAlign']);
+
+    renderDom(warpper);
 }
 
 /**
@@ -63,19 +83,23 @@ function renderCheckbox(data: Type.CheckboxData) {
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/
  */
 function renderCustomerchat(data: Type.CustomerchatData) {
-    let dom = document.getElementById(data.id);
-
-    if (!dom) {
-        dom = document.createElement('div');
-        document.body.appendChild(dom);
+    if (document.getElementById(data.id)) {
+        Print.warn('Skip Customerchat Plugin render again.');
+        return;
     }
+
+    const warpper = document.createElement('div');
+    const dom = document.createElement('div');
+
+    warpper.appendChild(dom);
+    document.body.appendChild(warpper);
 
     addClass(dom, Type.WidgetFbClass[Type.WidgetType.Customerchat]);
     addClass(dom, Type.WidgetBhClass[Type.WidgetType.Customerchat]);
 
     setAttributes(dom, data, ['pageId']);
 
-    renderDom(dom);
+    renderDom(warpper);
 }
 
 /**
@@ -83,19 +107,21 @@ function renderCustomerchat(data: Type.CustomerchatData) {
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin
  */
 function renderMessageUs(data: Type.MessageUsData) {
-    const dom = document.getElementById(data.id);
+    const warpper = document.getElementById(data.id);
 
-    if (!dom) {
+    if (!warpper) {
         renderWarn('Message Us', data.id);
         return;
     }
+
+    const dom = warpper.appendChild(document.createElement('div'));
 
     addClass(dom, Type.WidgetFbClass[Type.WidgetType.MessageUs]);
     addClass(dom, Type.WidgetBhClass[Type.WidgetType.MessageUs]);
 
     setAttributes(dom, data, ['size', 'color']);
 
-    renderDom(dom);
+    renderDom(warpper);
 }
 
 /**
@@ -103,12 +129,14 @@ function renderMessageUs(data: Type.MessageUsData) {
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/
  */
 function renderSendToMessenger(data: Type.SendToMessengerData) {
-    const dom = document.getElementById(data.id);
+    const warpper = document.getElementById(data.id);
 
-    if (!dom) {
+    if (!warpper) {
         renderWarn('Send To Messenger', data.id);
         return;
     }
+
+    const dom = warpper.appendChild(document.createElement('div'));
 
     addClass(dom, Type.WidgetFbClass[Type.WidgetType.SendToMessenger]);
     addClass(dom, Type.WidgetBhClass[Type.WidgetType.SendToMessenger]);
@@ -117,7 +145,7 @@ function renderSendToMessenger(data: Type.SendToMessengerData) {
 
     dom.setAttribute('data-ref', window.btoa(data.id));
 
-    renderDom(dom);
+    renderDom(warpper);
 }
 
 /**
@@ -132,6 +160,7 @@ function renderDiscount(data: Type.DiscountData) {
 function render(id?: string) {
     if (!id) {
         Store.widgets.forEach(({ id: item }) => render(item));
+        return;
     }
 
     const data = Store.widgets.find(({ id: item }) => item === id);

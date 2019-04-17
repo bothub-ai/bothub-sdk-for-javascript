@@ -7,6 +7,9 @@ export const enum WidgetType {
     MessageUs,
 }
 
+/** 包装 DOM 的 class 名称 */
+export const WarpperClassName = 'bothub-widget-warpper';
+
 /** 插件对应的 facebook 渲染的 class 名称 */
 export const WidgetBhClass = {
     [WidgetType.Checkbox]: 'bothub-messenger-checkbox',
@@ -134,6 +137,15 @@ export interface SendToMessengerData extends BaseWidgetData {
      * 默认为`false`
      */
     enforceLogin?: boolean;
+    /**
+     * 按钮文本
+     *  - 默认为空
+     */
+    cta_text?:
+        'GET_THIS_IN_MESSENGER' | 'RECEIVE_THIS_IN_MESSENGER' | 'SEND_THIS_TO_ME' | 'GET_CUSTOMER_ASSISTANCE' |
+        'GET_CUSTOMER_SERVICE' | 'GET_SUPPORT' | 'LET_US_CHAT' | 'SEND_ME_MESSAGES' | 'ALERT_ME_IN_MESSENGER' |
+        'SEND_ME_UPDATES' | 'MESSAGE_ME' | 'LET_ME_KNOW' | 'KEEP_ME_UPDATED' | 'TELL_ME_MORE' | 'SUBSCRIBE_IN_MESSENGER' |
+        'SUBSCRIBE_TO_UPDATES' | 'GET_MESSAGES' | 'SUBSCRIBE' | 'GET_STARTED_IN_MESSENGER' | 'LEARN_MORE_IN_MESSENGER' | 'GET_STARTED';
     /**
      * 点击事件
      */

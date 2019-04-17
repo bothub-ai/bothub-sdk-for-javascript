@@ -1,12 +1,15 @@
 import uuid from 'uuid';
+
+import { session, local } from './cache';
 import { getQueryString } from './http';
 
 /** 获取当前 facebook 用户 ID */
-export function getFacebookUserId(key: string) {
-    const fbUserId = getQueryString(key) || localStorage.getItem(key);
+export function getFacebookUserId() {
+    const key = 'fb_user_id';
+    const fbUserId = getQueryString(key) || local.get(key);
 
     if (fbUserId) {
-        localStorage.setItem(key, fbUserId);
+        local.set(key, fbUserId);
     }
 
     return fbUserId;
@@ -14,10 +17,8 @@ export function getFacebookUserId(key: string) {
 
 /** 获取用户 id */
 export function getCustomUserId() {
-    const originId = (
-        getQueryString('custom_user_id') ||
-        localStorage.getItem('bothub_custom_user_id')
-    );
+    const key = 'bothub_custom_user_id';
+    const originId = getQueryString(key) || local.get(key);
 
     if (originId) {
         return originId;
@@ -25,7 +26,7 @@ export function getCustomUserId() {
 
     const newId = uuid();
 
-    localStorage.setItem('bothub_custom_user_id', newId);
+    local.set(key, newId);
 
     return newId;
 }
@@ -37,11 +38,11 @@ export function getEventId() {
 
 /** 获取随机的 User Ref */
 export function getUserRef(force = false) {
-    let userRef = localStorage.getItem('bothub_user_ref');
+    let userRef = session.get('bothub_user_ref');
 
     if (force || !userRef) {
         userRef = `${location.host}_${uuid()}`.replace(/[\.-]/g, '_');
-        localStorage.setItem('bothub_user_ref', userRef);
+        session.set('bothub_user_ref', userRef);
     }
 
     return userRef;
@@ -61,4 +62,39 @@ export function sandBox<T extends (...args: any[]) => any>(cb: T) {
 
         return result;
     };
+}
+
+/**
+ * 异步延迟函数
+ * @param {number} [time] 延迟时间
+ * @returns {Promise<void>}
+ */
+export function delay(time = 0) {
+    return new Promise<void>((resolve) => setTimeout(resolve, time));
+}
+
+/**
+ * 轮询等待输入函数输出`true`
+ * @param {() => boolean} fn
+ * @param {number} [interval=200]
+ * @param {number} [stopTimeout=60000]
+ * @returns {Promise<void>}
+ */
+export function wait(fn: () => boolean, interval = 200, stopTimeout = 60000) {
+    let timeout = false;
+
+    const timer = setTimeout(() => timeout = true, stopTimeout);
+
+    return (function check(): Promise<void> {
+        if (fn()) {
+            clearTimeout(timer);
+            return Promise.resolve();
+        }
+        else if (!timeout) {
+            return delay(interval).then(check);
+        }
+        else {
+            return Promise.resolve();
+        }
+    })();
 }

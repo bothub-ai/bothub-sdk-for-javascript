@@ -13,7 +13,7 @@ if (!('BOTHUB' in window)) {
 
 // 运行入口函数
 setTimeout(() => {
-    const bhAsyncInit = (window as any).bhAsyncInit as Array<() => void> | (() => void);
+    const bhAsyncInit = window.bhAsyncInit;
 
     if (isArray(bhAsyncInit)) {
         bhAsyncInit.forEach((cb) => cb());

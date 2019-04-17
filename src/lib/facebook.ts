@@ -3,12 +3,6 @@ import * as Print from 'src/lib/print';
 
 import { WidgetType, CheckboxData, SendToMessengerData } from 'src/widget';
 
-/** facebook 初始化函数 */
-interface FbAsyncInit {
-    (): void;
-    hasRun: boolean;
-}
-
 /** 加载 facebook SDK */
 export function loadFacebookSDK() {
     const id = 'facebook-jssdk';
@@ -104,7 +98,7 @@ function bothubFacebookInit() {
 
 /** facebook SDK 初始化 */
 export function facebookInit() {
-    const fbAsyncInitPrev: FbAsyncInit = (window as any).fbAsyncInit;
+    const fbAsyncInitPrev: FbAsyncInit = window.fbAsyncInit;
 
     if (fbAsyncInitPrev) {
         // 初始化函数已经运行
@@ -113,13 +107,13 @@ export function facebookInit() {
         }
         // 初始化函数还未运行
         else {
-            (window as any).fbAsyncInit = () => {
+            window.fbAsyncInit = () => {
                 fbAsyncInitPrev();
                 bothubFacebookInit();
             };
         }
     }
     else {
-        (window as any).fbAsyncInit = bothubFacebookInit;
+        window.fbAsyncInit = bothubFacebookInit;
     }
 }

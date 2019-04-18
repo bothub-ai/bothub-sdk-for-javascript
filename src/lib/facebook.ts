@@ -1,7 +1,7 @@
-import * as Store from 'src/store';
-import * as Print from 'src/lib/print';
+import { warn } from 'src/lib/print';
+import { language, messengerAppId } from 'src/store';
 
-import { WidgetType, CheckboxData, SendToMessengerData } from 'src/widget';
+import Wdiget from 'src/widget';
 
 /** 加载 facebook SDK */
 export function loadFacebookSDK() {
@@ -15,7 +15,7 @@ export function loadFacebookSDK() {
             return true;
         }
         else {
-            Print.warn(
+            warn(
                 'Some other Facebook SDK have been loaded on the website, ' +
                 'some features of the Bothub SDK may not be available.',
             );
@@ -28,7 +28,7 @@ export function loadFacebookSDK() {
 
     script.id = id;
     script.async = true;
-    script.src = `https://connect.facebook.net/${Store.language}/sdk/xfbml.customerchat.js`;
+    script.src = `https://connect.facebook.net/${language}/sdk/xfbml.customerchat.js`;
 
     document.getElementsByTagName('head')[0].appendChild(script);
 
@@ -37,68 +37,19 @@ export function loadFacebookSDK() {
 
 function bothubFacebookInit() {
     // Facebook SDK 初始化
-    FB.init({
-        appId: Store.messengerAppId,
+    window.FB.init({
+        appId: messengerAppId,
         xfbml: true,
         version: 'v3.2',
     });
 
-    // 插件中含有 Checkbox
-    if (Store.widgets.some(({ type }) => type === WidgetType.Checkbox)) {
-        FB.Event.subscribe('messenger_checkbox', (ev: FacebookCheckboxEvent) => {
-            if (!ev.ref) {
-                Print.warn(
-                    'Can not found \'ref\' attrubite in this Checkbox Plugin, ' +
-                    `find 'user_ref': ${ev.user_ref}`,
-                    true,
-                );
-                return;
-            }
-
-            const getId = window.atob(ev.ref);
-            const widget = Store.widgets.find(({ id }) => id === getId) as CheckboxData;
-
-            if (!widget) {
-                Print.warn(`Invalid Widget ID: ${getId}`, true);
-                return;
-            }
-
-            if (ev.state === 'checked' && widget.checked) {
-                widget.checked(ev.user_ref);
-            }
-
-            if (ev.state === 'unchecked' && widget.unChecked) {
-                widget.unChecked(ev.user_ref);
-            }
-        });
-    }
-
-    // 插件中含有 Send To Messenger
-    if (Store.widgets.some(({ type }) => type === WidgetType.SendToMessenger)) {
-        FB.Event.subscribe('send_to_messenger', (ev: FacebookSendToMessengerEvent) => {
-            if (!ev.ref) {
-                Print.warn('Can not found \'ref\' attrubite in this Checkbox Plugin.', true);
-                return;
-            }
-
-            const getId = window.atob(ev.ref);
-            const widget = Store.widgets.find(({ id }) => id === getId) as SendToMessengerData;
-
-            if (!widget) {
-                Print.warn(`Invalid Widget ID: ${getId}`, true);
-                return;
-            }
-
-            if (ev.event === 'clicked' && widget.click) {
-                widget.click();
-            }
-        });
-    }
+    // 延迟 1 秒，渲染所有插件
+    setTimeout(Wdiget.render, 1000);
 }
 
 /** facebook SDK 初始化 */
 export function facebookInit() {
-    const fbAsyncInitPrev: FbAsyncInit = window.fbAsyncInit;
+    const fbAsyncInitPrev = window.fbAsyncInit;
 
     if (fbAsyncInitPrev) {
         // 初始化函数已经运行

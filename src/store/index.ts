@@ -1,4 +1,4 @@
-import { WidgetData } from 'src/widget';
+import { WidgetData, Widget } from 'src/widget';
 import { unique } from 'src/lib/native';
 
 /** 是否是调试模式 */
@@ -9,8 +9,10 @@ export let messengerAppId = process.env.appId as string;
 export let disableFacebook = false;
 /** 语言类型 */
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
-/** 插件配置 */
-export let widgets: WidgetData[] = [];
+/** 插件配置原始数据 */
+export let widgetData: WidgetData[] = [];
+/** 页面上的所有插件 */
+export const widgets: Widget[] = [];
 
 /** 初始化参数 */
 interface BothubInitParams {
@@ -26,13 +28,17 @@ interface BothubInitParams {
     /** 语言类型 */
     language?: typeof language;
     /** 页面插件数据 */
-    widgets?: typeof widgets;
+    widgets?: typeof widgetData;
 }
 
 /** 初始化函数 */
 export function setGlobalParams(param: BothubInitParams) {
     if (param.language) {
         language = param.language;
+    }
+
+    if (param.disableFacebook) {
+        disableFacebook = param.disableFacebook;
     }
 
     if (param.debug) {
@@ -45,5 +51,5 @@ export function setGlobalParams(param: BothubInitParams) {
     }
 
     // 合并插件列表
-    widgets = unique(widgets.concat(param.widgets || []), ({ id }) => id);
+    widgetData = unique(widgetData.concat(param.widgets || []), ({ id }) => id);
 }

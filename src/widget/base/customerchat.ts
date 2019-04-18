@@ -63,15 +63,14 @@ export default class Customerchat implements WidgetCommon {
         }
 
         if (document.getElementById(this.id)) {
-            warn('Customerchat Plugin was already rendered, skip.');
+            warn('Customerchat Plugin was already rendered, skip');
             this.canRender = false;
             return;
         }
 
         const warpper = document.createElement('div');
-        const dom = document.createElement('div');
+        const dom = warpper.appendChild(document.createElement('div'));
 
-        warpper.appendChild(dom);
         document.body.appendChild(warpper);
 
         addClass(dom, fbClass);
@@ -80,7 +79,7 @@ export default class Customerchat implements WidgetCommon {
         setAttributes(dom, this.attrs);
 
         renderDom(warpper, () => {
-            log(`Customerchat Plugin with ID ${this.id} has been rendered.'`);
+            log(`Customerchat Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

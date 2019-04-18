@@ -68,7 +68,7 @@ export default class MessageUs implements WidgetCommon {
         dom.setAttribute('messenger_app_id', messengerAppId);
 
         renderDom(warpper, () => {
-            log(`Message Us Plugin with ID ${this.id} has been rendered.'`);
+            log(`Message Us Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

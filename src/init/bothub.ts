@@ -17,9 +17,6 @@ function init(...arg: Parameters<typeof Store.setGlobalParams>) {
     FB.loadFacebookSDK();
     // 设置 facebook SDK 初始化函数
     FB.facebookInit();
-
-    // 插件初始化
-    Widget.render();
 }
 
 export default {

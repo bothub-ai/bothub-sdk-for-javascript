@@ -122,7 +122,7 @@ export default class Checkbox implements WidgetCommon {
             }
 
             if (ev.event === 'rendered') {
-                log(`Checkbox Plugin with ID ${this.id} has been rendered.'`);
+                log(`Checkbox Plugin with ID ${this.id} has been rendered`);
                 this.isRendered = true;
             }
             else if (ev.state === 'checked' && this.onCheck) {

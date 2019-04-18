@@ -107,7 +107,7 @@ export default class SendToMessenger implements WidgetCommon {
             }
 
             if (ev.event === 'rendered') {
-                log(`Send To Messenger Plugin with ID ${this.id} has been rendered.'`);
+                log(`Send To Messenger Plugin with ID ${this.id} has been rendered`);
                 this.isRendered = true;
             }
             else if (ev.event === 'clicked' && this.onClick) {

@@ -1,7 +1,5 @@
 import { addClass } from 'src/lib/dom';
-import { log, warn } from 'src/lib/print';
-import { getUserRef } from 'src/lib/utils';
-import { messengerAppId } from 'src/store';
+import { log } from 'src/lib/print';
 
 import {
     WidgetCommon,
@@ -13,7 +11,7 @@ import {
 } from '../helper';
 
 /** 分享按钮插件 */
-export interface ShareButtonData extends WidgetDataCommon {
+export interface ShareButtonData extends Omit<WidgetDataCommon, 'pageId'> {
     /** 分享按钮插件类型 */
     type: WidgetType.ShareButton;
     /** 待分享页面的绝对网址 */
@@ -69,7 +67,7 @@ export default class ShareButton implements WidgetCommon {
         setAttributes(dom, this.attrs, ['size', 'layout', 'href']);
 
         renderDom(warpper, () => {
-            log(`Share Button Plugin with ID ${this.id} has been rendered.'`);
+            log(`Share Button Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

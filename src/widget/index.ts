@@ -4,11 +4,12 @@ import { log, warn } from 'src/lib/print';
 
 import { default as Checkbox, CheckboxData } from './base/checkbox';
 import { default as MessageUs, MessageUsData } from './base/message-us';
+import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-export type Widget = Customerchat | MessageUs | SendToMessenger | Checkbox;
-export type WidgetData = CustomerchatData | MessageUsData | SendToMessengerData | CheckboxData;
+export type Widget = Customerchat | MessageUs | SendToMessenger | Checkbox | ShareButton;
+export type WidgetData = CustomerchatData | MessageUsData | SendToMessengerData | CheckboxData | ShareButtonData;
 
 /** 渲染函数 */
 function render(id?: string) {
@@ -45,6 +46,9 @@ function render(id?: string) {
             break;
         case WidgetType.SendToMessenger:
             widget = new SendToMessenger(data);
+            break;
+        case WidgetType.ShareButton:
+            widget = new ShareButton(data);
             break;
         // case WidgetType.Discount:
         //     break;

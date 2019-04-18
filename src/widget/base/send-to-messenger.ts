@@ -50,7 +50,7 @@ const fbClass = 'fb-send-to-messenger';
 const bhClass = 'bothub-send-to-messenger';
 
 /**
- * “发送至 Messenger”插件渲染
+ * “发送至 Messenger”插件
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/
  */
 export default class SendToMessenger implements WidgetCommon {

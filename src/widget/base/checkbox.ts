@@ -54,7 +54,7 @@ const fbClass = 'fb-messenger-checkbox';
 const bhClass = 'bothub-messenger-checkbox';
 
 /**
- * 确认框插件渲染
+ * 确认框插件
  * @link https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox
  */
 export default class Checkbox implements WidgetCommon {

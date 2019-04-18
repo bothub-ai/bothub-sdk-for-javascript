@@ -40,7 +40,7 @@ const fbClass = 'fb-customerchat';
 const bhClass = 'bothub-customerchat';
 
 /**
- * 顾客聊天插件渲染
+ * 顾客聊天插件
  * @link https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/
  */
 export default class Customerchat implements WidgetCommon {

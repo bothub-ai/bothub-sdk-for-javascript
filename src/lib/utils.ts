@@ -37,15 +37,8 @@ export function getEventId() {
 }
 
 /** 获取随机的 User Ref */
-export function getUserRef(force = false) {
-    let userRef = session.get('bothub_user_ref');
-
-    if (force || !userRef) {
-        userRef = `${location.host}_${uuid()}`.replace(/[\.-]/g, '_');
-        session.set('bothub_user_ref', userRef);
-    }
-
-    return userRef;
+export function getUserRef() {
+    return `${location.host}_${uuid()}`.replace(/[\.-]/g, '_');
 }
 
 /** 函数沙箱 */

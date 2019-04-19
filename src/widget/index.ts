@@ -2,14 +2,19 @@ import { WidgetType } from './helper';
 import { widgetData, widgets } from 'src/store';
 import { log, warn } from 'src/lib/print';
 
-import { default as Checkbox, CheckboxData } from './base/checkbox';
-import { default as MessageUs, MessageUsData } from './base/message-us';
-import { default as ShareButton, ShareButtonData } from './base/share-button';
-import { default as Customerchat, CustomerchatData } from './base/customerchat';
-import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
+// import { default as Checkbox, CheckboxData } from './base/checkbox';
+// import { default as MessageUs, MessageUsData } from './base/message-us';
+// import { default as ShareButton, ShareButtonData } from './base/share-button';
+// import { default as Customerchat, CustomerchatData } from './base/customerchat';
+// import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-export type Widget = Customerchat | MessageUs | SendToMessenger | Checkbox | ShareButton;
-export type WidgetData = CustomerchatData | MessageUsData | SendToMessengerData | CheckboxData | ShareButtonData;
+// export type Widget = Customerchat | MessageUs | SendToMessenger | Checkbox | ShareButton;
+// export type WidgetData = CustomerchatData | MessageUsData | SendToMessengerData | CheckboxData | ShareButtonData;
+
+import { default as Checkbox, CheckboxData } from './checkbox';
+
+export type Widget = Checkbox;
+export type WidgetData = CheckboxData;
 
 /** 渲染函数 */
 function render(id?: string) {
@@ -38,27 +43,27 @@ function render(id?: string) {
         case WidgetType.Checkbox:
             widget = new Checkbox(data);
             break;
-        case WidgetType.Customerchat:
-            widget = new Customerchat(data);
-            break;
-        case WidgetType.MessageUs:
-            widget = new MessageUs(data);
-            break;
-        case WidgetType.SendToMessenger:
-            widget = new SendToMessenger(data);
-            break;
-        case WidgetType.ShareButton:
-            widget = new ShareButton(data);
-            break;
+        // case WidgetType.Customerchat:
+        //     widget = new Customerchat(data);
+        //     break;
+        // case WidgetType.MessageUs:
+        //     widget = new MessageUs(data);
+        //     break;
+        // case WidgetType.SendToMessenger:
+        //     widget = new SendToMessenger(data);
+        //     break;
+        // case WidgetType.ShareButton:
+        //     widget = new ShareButton(data);
+        //     break;
         // case WidgetType.Discount:
         //     break;
         default:
-            log(`Invalid plugin type: ${(data as any).type}, skip.`);
+            log(`Invalid plugin type: ${(data as any).type}, skip`);
             return;
     }
 
     // 渲染
-    widget.render();
+    widget.parse();
 
     if (widget.canRender) {
         widgets.push(widget);

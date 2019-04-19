@@ -1,0 +1,19 @@
+.bothub-widget-loading {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+
+    .bothub-widget-loading__spinner {
+        display: inline-block;
+        animation: loadingCircle 1s infinite linear;
+    }
+}
+
+@keyframes loadingCircle {
+    0% {
+        transform: rotate(0deg)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}

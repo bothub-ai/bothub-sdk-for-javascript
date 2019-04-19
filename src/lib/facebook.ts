@@ -17,7 +17,7 @@ export function loadFacebookSDK() {
         else {
             warn(
                 'Some other Facebook SDK have been loaded on the website, ' +
-                'some features of the Bothub SDK may not be available.',
+                'some features of the Bothub SDK may not be available',
             );
             return false;
         }

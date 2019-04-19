@@ -1,4 +1,5 @@
 import './polyfill';
+import 'src/style';
 
 import Bothub from './bothub';
 import { isArray } from 'src/lib/assert';

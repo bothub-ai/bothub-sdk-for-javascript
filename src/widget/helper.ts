@@ -1,7 +1,14 @@
 import { warn } from 'src/lib/print';
 import { underline } from 'src/lib/string';
 
-import { render, FunctionalComponent } from 'preact';
+import {
+    h,
+    render,
+    Component,
+    AnyComponent,
+    ComponentConstructor,
+    FunctionalComponent,
+} from 'preact';
 
 /** 插件类型 */
 export const enum WidgetType {
@@ -22,8 +29,8 @@ export interface BaseWidget {
     id: string;
     /** 当前插件的类型 */
     type: WidgetType;
-    /** 当前插件的属性 */
-    attrs: object;
+    /** 当前插件的核心 facebook 插件属性 */
+    fbAttrs: object;
     /** 是否可以渲染 */
     canRender: boolean;
     /** 当前是否已经渲染 */
@@ -66,18 +73,41 @@ export function underlineObject(from: object) {
 
 /** 组件类型 */
 export type ComponentType<T extends object = object> = {
-    update(props: T): void;
+    update(props?: Partial<T>): void;
     destroy(): void;
 };
 
+/** 是否是函数组件 */
+const isFunctional = <U extends object>(x: AnyComponent<U>): x is FunctionalComponent<U> => {
+    return Object.getPrototypeOf(x) !== Component;
+};
+
 /** react 组件包装器 */
-export function componentWarpper<T extends object>(component: FunctionalComponent<T>, warpperEle: Element): ComponentType<T> {
+export function componentWarpper<T extends object>(
+    component: FunctionalComponent<T> | ComponentConstructor<T, object>,
+    warpperEle: Element,
+    firstProps: T,
+): ComponentType<T> {
+    /** 当前属性暂存 */
+    let storeProps = firstProps;
     /** 当前包装器的编号 */
     const id = warpperEle.getAttribute('id')!;
+    /** 是否是函数式组件 */
+    const isFunction = isFunctional(component);
 
     /** 更新组件 */
-    function update(props: T) {
-        render(component(props as any), document.body, warpperEle);
+    function update(props: Partial<T> = {}) {
+        storeProps = { ...storeProps, ...props };
+
+        // 函数式组件
+        if (isFunction) {
+            render((component as FunctionalComponent)(storeProps), document.body, warpperEle);
+        }
+        // 类组件
+        else {
+            // FIXME: 真的能这样刷新？
+            render(h(component as any, storeProps), document.body, warpperEle);
+        }
     }
 
     /** 销毁组件 */

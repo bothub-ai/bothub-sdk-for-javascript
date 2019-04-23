@@ -1,5 +1,7 @@
+import './style.less';
+
 import { BaseWidget, WidgetType, ComponentType, componentWarpper, eleNotFound } from '../helper';
-import { CheckboxData, ComponentProps } from './constant';
+import { DiscountData, ComponentProps } from './constant';
 
 import { log, warn } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
@@ -7,15 +9,17 @@ import { messengerAppId } from 'src/store';
 
 import Component from './component';
 
-export { CheckboxData };
+export { DiscountData };
 
 /**
- * [确认框插件](https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox)
+ * [优惠券插件]()
  */
-export default class Checkbox implements BaseWidget {
+export default class Discount implements BaseWidget {
     id: string;
-    type = WidgetType.Checkbox;
-    fbAttrs: ComponentProps['attrs'];
+    type = WidgetType.Discount;
+
+    data: ComponentProps['data'];
+    fbAttrs: ComponentProps['fbAttrs'];
 
     $el?: HTMLElement;
     $component?: ComponentType<ComponentProps>;
@@ -27,32 +31,28 @@ export default class Checkbox implements BaseWidget {
     /** 是否已经完成渲染 */
     isRendered = false;
 
-    /**
-     * Checkbox 点击选中事件
-     * @param {string} userRef 当前用户编号
-     */
-    onCheck?(userRef: string): void;
-    /**
-     * Checkbox 点击取消事件
-     * @param {string} userRef 当前用户编号
-     */
-    onUnCheck?(userRef: string): void;
+    clickShowCodeBtn: DiscountData['clickShowCodeBtn'];
+    clickCopyCodeBtn: DiscountData['clickCopyCodeBtn'];
 
-    constructor({ id, type, check, unCheck, ...attrs }: CheckboxData) {
+    constructor({ id, type, pageId, clickShowCodeBtn, clickCopyCodeBtn, ...rest }: DiscountData) {
         this.id = id;
-        this.onCheck = check;
-        this.onUnCheck = unCheck;
+        this.data = rest;
+        this.clickShowCodeBtn = clickShowCodeBtn;
+        this.clickCopyCodeBtn = clickCopyCodeBtn;
+
         this.fbAttrs = {
-            ...attrs,
-            userRef: '',
+            messengerAppId, pageId,
             origin: location.origin,
-            messengerAppId,
+            size: 'large',
+            // 强制居中
+            centerAlign: true,
+            userRef: '',
         };
 
         this.$el = document.getElementById(this.id) || undefined;
 
         if (!this.$el) {
-            eleNotFound('Checkbox', this.id);
+            eleNotFound('Discount', this.id);
             this.canRender = false;
         }
     }
@@ -74,8 +74,12 @@ export default class Checkbox implements BaseWidget {
         if (!this.$component) {
             this.$component = componentWarpper(Component, this.$el, {
                 id: this.id,
+                fbAttrs: this.fbAttrs,
+                data: this.data,
                 loading: true,
-                attrs: this.fbAttrs,
+                isChecked: false,
+                clickShowCodeBtn: this.clickShowCodeBtn,
+                clickCopyCodeBtn: this.clickCopyCodeBtn,
             });
         }
 
@@ -91,7 +95,7 @@ export default class Checkbox implements BaseWidget {
         if (!alreadyRender) {
             window.FB.Event.subscribe('messenger_checkbox', (ev: FacebookCheckboxEvent) => {
                 if (!ev.ref) {
-                    warn('Can not found \'ref\' attrubite in this \'Checkbox\' Plugin', true);
+                    warn('Can not found \'ref\' attrubite in this \'Discount\' Plugin', true);
                     return;
                 }
 
@@ -103,18 +107,16 @@ export default class Checkbox implements BaseWidget {
 
                 if (ev.event === 'rendered') {
                     log(`Checkbox Plugin with ID ${this.id} has been rendered`);
-                    // 已渲染标志位置高
                     this.isRendered = true;
-                    // 隐藏 loading
                     this.$component!.update({ loading: false });
                 }
-                else if (ev.state === 'checked' && this.onCheck) {
+                else if (ev.state === 'checked') {
                     this.isChecked = true;
-                    this.onCheck(ev.user_ref);
+                    this.$component!.update({ isChecked: true });
                 }
-                else if (ev.state === 'unchecked' && this.onUnCheck) {
+                else if (ev.state === 'unchecked') {
                     this.isChecked = false;
-                    this.onUnCheck(ev.user_ref);
+                    this.$component!.update({ isChecked: false });
                 }
             });
         }

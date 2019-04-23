@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 
-import { session, local } from './cache';
+import { isIOS } from './env';
+import { local } from './cache';
 import { getQueryString } from './http';
 
 /** 获取当前 facebook 用户 ID */
@@ -90,4 +91,36 @@ export function wait(fn: () => boolean, interval = 200, stopTimeout = 60000) {
             return Promise.resolve();
         }
     })();
+}
+
+/** 复制文本到剪贴板 */
+export function copy(text: string) {
+    const input = document.createElement('textarea');
+
+    input.value = text;
+    document.body.appendChild(input);
+
+    if (isIOS) {
+        input.contentEditable = 'true';
+        input.readOnly = false;
+
+        const range = document.createRange();
+        range.selectNodeContents(input);
+
+        const selection = window.getSelection()!;
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        input.setSelectionRange(0, 999999);
+    }
+    else {
+        input.select();
+    }
+
+    const ret = document.execCommand('copy');
+
+    input.blur();
+    document.body.removeChild(input);
+
+    return ret;
 }

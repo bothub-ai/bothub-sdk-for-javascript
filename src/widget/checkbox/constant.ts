@@ -39,7 +39,7 @@ export interface CheckboxData extends WidgetDataCommon {
 }
 
 /** Facebook 核心插件的属性 */
-export interface CheckboxAttrs extends Omit<CheckboxData, 'type' | 'id' | 'check' | 'unCheck'> {
+export interface FbCheckboxAttrs extends Omit<CheckboxData, 'type' | 'id' | 'check' | 'unCheck'> {
     /** 插件加载网址的基域 */
     origin: string;
     /** Facebook 应用编号 */
@@ -57,8 +57,8 @@ export interface ComponentProps {
     id: string;
     /** 等待插件加载 */
     loading: boolean;
-    /** 属性集合 */
-    attrs: CheckboxAttrs;
+    /** facebook 插件属性集合 */
+    attrs: FbCheckboxAttrs;
 }
 
 export const fbClass = 'fb-messenger-checkbox';

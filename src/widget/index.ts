@@ -12,9 +12,10 @@ import { log, warn } from 'src/lib/print';
 // export type WidgetData = CustomerchatData | MessageUsData | SendToMessengerData | CheckboxData | ShareButtonData;
 
 import { default as Checkbox, CheckboxData } from './checkbox';
+import { default as Discount, DiscountData } from './discount';
 
-export type Widget = Checkbox;
-export type WidgetData = CheckboxData;
+export type Widget = Checkbox | Discount;
+export type WidgetData = CheckboxData | DiscountData;
 
 /** 渲染函数 */
 function render(id?: string) {
@@ -55,8 +56,9 @@ function render(id?: string) {
         // case WidgetType.ShareButton:
         //     widget = new ShareButton(data);
         //     break;
-        // case WidgetType.Discount:
-        //     break;
+        case WidgetType.Discount:
+            widget = new Discount(data);
+            break;
         default:
             log(`Invalid plugin type: ${(data as any).type}, skip`);
             return;

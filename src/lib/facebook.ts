@@ -43,8 +43,8 @@ function bothubFacebookInit() {
         version: 'v3.2',
     });
 
-    // 延迟 1 秒，渲染所有插件
-    setTimeout(Wdiget.render, 1000);
+    // 延迟 500 毫秒，渲染所有插件
+    setTimeout(Wdiget.render, 500);
 }
 
 /** facebook SDK 初始化 */

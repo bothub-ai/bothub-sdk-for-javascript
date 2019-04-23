@@ -1,4 +1,5 @@
 import { warn } from 'src/lib/print';
+import { addClass } from 'src/lib/dom';
 import { underline } from 'src/lib/string';
 
 import {
@@ -138,4 +139,23 @@ export function eleNotFound(name: string, id: string) {
         `Can not find the ${name} Plugin element with ID: ${id}, Skip`,
         true,
     );
+}
+
+/** 获取并创建本体以及包装 */
+export function getWarpperById(name: string, id: string) {
+    const warpper = document.getElementById(id);
+
+    // 未找到包装的 DOM
+    if (!warpper) {
+        eleNotFound(name, id);
+        return;
+    }
+
+    addClass(warpper, WarpperClassName);
+
+    if (!warpper.firstElementChild) {
+        warpper.appendChild(document.createElement('div'));
+    }
+
+    return warpper;
 }

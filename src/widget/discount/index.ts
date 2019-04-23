@@ -43,9 +43,10 @@ export default class Discount implements BaseWidget {
         this.fbAttrs = {
             messengerAppId, pageId,
             origin: location.origin,
-            size: 'large',
             // 强制居中
             centerAlign: true,
+            // 手机界面显示 small，PC 界面显示 large
+            size: window.innerWidth < 768 ? 'small' : 'large',
             userRef: '',
         };
 

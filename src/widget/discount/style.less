@@ -26,16 +26,16 @@
         border-right: 2px dotted #C0CCDA;
         border-radius: @Radius;
 
+        font-weight: bold;
+
         .bothub-widget-discount__notice {
             font-size: 24px;
             line-height: 26px;
-            font-weight: bold;
         }
 
         .bothub-widget-discount__msg {
             font-size: 14px;
             line-height: 16px;
-            font-weight: bold;
         }
     }
 
@@ -53,11 +53,12 @@
 
         .bothub-widget-discount__content-text {
             color: #2DCE8E;
+            font-size: 16px;
         }
 
         .bothub-widget-discount__content-code {
             color: #2DCE8E;
-            font-size: 17px;
+            font-size: 18px;
             line-height: 20px;
             font-weight: bold;
         }
@@ -78,6 +79,44 @@
 
         &:hover {
             background-color: #eef1f5 - #090909;
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    @Width: 250px;
+
+    .bothub-widget-discount {
+        width: @Width;
+
+        .bothub-widget-discount__tip {
+            width: 90px;
+
+            .bothub-widget-discount__notice {
+                font-size: 20px;
+                line-height: 22px;
+            }
+
+            .bothub-widget-discount__msg {
+                font-size: 12px;
+                line-height: 14px;
+            }
+        }
+
+        .bothub-widget-discount__content {
+            width: 160px;
+
+            .bothub-widget-discount__content-text {
+                font-size: 14px;
+            }
+
+            .bothub-widget-discount__content-code {
+                font-size: 16px;
+            }
+        }
+
+        .bothub-widget-discount__btn {
+            width: @Width;
         }
     }
 }

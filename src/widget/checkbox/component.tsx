@@ -6,7 +6,7 @@ import Loading from 'src/widget/components/loading';
 
 const Component: FunctionalComponent<ComponentProps> = ({ id, loading, attrs }) => (
     <div id={id} class={WarpperClassName}>
-        { loading ? <Loading /> : '' }
+        { loading ? <Loading style='position: relative; left: 60px;' /> : '' }
         <div
             data-ref={window.btoa(id)}
             class={`${bhClass} ${fbClass}`}

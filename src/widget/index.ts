@@ -8,15 +8,14 @@ import { default as Discount, DiscountData } from './discount';
 import { default as MessageUs, MessageUsData } from './base/message-us';
 import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
+import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-export type Widget = Checkbox | Discount | MessageUs | Customerchat | ShareButton;
-export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | ShareButtonData;
+export type Widget = Checkbox | Discount | MessageUs | Customerchat | SendToMessenger | ShareButton;
+export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | SendToMessengerData | ShareButtonData;
 
-/** 渲染函数重载定义 */
-function render(focus?: boolean): void;
-function render(id?: string, focus?: boolean): void;
-
-/** 渲染函数实际定义 */
+/** 渲染函数 */
+function render(focus?: boolean): boolean;
+function render(id?: string, focus?: boolean): boolean;
 function render(id?: string | boolean, focus?: boolean) {
     // 没有输入
     if (arguments.length === 0) {
@@ -35,8 +34,7 @@ function render(id?: string | boolean, focus?: boolean) {
     }
 
     if (!id) {
-        widgetData.forEach(({ id: item }) => render(item, focus));
-        return;
+        return widgetData.map(({ id: item }) => render(item, focus)).every((n) => n);
     }
 
     // 当前插件数据
@@ -72,9 +70,9 @@ function render(id?: string | boolean, focus?: boolean) {
         case WidgetType.MessageUs:
             widget = new MessageUs(data);
             break;
-        // case WidgetType.SendToMessenger:
-        //     widget = new SendToMessenger(data);
-        //     break;
+        case WidgetType.SendToMessenger:
+            widget = new SendToMessenger(data);
+            break;
         case WidgetType.ShareButton:
             widget = new ShareButton(data);
             break;

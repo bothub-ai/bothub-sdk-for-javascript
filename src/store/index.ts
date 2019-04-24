@@ -10,10 +10,10 @@ export let messengerAppId = process.env.appId as string;
 export let disableFacebook = false;
 /** 语言类型 */
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
-/** 插件配置原始数据 */
-export let widgetData: WidgetData[] = [];
 /** 是否在初始化后立即渲染 */
 export let renderImmediately = true;
+/** 插件配置原始数据 */
+export let widgetData: WidgetData[] = [];
 /** 页面上的所有插件 */
 export const widgets: Widget[] = [];
 

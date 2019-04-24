@@ -53,9 +53,11 @@ export default class ShareButton implements BaseWidget {
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Share-Button with id ${this.id}`);
+            log(`Skip Share Button with id ${this.id}`);
             return;
         }
+
+        this.isRendered = false;
 
         const dom = this.$el.firstElementChild!;
 

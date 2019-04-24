@@ -1,6 +1,6 @@
 import { warn } from 'src/lib/print';
 import { addClass } from 'src/lib/dom';
-import { underline } from 'src/lib/string';
+import { fromCamelCase } from 'src/lib/string';
 
 import {
     h,
@@ -65,7 +65,7 @@ export function underlineObject(from: object) {
 
     for (const key in from) {
         if (from.hasOwnProperty(key)) {
-            result[underline(key)] = from[key];
+            result[fromCamelCase(key)] = from[key];
         }
     }
 

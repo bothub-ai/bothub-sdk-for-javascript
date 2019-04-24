@@ -46,15 +46,17 @@ export default class MessageUs implements BaseWidget {
         this.type = type;
         this.fbAttrs = attrs;
 
-        this.$el = getWarpperById('Share Button', this.id);
+        this.$el = getWarpperById('Message Us', this.id);
         this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Share-Button with id ${this.id}`);
+            log(`Skip Message Us with id ${this.id}`);
             return;
         }
+
+        this.isRendered = false;
 
         const dom = this.$el.firstElementChild!;
 

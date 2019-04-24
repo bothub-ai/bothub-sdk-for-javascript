@@ -54,26 +54,40 @@ export default class Customerchat implements BaseWidget {
         this.id = id;
         this.type = type;
         this.fbAttrs = attrs;
+
+        // 网页只能有一个对话插件
+        if (
+            document.getElementsByClassName(fbClass).length !== 0 ||
+            document.getElementsByClassName(bhClass).length !== 0
+        ) {
+            warn(`There are already other Customerchat plugins in this page, skip the widget with id ${this.id}`);
+            this.canRender = false;
+        }
     }
 
     parse() {
-        if (this.isRendered) {
-            warn('Customerchat Plugin was already rendered, skip');
-            this.canRender = false;
+        if ((!focus && this.isRendered) || !this.canRender) {
+            log(`Skip Customerchat with id ${this.id}`);
             return;
         }
 
-        const warpper = document.createElement('div');
-        const dom = warpper.appendChild(document.createElement('div'));
+        this.isRendered = false;
 
-        document.body.appendChild(warpper);
+        if (!this.$el) {
+            this.$el = document.createElement('div');
+            this.$el.appendChild(document.createElement('div'));
+        }
+
+        const dom = this.$el.firstElementChild!;
+
+        document.body.appendChild(this.$el);
 
         addClass(dom, fbClass);
         addClass(dom, bhClass);
 
         setAttributes(dom, this.fbAttrs);
 
-        window.FB.XFBML.parse(warpper, () => {
+        window.FB.XFBML.parse(this.$el, () => {
             log(`Customerchat Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });

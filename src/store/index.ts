@@ -1,5 +1,6 @@
 import { WidgetData, Widget } from 'src/widget';
 import { unique } from 'src/lib/native';
+import { isDef } from 'src/lib/assert';
 
 /** 是否是调试模式 */
 export let debug = false;
@@ -11,6 +12,8 @@ export let disableFacebook = false;
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
 /** 插件配置原始数据 */
 export let widgetData: WidgetData[] = [];
+/** 是否在初始化后立即渲染 */
+export let renderImmediately = true;
 /** 页面上的所有插件 */
 export const widgets: Widget[] = [];
 
@@ -29,6 +32,8 @@ interface BothubInitParams {
     language?: typeof language;
     /** 页面插件数据 */
     widgets?: typeof widgetData;
+    /** 是否初始化后立即渲染 */
+    renderImmediately?: typeof renderImmediately;
 }
 
 /** 初始化函数 */
@@ -39,6 +44,10 @@ export function setGlobalParams(param: BothubInitParams) {
 
     if (param.disableFacebook) {
         disableFacebook = param.disableFacebook;
+    }
+
+    if (isDef(param.renderImmediately)) {
+        renderImmediately = param.renderImmediately;
     }
 
     if (param.debug) {

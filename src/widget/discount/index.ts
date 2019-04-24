@@ -59,7 +59,6 @@ export default class Discount implements BaseWidget {
     }
 
     parse(focus = false) {
-        // 非强制模式且已渲染，或者是无法渲染
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
             log(`Skip Checkbox with id ${this.id}`);
             return;

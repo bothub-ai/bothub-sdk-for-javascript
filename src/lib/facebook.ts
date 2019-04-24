@@ -1,5 +1,5 @@
 import { warn } from 'src/lib/print';
-import { language, messengerAppId } from 'src/store';
+import { language, messengerAppId, renderImmediately } from 'src/store';
 
 import Wdiget from 'src/widget';
 
@@ -43,8 +43,10 @@ function bothubFacebookInit() {
         version: 'v3.2',
     });
 
-    // 延迟 500 毫秒，渲染所有插件
-    setTimeout(Wdiget.render, 500);
+    // 允许立即渲染，延迟 500 毫秒，渲染所有插件
+    if (renderImmediately) {
+        setTimeout(Wdiget.render, 500);
+    }
 }
 
 /** facebook SDK 初始化 */

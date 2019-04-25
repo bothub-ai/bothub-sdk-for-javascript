@@ -2,6 +2,8 @@ import { WidgetData, Widget } from 'src/widget';
 import { unique } from 'src/lib/native';
 import { isDef } from 'src/lib/assert';
 
+import * as utils from 'src/lib/utils';
+
 /** 是否是调试模式 */
 export let debug = false;
 /** APP 编号 */
@@ -16,6 +18,13 @@ export let renderImmediately = true;
 export let widgetData: WidgetData[] = [];
 /** 页面上的所有插件 */
 export const widgets: Widget[] = [];
+
+/** 当前用户引用参数 */
+export const userRef = utils.getUserRef();
+/** 当前用户的自定义编号 */
+export const customUserId = utils.getCustomUserId();
+/** 当前用户的 Facebook 编号  */
+export const fbUserId = utils.getFacebookUserId();
 
 /** 初始化参数 */
 interface BothubInitParams {

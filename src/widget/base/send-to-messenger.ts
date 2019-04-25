@@ -1,6 +1,7 @@
 import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
 import { addClass, setAttributes } from 'src/lib/dom';
+import { SendToMessengerEvent } from 'typings/facebook';
 
 import {
     BaseWidget,
@@ -97,7 +98,7 @@ export default class SendToMessenger implements BaseWidget {
 
         // 绑定事件
         if (!alreadyRender) {
-            window.FB.Event.subscribe('send_to_messenger', (ev: FacebookSendToMessengerEvent) => {
+            window.FB.Event.subscribe('send_to_messenger', (ev: SendToMessengerEvent) => {
                 if (!ev.ref) {
                     warn('Can not found \'ref\' attrubite in this \'Send To Messenger\' Plugin', true);
                     return;

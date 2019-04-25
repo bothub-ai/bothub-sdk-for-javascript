@@ -14,9 +14,9 @@ export type Widget = Checkbox | Discount | MessageUs | Customerchat | SendToMess
 export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | SendToMessengerData | ShareButtonData;
 
 /** 渲染函数 */
-function render(focus?: boolean): boolean;
-function render(id?: string, focus?: boolean): boolean;
-function render(id?: string | boolean, focus?: boolean) {
+export function render(focus?: boolean): boolean;
+export function render(id?: string, focus?: boolean): boolean;
+export function render(id?: string | boolean, focus?: boolean) {
     // 没有输入
     if (arguments.length === 0) {
         id = undefined;
@@ -92,7 +92,3 @@ function render(id?: string | boolean, focus?: boolean) {
 
     return widget.canRender;
 }
-
-export default {
-    render,
-};

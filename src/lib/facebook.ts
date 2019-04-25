@@ -1,7 +1,6 @@
 import { warn } from 'src/lib/print';
+import { render } from 'src/widget';
 import { language, messengerAppId, renderImmediately } from 'src/store';
-
-import Wdiget from 'src/widget';
 
 /** 加载 facebook SDK */
 export function loadFacebookSDK() {
@@ -45,7 +44,7 @@ function bothubFacebookInit() {
 
     // 允许立即渲染，延迟 500 毫秒，渲染所有插件
     if (renderImmediately) {
-        setTimeout(Wdiget.render, 500);
+        setTimeout(render, 500);
     }
 }
 

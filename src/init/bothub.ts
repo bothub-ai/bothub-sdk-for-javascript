@@ -1,9 +1,8 @@
-import Widget from 'src/widget';
-import Marketing from 'src/module/marketing';
-import Ecommerce from 'src/module/ecommerce';
+import * as Widget from 'src/widget';
+import * as Event from 'src/module/event';
 
 import * as Store from 'src/store';
-import * as FB from 'src/lib/facebook';
+import * as Facebook from 'src/lib/facebook';
 
 function init(...arg: Parameters<typeof Store.setGlobalParams>) {
     Store.setGlobalParams(...arg);
@@ -14,18 +13,16 @@ function init(...arg: Parameters<typeof Store.setGlobalParams>) {
     }
 
     // 加载 facebook SDK
-    FB.loadFacebookSDK();
+    Facebook.loadFacebookSDK();
     // 设置 facebook SDK 初始化函数
-    FB.facebookInit();
+    Facebook.facebookInit();
 }
 
 export default {
     /** 初始化函数 */
     init,
-    /** 订单模块 */
-    Ecommerce,
-    /** 营销模块 */
-    Marketing,
+    /** 事件应用 */
+    Event,
     /** 插件模块 */
     Widget,
 };

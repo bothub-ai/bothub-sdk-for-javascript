@@ -2,6 +2,7 @@ import './style.less';
 
 import { BaseWidget, WidgetType, ComponentType, componentWarpper, eleNotFound } from '../helper';
 import { DiscountData, ComponentProps } from './constant';
+import { CheckboxEvent } from 'typings/facebook';
 
 import { log, warn } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
@@ -93,7 +94,7 @@ export default class Discount implements BaseWidget {
 
         // 首次渲染，需要绑定事件
         if (!alreadyRender) {
-            window.FB.Event.subscribe('messenger_checkbox', (ev: FacebookCheckboxEvent) => {
+            window.FB.Event.subscribe('messenger_checkbox', (ev: CheckboxEvent) => {
                 if (!ev.ref) {
                     warn('Can not found \'ref\' attrubite in this \'Discount\' Plugin', true);
                     return;

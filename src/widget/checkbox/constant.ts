@@ -27,6 +27,11 @@ export interface CheckboxData extends WidgetDataCommon {
      */
     centerAlign?: boolean;
     /**
+     * 用户勾选确认后多少天内自动隐藏
+     *  - 默认为`-1`，意为不使用此功能
+     */
+    hideAfterChecked?: number;
+    /**
      * Checkbox 点击选中事件
      * @param {string} userRef 当前用户编号
      */
@@ -39,7 +44,10 @@ export interface CheckboxData extends WidgetDataCommon {
 }
 
 /** Facebook 核心插件的属性 */
-export interface FbCheckboxAttrs extends Omit<CheckboxData, 'type' | 'id' | 'check' | 'unCheck'> {
+export interface FbCheckboxAttrs extends Omit<
+    CheckboxData,
+    'type' | 'id' | 'check' | 'unCheck' | 'bhRef' | 'hideAfterChecked'
+> {
     /** 插件加载网址的基域 */
     origin: string;
     /** Facebook 应用编号 */

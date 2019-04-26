@@ -1,6 +1,7 @@
 /** Ignoring some properties in an interface */
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
+/** Part partial */
 declare type PartPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 /** To overwrite a read-only interface as writable */

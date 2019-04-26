@@ -1,7 +1,15 @@
-import { BaseWidget, WidgetType, ComponentType, componentWarpper, eleNotFound } from '../helper';
 import { CheckboxData, ComponentProps } from './constant';
+import { overHiddenTime, bindEvent } from './helper';
 import { CheckboxEvent } from 'typings/facebook';
 
+import {
+    BaseWidget,
+    WidgetCommon,
+    ComponentType,
+    componentWarpper,
+} from '../helper';
+
+import { local } from 'src/lib/cache';
 import { log, warn } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
@@ -13,10 +21,9 @@ export { CheckboxData };
 /**
  * [确认框插件](https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox)
  */
-export default class Checkbox implements BaseWidget {
-    id: string;
-    type = WidgetType.Checkbox;
+export default class Checkbox extends BaseWidget implements WidgetCommon {
     fbAttrs: ComponentProps['attrs'];
+    hideAfterChecked: number;
 
     $el?: HTMLElement;
     $component?: ComponentType<ComponentProps>;
@@ -39,10 +46,13 @@ export default class Checkbox implements BaseWidget {
      */
     onUnCheck?(userRef: string): void;
 
-    constructor({ id, type, check, unCheck, ...attrs }: CheckboxData) {
-        this.id = id;
+    constructor({ id, type, bhRef, hideAfterChecked = 0, check, unCheck, ...attrs }: CheckboxData) {
+        super(arguments[0]);
+
+        this.hideAfterChecked = hideAfterChecked;
         this.onCheck = check;
         this.onUnCheck = unCheck;
+
         this.fbAttrs = {
             ...attrs,
             userRef: '',
@@ -53,14 +63,26 @@ export default class Checkbox implements BaseWidget {
         this.$el = document.getElementById(this.id) || undefined;
 
         if (!this.$el) {
-            eleNotFound('Checkbox', this.id);
+            this.elNotFound();
             this.canRender = false;
+            return this;
         }
+
+        // 设置隐藏，且在隐藏时间范围内
+        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
+            this.canRender = false;
+            return this;
+        }
+    }
+
+    /** “自动隐藏”存储的键名 */
+    get hidenKey() {
+        return `checkbox-hide:${this.id}`;
     }
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Checkbox with id ${this.id}`);
+            log(`Skip ${this.name} with id ${this.id}`);
             return;
         }
 
@@ -89,33 +111,10 @@ export default class Checkbox implements BaseWidget {
 
         // 首次渲染，需要绑定事件
         if (!alreadyRender) {
-            window.FB.Event.subscribe('messenger_checkbox', (ev: CheckboxEvent) => {
-                if (!ev.ref) {
-                    warn('Can not found \'ref\' attrubite in this \'Checkbox\' Plugin', true);
-                    return;
-                }
-
-                const getId = window.atob(ev.ref);
-
-                if (getId !== this.id) {
-                    return;
-                }
-
-                if (ev.event === 'rendered') {
-                    log(`Checkbox Plugin with ID ${this.id} has been rendered`);
-                    // 已渲染标志位置高
-                    this.isRendered = true;
-                    // 隐藏 loading
-                    this.$component!.update({ loading: false });
-                }
-                else if (ev.state === 'checked' && this.onCheck) {
-                    this.isChecked = true;
-                    this.onCheck(ev.user_ref);
-                }
-                else if (ev.state === 'unchecked' && this.onUnCheck) {
-                    this.isChecked = false;
-                    this.onUnCheck(ev.user_ref);
-                }
+            bindEvent(this, {
+                onCheck: this.onCheck,
+                onUnCheck: this.onUnCheck,
+                onRendered: () => this.$component!.update({ loading: false }),
             });
         }
     }

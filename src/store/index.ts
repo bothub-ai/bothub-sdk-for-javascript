@@ -32,7 +32,7 @@ interface BothubInitParams {
     debug?: typeof debug;
     /**
      * APP 编号
-     *  - debug 选项为 true 时才会生效
+     *  - debug 选项为`true`时才会生效
      */
     appId?: typeof messengerAppId;
     /** 是否禁用 Facebook 相关功能 */

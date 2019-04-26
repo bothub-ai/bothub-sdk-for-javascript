@@ -4,9 +4,9 @@ import { messengerAppId } from 'src/store';
 
 import {
     BaseWidget,
+    WidgetCommon,
     WidgetDataCommon,
     WidgetType,
-    getWarpperById,
 } from '../helper';
 
 /** “给我们发消息”插件 */
@@ -31,28 +31,25 @@ const bhClass = 'bothub-messengermessageus';
 /**
  * [“给我们发消息”插件](https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin)
  */
-export default class MessageUs implements BaseWidget {
-    id: string;
-    type: WidgetType.MessageUs;
-    fbAttrs: Omit<MessageUsData, 'id' | 'type'>;
+export default class MessageUs extends BaseWidget implements WidgetCommon {
+    fbAttrs: Omit<MessageUsData, 'id' | 'type' | 'bhRef'>;
 
     canRender = true;
     isRendered = false;
 
     $el?: HTMLElement;
 
-    constructor({ id, type, ...attrs }: MessageUsData) {
-        this.id = id;
-        this.type = type;
-        this.fbAttrs = attrs;
+    constructor({ id, type, bhRef, ...attrs }: MessageUsData) {
+        super(arguments[0]);
 
-        this.$el = getWarpperById('Message Us', this.id);
+        this.fbAttrs = attrs;
+        this.$el = this.renderWarpperById();
         this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Message Us with id ${this.id}`);
+            log(`Skip ${this.name} with id ${this.id}`);
             return;
         }
 
@@ -68,7 +65,7 @@ export default class MessageUs implements BaseWidget {
         dom.setAttribute('messenger_app_id', messengerAppId);
 
         window.FB.XFBML.parse(this.$el, () => {
-            log(`Message Us Plugin with ID ${this.id} has been rendered`);
+            log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

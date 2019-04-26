@@ -3,9 +3,9 @@ import { addClass, setAttributes } from 'src/lib/dom';
 
 import {
     BaseWidget,
+    WidgetCommon,
     WidgetDataCommon,
     WidgetType,
-    getWarpperById,
 } from '../helper';
 
 /** 分享按钮插件 */
@@ -32,28 +32,26 @@ const bhClass = 'bothub-share-button';
 /**
  * [分享按钮插件](https://developers.facebook.com/docs/plugins/share-button/)
  */
-export default class ShareButton implements BaseWidget {
-    id: string;
-    type: WidgetType.ShareButton;
-    fbAttrs: Omit<ShareButtonData, 'id' | 'type'>;
+export default class ShareButton extends BaseWidget implements WidgetCommon {
+    fbAttrs: Omit<ShareButtonData, 'id' | 'type' | 'bhRef'>;
 
     canRender = true;
     isRendered = false;
 
     $el?: HTMLElement;
 
-    constructor({ id, type, ...attrs }: ShareButtonData) {
-        this.id = id;
-        this.type = type;
+    constructor({ id, type, bhRef, ...attrs }: ShareButtonData) {
+        super(arguments[0]);
+
         this.fbAttrs = attrs;
 
-        this.$el = getWarpperById('Share Button', this.id);
+        this.$el = this.renderWarpperById();
         this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Share Button with id ${this.id}`);
+            log(`Skip ${this.name} with id ${this.id}`);
             return;
         }
 
@@ -67,7 +65,7 @@ export default class ShareButton implements BaseWidget {
         setAttributes(dom, this.fbAttrs, ['size', 'layout', 'href']);
 
         window.FB.XFBML.parse(this.$el, () => {
-            log(`Share Button Plugin with ID ${this.id} has been rendered`);
+            log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

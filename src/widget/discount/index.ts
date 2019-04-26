@@ -1,12 +1,18 @@
 import './style.less';
 
-import { BaseWidget, WidgetType, ComponentType, componentWarpper, eleNotFound } from '../helper';
 import { DiscountData, ComponentProps } from './constant';
-import { CheckboxEvent } from 'typings/facebook';
+import { overHiddenTime, bindEvent } from '../checkbox/helper';
 
-import { log, warn } from 'src/lib/print';
+import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
+
+import {
+    BaseWidget,
+    WidgetCommon,
+    ComponentType,
+    componentWarpper,
+} from '../helper';
 
 import Component from './component';
 
@@ -15,12 +21,10 @@ export { DiscountData };
 /**
  * [优惠券插件]()
  */
-export default class Discount implements BaseWidget {
-    id: string;
-    type = WidgetType.Discount;
-
+export default class Discount extends BaseWidget implements WidgetCommon {
     data: ComponentProps['data'];
     fbAttrs: ComponentProps['fbAttrs'];
+    hideAfterChecked: number;
 
     $el?: HTMLElement;
     $component?: ComponentType<ComponentProps>;
@@ -35,9 +39,11 @@ export default class Discount implements BaseWidget {
     clickShowCodeBtn: DiscountData['clickShowCodeBtn'];
     clickCopyCodeBtn: DiscountData['clickCopyCodeBtn'];
 
-    constructor({ id, type, pageId, clickShowCodeBtn, clickCopyCodeBtn, ...rest }: DiscountData) {
-        this.id = id;
+    constructor({ id, type, bhRef, pageId, hideAfterChecked = 0, clickShowCodeBtn, clickCopyCodeBtn, ...rest }: DiscountData) {
+        super(arguments[0]);
+
         this.data = rest;
+        this.hideAfterChecked = hideAfterChecked;
         this.clickShowCodeBtn = clickShowCodeBtn;
         this.clickCopyCodeBtn = clickCopyCodeBtn;
 
@@ -54,9 +60,21 @@ export default class Discount implements BaseWidget {
         this.$el = document.getElementById(this.id) || undefined;
 
         if (!this.$el) {
-            eleNotFound('Discount', this.id);
+            this.elNotFound();
             this.canRender = false;
+            return this;
         }
+
+        // 设置隐藏，且在隐藏时间范围内
+        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
+            this.canRender = false;
+            return this;
+        }
+    }
+
+    /** “自动隐藏”存储的键名 */
+    get hidenKey() {
+        return `discount-hide:${this.id}`;
     }
 
     parse(focus = false) {
@@ -94,31 +112,10 @@ export default class Discount implements BaseWidget {
 
         // 首次渲染，需要绑定事件
         if (!alreadyRender) {
-            window.FB.Event.subscribe('messenger_checkbox', (ev: CheckboxEvent) => {
-                if (!ev.ref) {
-                    warn('Can not found \'ref\' attrubite in this \'Discount\' Plugin', true);
-                    return;
-                }
-
-                const getId = window.atob(ev.ref);
-
-                if (getId !== this.id) {
-                    return;
-                }
-
-                if (ev.event === 'rendered') {
-                    log(`Checkbox Plugin with ID ${this.id} has been rendered`);
-                    this.isRendered = true;
-                    this.$component!.update({ loading: false });
-                }
-                else if (ev.state === 'checked') {
-                    this.isChecked = true;
-                    this.$component!.update({ isChecked: true });
-                }
-                else if (ev.state === 'unchecked') {
-                    this.isChecked = false;
-                    this.$component!.update({ isChecked: false });
-                }
+            bindEvent(this, {
+                onRendered: () => this.$component!.update({ loading: false }),
+                onCheck: () => this.$component!.update({ isChecked: true }),
+                onUnCheck: () => this.$component!.update({ isChecked: false }),
             });
         }
     }

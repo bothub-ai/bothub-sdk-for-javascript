@@ -5,9 +5,9 @@ import { SendToMessengerEvent } from 'typings/facebook';
 
 import {
     BaseWidget,
+    WidgetCommon,
     WidgetDataCommon,
     WidgetType,
-    getWarpperById,
 } from '../helper';
 
 /** “发送至 Messenger”插件 */
@@ -51,10 +51,8 @@ const bhClass = 'bothub-send-to-messenger';
 /**
  * [“发送至 Messenger”插件](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/)
  */
-export default class SendToMessenger implements BaseWidget {
-    id: string;
-    type: WidgetType.SendToMessenger;
-    fbAttrs: Omit<SendToMessengerData, 'id' | 'type' | 'click'>;
+export default class SendToMessenger extends BaseWidget implements WidgetCommon {
+    fbAttrs: Omit<SendToMessengerData, 'id' | 'type' | 'bhRef' | 'click'>;
 
     canRender = true;
     isRendered = false;
@@ -64,19 +62,19 @@ export default class SendToMessenger implements BaseWidget {
     /** 点击事件 */
     onClick?(): void;
 
-    constructor({ id, type, click, ...attrs }: SendToMessengerData) {
-        this.id = id;
-        this.type = type;
+    constructor({ id, type, bhRef, click, ...attrs }: SendToMessengerData) {
+        super(arguments[0]);
+
         this.onClick = click;
         this.fbAttrs = attrs;
 
-        this.$el = getWarpperById('Send To Messenger', this.id);
+        this.$el = this.renderWarpperById();
         this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
-            log(`Skip Send To Messenger with id ${this.id}`);
+            log(`Skip ${this.name} with id ${this.id}`);
             return;
         }
 
@@ -100,7 +98,7 @@ export default class SendToMessenger implements BaseWidget {
         if (!alreadyRender) {
             window.FB.Event.subscribe('send_to_messenger', (ev: SendToMessengerEvent) => {
                 if (!ev.ref) {
-                    warn('Can not found \'ref\' attrubite in this \'Send To Messenger\' Plugin', true);
+                    warn(`Can not found 'ref' attrubite in this '${this.name}' Plugin`, true);
                     return;
                 }
 
@@ -111,7 +109,7 @@ export default class SendToMessenger implements BaseWidget {
                 }
 
                 if (ev.event === 'rendered') {
-                    log(`Send To Messenger Plugin with ID ${this.id} has been rendered`);
+                    log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
                 }
                 else if (ev.event === 'clicked' && this.onClick) {

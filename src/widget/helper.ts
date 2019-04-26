@@ -12,7 +12,7 @@ import {
 } from 'preact';
 
 /** 插件类型 */
-export const enum WidgetType {
+export enum WidgetType {
     Checkbox,
     Customerchat,
     Discount,
@@ -25,13 +25,19 @@ export const enum WidgetType {
 export const WarpperClassName = 'bothub-widget-warpper';
 
 /** 类的公共实现 */
-export interface BaseWidget {
+export interface WidgetCommon {
     /** 当前插件的唯一编号 */
     id: string;
     /** 当前插件的类型 */
     type: WidgetType;
+    /** 插件名称 */
+    name: string;
+    /** bothub 引用标记 */
+    bhRef: string;
+
     /** 当前插件的核心 facebook 插件属性 */
     fbAttrs: object;
+
     /** 是否可以渲染 */
     canRender: boolean;
     /** 当前是否已经渲染 */
@@ -55,8 +61,52 @@ export interface BaseWidget {
 export interface WidgetDataCommon {
     /** 当前插件的唯一编号 */
     id: string;
+    /** 插件类型 */
+    type: WidgetType;
     /** Facebook 主页编号 */
     pageId: string;
+    /** bothub 引用标记 */
+    bhRef: string;
+}
+
+/** 插件基类 */
+export abstract class BaseWidget {
+    id: string;
+    bhRef: string;
+    type: WidgetType;
+
+    constructor({ id, type, bhRef }: WidgetDataCommon) {
+        this.id = id;
+        this.type = type;
+        this.bhRef = bhRef;
+    }
+
+    get name() {
+        return WidgetType[this.type];
+    }
+
+    /** 未找到插件 ID 时的报错日志 */
+    elNotFound() {
+        warn(`Can not find the ${this.name} Plugin element with ID: ${this.id}, Skip`, true);
+    }
+    /** 获取并创建本体以及包装 */
+    getWarpperById() {
+        const warpper = document.getElementById(this.id);
+
+        // 未找到包装的 DOM
+        if (!warpper) {
+            this.elNotFound();
+            return;
+        }
+
+        addClass(warpper, WarpperClassName);
+
+        if (!warpper.firstElementChild) {
+            warpper.appendChild(document.createElement('div'));
+        }
+
+        return warpper;
+    }
 }
 
 /** 对象属性名称由驼峰转为下划线 */
@@ -131,31 +181,4 @@ export function componentWarpper<T extends object>(
         update,
         destroy,
     };
-}
-
-/** 未找到插件 ID 时的报错日志 */
-export function eleNotFound(name: string, id: string) {
-    warn(
-        `Can not find the ${name} Plugin element with ID: ${id}, Skip`,
-        true,
-    );
-}
-
-/** 获取并创建本体以及包装 */
-export function getWarpperById(name: string, id: string) {
-    const warpper = document.getElementById(id);
-
-    // 未找到包装的 DOM
-    if (!warpper) {
-        eleNotFound(name, id);
-        return;
-    }
-
-    addClass(warpper, WarpperClassName);
-
-    if (!warpper.firstElementChild) {
-        warpper.appendChild(document.createElement('div'));
-    }
-
-    return warpper;
 }

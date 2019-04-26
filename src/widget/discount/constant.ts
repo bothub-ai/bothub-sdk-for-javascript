@@ -15,6 +15,11 @@ export interface DiscountData extends WidgetDataCommon {
     copyCodeBtnText: string;
     /** 折扣 */
     notice: string;
+    /**
+     * 用户勾选确认后多少天内自动隐藏
+     *  - 默认为`-1`，意为不使用此功能
+     */
+    hideAfterChecked?: number;
 
     /** 复制优惠码事件 */
     clickCopyCodeBtn?(): void;

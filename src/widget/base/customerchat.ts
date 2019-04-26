@@ -3,6 +3,7 @@ import { addClass, setAttributes } from 'src/lib/dom';
 
 import {
     BaseWidget,
+    WidgetCommon,
     WidgetDataCommon,
     WidgetType,
 } from '../helper';
@@ -40,19 +41,17 @@ const bhClass = 'bothub-customerchat';
 /**
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
  */
-export default class Customerchat implements BaseWidget {
-    id: string;
-    type: WidgetType.Customerchat;
-    fbAttrs: Omit<CustomerchatData, 'id' | 'type'>;
+export default class Customerchat extends BaseWidget implements WidgetCommon {
+    fbAttrs: Omit<CustomerchatData, 'id' | 'type' | 'bhRef'>;
 
     canRender = true;
     isRendered = false;
 
     $el?: HTMLElement;
 
-    constructor({ id, type, ...attrs }: CustomerchatData) {
-        this.id = id;
-        this.type = type;
+    constructor({ id, type, bhRef, ...attrs }: CustomerchatData) {
+        super(arguments[0]);
+
         this.fbAttrs = attrs;
 
         // 网页只能有一个对话插件
@@ -60,14 +59,14 @@ export default class Customerchat implements BaseWidget {
             document.getElementsByClassName(fbClass).length !== 0 ||
             document.getElementsByClassName(bhClass).length !== 0
         ) {
-            warn(`There are already other Customerchat plugins in this page, skip the widget with id ${this.id}`);
+            warn(`There are already other ${this.name} plugins in this page, skip the widget with id ${this.id}`);
             this.canRender = false;
         }
     }
 
     parse() {
         if ((!focus && this.isRendered) || !this.canRender) {
-            log(`Skip Customerchat with id ${this.id}`);
+            log(`Skip ${this.name} with id ${this.id}`);
             return;
         }
 
@@ -88,7 +87,7 @@ export default class Customerchat implements BaseWidget {
         setAttributes(dom, this.fbAttrs);
 
         window.FB.XFBML.parse(this.$el, () => {
-            log(`Customerchat Plugin with ID ${this.id} has been rendered`);
+            log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
         });
     }

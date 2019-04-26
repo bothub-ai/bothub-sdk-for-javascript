@@ -90,7 +90,7 @@ export abstract class BaseWidget {
         warn(`Can not find the ${this.name} Plugin element with ID: ${this.id}, Skip`, true);
     }
     /** 获取并创建本体以及包装 */
-    getWarpperById() {
+    renderWarpperById() {
         const warpper = document.getElementById(this.id);
 
         // 未找到包装的 DOM

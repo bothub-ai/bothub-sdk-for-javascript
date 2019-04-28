@@ -57,6 +57,9 @@ export default class SendToMessenger extends BaseWidget implements WidgetCommon 
     canRender = true;
     isRendered = false;
 
+    /** 是否已经发送数据 */
+    sent = false;
+
     $el?: HTMLElement;
 
     /** 点击事件 */
@@ -82,6 +85,7 @@ export default class SendToMessenger extends BaseWidget implements WidgetCommon 
         const alreadyRender = this.isRendered;
         const dom = this.$el.firstElementChild!;
 
+        this.sent = false;
         this.isRendered = false;
 
         addClass(dom, fbClass);
@@ -109,10 +113,11 @@ export default class SendToMessenger extends BaseWidget implements WidgetCommon 
                 }
 
                 if (ev.event === 'rendered') {
-                    log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
+                    log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                 }
                 else if (ev.event === 'clicked' && this.onClick) {
+                    this.sent = true;
                     this.onClick();
                 }
             });

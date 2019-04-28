@@ -123,10 +123,10 @@ export function underlineObject(from: object) {
 }
 
 /** 组件类型 */
-export type ComponentType<T extends object = object> = {
+export interface ComponentType<T extends object = object> {
     update(props?: Partial<T>): void;
     destroy(): void;
-};
+}
 
 /** 是否是函数组件 */
 const isFunctional = <U extends object>(x: AnyComponent<U>): x is FunctionalComponent<U> => {

@@ -9,8 +9,7 @@ import {
     componentWarpper,
 } from '../helper';
 
-import { local } from 'src/lib/cache';
-import { log, warn } from 'src/lib/print';
+import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
 

@@ -10,6 +10,8 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
+export { WidgetType };
+
 export type Widget = Checkbox | Discount | MessageUs | Customerchat | SendToMessenger | ShareButton;
 export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | SendToMessengerData | ShareButtonData;
 
@@ -46,10 +48,8 @@ export function render(id?: string | boolean, focus?: boolean) {
         if (focus) {
             widget.parse(true);
         }
-        // 非强制刷新则跳过
-        else {
-            return;
-        }
+
+        return;
     }
 
     // 插件还不存在，则创建

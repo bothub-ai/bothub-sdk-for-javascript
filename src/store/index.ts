@@ -1,5 +1,4 @@
 import { WidgetData, Widget } from 'src/widget';
-import { unique } from 'src/lib/native';
 import { isDef } from 'src/lib/assert';
 
 import * as utils from 'src/lib/utils';
@@ -15,7 +14,7 @@ export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
 /** 是否在初始化后立即渲染 */
 export let renderImmediately = true;
 /** 插件配置原始数据 */
-export let widgetData: WidgetData[] = [];
+export const widgetData: WidgetData[] = [];
 /** 页面上的所有插件 */
 export const widgets: Widget[] = [];
 
@@ -69,5 +68,16 @@ export function setGlobalParams(param: BothubInitParams) {
     }
 
     // 合并插件列表
-    widgetData = unique(widgetData.concat(param.widgets || []), ({ id }) => id);
+    (param.widgets || []).forEach((item) => {
+        const origin = widgetData.find(({ id: local }) => local === item.id);
+
+        // 找到 id 重复的插件，合并
+        if (origin) {
+            Object.assign(origin, item);
+        }
+        // 未找到 id 重复的插件，则添加新插件
+        else {
+            widgetData.push(item);
+        }
+    });
 }

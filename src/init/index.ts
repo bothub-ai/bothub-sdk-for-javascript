@@ -5,9 +5,9 @@ import Bothub from './bothub';
 import { isArray } from 'src/lib/assert';
 
 // 初始化入口
-if (!('BOTHUB' in window)) {
-    Object.defineProperty(window, 'BOTHUB', {
-        enumerable: true,
+if (!('BH' in window)) {
+    Object.defineProperty(window, 'BH', {
+        enumerable: false,
         value: Bothub,
     });
 }

@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
+import { underlineObject } from '../helper';
+import { WarpperClassName } from '../base/base';
 import { ComponentProps, bhClass } from './constant';
-import { WarpperClassName, underlineObject } from '../helper';
 
 import { log } from 'src/lib/print';
 import { copy } from 'src/lib/utils';

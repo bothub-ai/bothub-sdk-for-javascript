@@ -1,4 +1,5 @@
-import { WidgetType, WidgetDataCommon } from '../helper';
+import { WidgetType } from '../helper';
+import { WidgetDataCommon } from '../base/base';
 import { FbCheckboxAttrs } from '../checkbox/constant';
 
 /** 砍价插件数据接口 */

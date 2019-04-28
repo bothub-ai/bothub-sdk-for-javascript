@@ -1,12 +1,8 @@
 import { log } from 'src/lib/print';
 import { addClass, setAttributes } from 'src/lib/dom';
 
-import {
-    BaseWidget,
-    WidgetCommon,
-    WidgetDataCommon,
-    WidgetType,
-} from '../helper';
+import { WidgetType } from '../helper';
+import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
 
 /** 分享按钮插件 */
 export interface ShareButtonData extends Omit<WidgetDataCommon, 'pageId'> {

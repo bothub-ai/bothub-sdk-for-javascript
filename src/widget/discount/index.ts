@@ -7,12 +7,8 @@ import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
 
-import {
-    BaseWidget,
-    WidgetCommon,
-    ComponentType,
-    componentWarpper,
-} from '../helper';
+import { componentWarpper, ComponentType } from '../helper';
+import { BaseWidget, WidgetCommon } from '../base/base';
 
 import Component from './component';
 

@@ -3,12 +3,8 @@ import { messengerAppId } from 'src/store';
 import { addClass, setAttributes } from 'src/lib/dom';
 import { SendToMessengerEvent } from 'typings/facebook';
 
-import {
-    BaseWidget,
-    WidgetCommon,
-    WidgetDataCommon,
-    WidgetType,
-} from '../helper';
+import { WidgetType } from '../helper';
+import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {

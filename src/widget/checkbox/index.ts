@@ -2,12 +2,8 @@ import { CheckboxData, ComponentProps } from './constant';
 import { overHiddenTime, bindEvent } from './helper';
 import { CheckboxEvent } from 'typings/facebook';
 
-import {
-    BaseWidget,
-    WidgetCommon,
-    ComponentType,
-    componentWarpper,
-} from '../helper';
+import { componentWarpper, ComponentType } from '../helper';
+import { BaseWidget, WidgetCommon } from '../base/base';
 
 import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';

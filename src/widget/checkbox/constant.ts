@@ -1,4 +1,5 @@
-import { WidgetType, WidgetDataCommon } from '../helper';
+import { WidgetType } from '../helper';
+import { WidgetDataCommon } from '../base/base';
 
 /** 确认框插件数据接口 */
 export interface CheckboxData extends WidgetDataCommon {

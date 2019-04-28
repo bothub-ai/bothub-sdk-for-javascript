@@ -1,12 +1,8 @@
 import { log, warn } from 'src/lib/print';
 import { addClass, setAttributes } from 'src/lib/dom';
 
-import {
-    BaseWidget,
-    WidgetCommon,
-    WidgetDataCommon,
-    WidgetType,
-} from '../helper';
+import { WidgetType } from '../helper';
+import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
 
 /** 顾客聊天插件数据接口 */
 export interface CustomerchatData extends WidgetDataCommon {

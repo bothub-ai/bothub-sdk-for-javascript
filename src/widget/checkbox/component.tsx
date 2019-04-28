@@ -1,6 +1,7 @@
 import { h, FunctionalComponent } from 'preact';
+import { underlineObject } from '../helper';
+import { WarpperClassName } from '../base/base';
 import { ComponentProps, bhClass, fbClass } from './constant';
-import { WarpperClassName, underlineObject } from '../helper';
 
 import Loading from 'src/widget/components/loading';
 

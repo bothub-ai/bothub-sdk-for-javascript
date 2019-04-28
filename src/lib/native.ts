@@ -63,3 +63,18 @@ export function concat<T, U>(from: T[], callback: (val: T) => U[] | undefined): 
 
     return result;
 }
+
+/**
+ * 取出数组的某个元素
+ * @param arr 待取数的数组
+ * @param index 下标 - 支持负数
+ */
+export function get<T>(arr: T[], index: number): T {
+    const sub = (index >= 0) ? index : arr.length + index;
+
+    if (sub < 0 || sub >= arr.length) {
+        throw new Error('(array) index out of bounds.');
+    }
+
+    return arr[sub];
+}

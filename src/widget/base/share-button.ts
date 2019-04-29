@@ -5,7 +5,7 @@ import { WidgetType } from '../helper';
 import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
 
 /** 分享按钮插件 */
-export interface ShareButtonData extends Omit<WidgetDataCommon, 'pageId'> {
+export interface ShareButtonData extends WidgetDataCommon {
     /** 分享按钮插件类型 */
     type: WidgetType.ShareButton;
     /** 待分享页面的绝对网址 */
@@ -28,21 +28,16 @@ const bhClass = 'bothub-share-button';
 /**
  * [分享按钮插件](https://developers.facebook.com/docs/plugins/share-button/)
  */
-export default class ShareButton extends BaseWidget implements WidgetCommon {
+export default class ShareButton extends BaseWidget<ShareButtonData> implements WidgetCommon {
     fbAttrs: Omit<ShareButtonData, 'id' | 'type' | 'bhRef'>;
 
-    canRender = true;
-    isRendered = false;
-
-    $el?: HTMLElement;
+    readonly requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href', 'bhRef'];
 
     constructor({ id, type, bhRef, ...attrs }: ShareButtonData) {
         super(arguments[0]);
 
+        this.check();
         this.fbAttrs = attrs;
-
-        this.$el = this.renderWarpperById();
-        this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {

@@ -4,6 +4,30 @@
 
     width: @Width;
     margin: 6px auto;
+
+    &.bothub-widget-discount__left {
+        margin-left: 0;
+    }
+
+    &.bothub-widget-discount__right {
+        margin-right: 0;
+    }
+
+    .bothub-widget-discount__header {
+        text-align: center;
+
+        .bothub-widget-discount__title {
+            font-size: 18px;
+            line-height: 20px;
+            color: #444;
+        }
+
+        .bothub-widget-discount__subtitle {
+            font-size: 14px;
+            line-height: 16px;
+            color: #666;
+        }
+    }
     
     .bothub-widget-discount__box {
         display: flex;
@@ -12,6 +36,7 @@
         margin: 0 auto;
         text-align: left;
         height: 72px;
+        margin: 8px 0;
     }
 
     .bothub-widget-discount__tip {
@@ -72,7 +97,6 @@
         border: none;
         padding: 10px 0;
         border-radius: @Radius;
-        margin: 8px 0 0 0;
         cursor: pointer;
         user-select: none;
         outline: none;

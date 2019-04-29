@@ -1,5 +1,5 @@
-import { WidgetType, WidgetData, Widget } from 'src/widget';
-import { isDef, isNumber } from 'src/lib/assert';
+import { isDef } from 'src/lib/assert';
+import { InputWidgetData, WidgetData, Widget, setWidget } from 'src/widget';
 
 import * as utils from 'src/lib/utils';
 
@@ -25,11 +25,6 @@ export const customUserId = utils.getCustomUserId();
 /** 当前用户的 Facebook 编号  */
 export const fbUserId = utils.getFacebookUserId();
 
-/** 插件输入数据类型 */
-type InputWidgetData = Omit<WidgetData, 'type'> & {
-    type: WidgetType | keyof typeof WidgetType;
-};
-
 /** 初始化参数 */
 interface BothubInitParams {
     /** 是否是调试模式 */
@@ -43,10 +38,10 @@ interface BothubInitParams {
     disableFacebook?: typeof disableFacebook;
     /** 语言类型 */
     language?: typeof language;
-    /** 页面插件数据 */
-    widgets?: InputWidgetData[];
     /** 是否初始化后立即渲染 */
     renderImmediately?: typeof renderImmediately;
+    /** 页面插件数据 */
+    widgets?: InputWidgetData[];
 }
 
 /** 初始化函数 */
@@ -72,24 +67,8 @@ export function setGlobalParams(param: BothubInitParams) {
         }
     }
 
-    const toWidgetData = (item: InputWidgetData): WidgetData => {
-        return isNumber(item.type) ? item : {
-            ...item,
-            type: WidgetType[item.type],
-        } as any;
-    };
-
     // 合并插件列表
-    (param.widgets || []).forEach((item) => {
-        const origin = widgetData.find(({ id: local }) => local === item.id);
-
-        // 找到 id 重复的插件，合并
-        if (origin) {
-            Object.assign(origin, toWidgetData(item));
-        }
-        // 未找到 id 重复的插件，则添加新插件
-        else {
-            widgetData.push(toWidgetData(item));
-        }
-    });
+    if (param.widgets) {
+        setWidget(param.widgets);
+    }
 }

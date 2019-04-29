@@ -34,6 +34,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         const {
             id,
             data,
+            align,
             fbAttrs,
             loading,
             isChecked,
@@ -55,6 +56,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                 this.setState({ isCopied: true });
             }
             else if (isChecked) {
+                // TODO: 这里的 code 也可能是从后端取过来的
                 this.setState({ showCode: true });
                 clickShowCodeBtn && clickShowCodeBtn;
             }
@@ -66,8 +68,12 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
 
         return (
             <div id={id} class={WarpperClassName}>
-                <div class={bhClass}>
-                    <div class={parseClass([`${bhClass}__box`, {
+                <section class={`${bhClass} ${bhClass}__${align}`}>
+                    <header class={`${bhClass}__header`}>
+                        <div class={`${bhClass}__title`}>{ data.title }</div>
+                        <div class={`${bhClass}__subtitle`}>{ data.subtitle }</div>
+                    </header>
+                    <article class={parseClass([`${bhClass}__box`, {
                         [`${bhClass}__code`]: showCode,
                         ['shake-box']: shakeBox,
                     }])}>
@@ -101,7 +107,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                                 : ''
                             }
                         </div>
-                    </div>
+                    </article>
                     <button
                         class={`${bhClass}__btn`}
                         onClick={clickButton}
@@ -113,7 +119,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                                 : data.copyCodeBtnText
                             : data.showCodeBtnText
                     }</button>
-                </div>
+                </section>
             </div>
         );
     }

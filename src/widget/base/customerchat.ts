@@ -37,18 +37,21 @@ const bhClass = 'bothub-customerchat';
 /**
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
  */
-export default class Customerchat extends BaseWidget implements WidgetCommon {
+export default class Customerchat extends BaseWidget<CustomerchatData> implements WidgetCommon {
     fbAttrs: Omit<CustomerchatData, 'id' | 'type' | 'bhRef'>;
-
-    canRender = true;
-    isRendered = false;
-
-    $el?: HTMLElement;
 
     constructor({ id, type, bhRef, ...attrs }: CustomerchatData) {
         super(arguments[0]);
 
+        this.check();
         this.fbAttrs = attrs;
+    }
+
+    check() {
+        if (!this.checkRequired()) {
+            this.canRender = false;
+            return;
+        }
 
         // 网页只能有一个对话插件
         if (
@@ -57,9 +60,9 @@ export default class Customerchat extends BaseWidget implements WidgetCommon {
         ) {
             warn(`There are already other ${this.name} plugins in this page, skip the widget with id ${this.id}`);
             this.canRender = false;
+            return;
         }
     }
-
     parse() {
         if ((!focus && this.isRendered) || !this.canRender) {
             log(`Skip ${this.name} with id ${this.id}`);

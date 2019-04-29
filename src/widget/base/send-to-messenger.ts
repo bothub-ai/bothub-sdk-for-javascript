@@ -47,16 +47,11 @@ const bhClass = 'bothub-send-to-messenger';
 /**
  * [“发送至 Messenger”插件](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/)
  */
-export default class SendToMessenger extends BaseWidget implements WidgetCommon {
+export default class SendToMessenger extends BaseWidget<SendToMessengerData> implements WidgetCommon {
     fbAttrs: Omit<SendToMessengerData, 'id' | 'type' | 'bhRef' | 'click'>;
-
-    canRender = true;
-    isRendered = false;
 
     /** 是否已经发送数据 */
     sent = false;
-
-    $el?: HTMLElement;
 
     /** 点击事件 */
     onClick?(): void;
@@ -64,11 +59,9 @@ export default class SendToMessenger extends BaseWidget implements WidgetCommon 
     constructor({ id, type, bhRef, click, ...attrs }: SendToMessengerData) {
         super(arguments[0]);
 
+        this.check();
         this.onClick = click;
         this.fbAttrs = attrs;
-
-        this.$el = this.renderWarpperById();
-        this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {

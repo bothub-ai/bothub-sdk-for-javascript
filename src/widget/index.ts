@@ -1,7 +1,7 @@
 import { WidgetType } from './helper';
 import { log, warn } from 'src/lib/print';
-import { isBoolean } from 'src/lib/assert';
 import { widgetData, widgets } from 'src/store';
+import { isNumber, isArray, isBoolean } from 'src/lib/assert';
 
 import { default as Checkbox, CheckboxData } from './checkbox';
 import { default as Discount, DiscountData } from './discount';
@@ -10,10 +10,40 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-export { WidgetType };
-
+/** 插件类 */
 export type Widget = Checkbox | Discount | MessageUs | Customerchat | SendToMessenger | ShareButton;
+/** 插件标准数据 */
 export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | SendToMessengerData | ShareButtonData;
+/** 插件输入数据类型 */
+export type InputWidgetData = Omit<WidgetData, 'type'> & {
+    type: WidgetType | keyof typeof WidgetType;
+};
+
+/** 插件类型全部映射到数字 */
+const toWidgetData = (item: InputWidgetData): WidgetData => {
+    return isNumber(item.type) ? item : {
+        ...item,
+        type: WidgetType[item.type],
+    } as any;
+};
+
+/** 设置插件属性 */
+export function setWidget(config: InputWidgetData | InputWidgetData[]) {
+    const data = isArray(config) ? config : [config];
+
+    data.forEach((item) => {
+        const origin = widgetData.find(({ id: local }) => local === item.id);
+
+        // 找到编号重复的插件，合并
+        if (origin) {
+            Object.assign(origin, toWidgetData(item));
+        }
+        // 未找到编号重复的插件，则添加新插件
+        else {
+            widgetData.push(toWidgetData(item));
+        }
+    });
+}
 
 /** 渲染函数 */
 export function render(focus?: boolean): boolean;

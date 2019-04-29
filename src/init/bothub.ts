@@ -21,8 +21,8 @@ function init(...arg: Parameters<typeof Store.setGlobalParams>) {
 export default {
     /** 初始化函数 */
     init,
-    /** 事件应用 */
-    Event,
+    /** 应用事件 */
+    Event: { ...Event },
     /** 插件模块 */
-    Widget,
+    Widget: { ...Widget },
 };

@@ -17,31 +17,54 @@ export { DiscountData };
 /**
  * [优惠券插件]()
  */
-export default class Discount extends BaseWidget implements WidgetCommon {
+export default class Discount extends BaseWidget<DiscountData> implements WidgetCommon {
     data: ComponentProps['data'];
     fbAttrs: ComponentProps['fbAttrs'];
     hideAfterChecked: number;
 
-    $el?: HTMLElement;
-    $component?: ComponentType<ComponentProps>;
-
     /** 当前是否已经勾选 */
     isChecked = false;
-    /** 是否可以渲染 */
-    canRender = true;
-    /** 是否已经完成渲染 */
-    isRendered = false;
+    /** 组件渲染 */
+    $component?: ComponentType<ComponentProps>;
 
+    align: NonNullable<DiscountData['align']>;
     clickShowCodeBtn: DiscountData['clickShowCodeBtn'];
     clickCopyCodeBtn: DiscountData['clickCopyCodeBtn'];
 
-    constructor({ id, type, bhRef, pageId, hideAfterChecked = 0, clickShowCodeBtn, clickCopyCodeBtn, ...rest }: DiscountData) {
+    readonly requiredKeys: (keyof DiscountData)[] = [
+        'id',
+        'type',
+        'bhRef',
+        'pageId',
+        'title',
+        'subtitle',
+        'notice',
+        'showCodeBtnText',
+        'copyCodeBtnText',
+        'discountText',
+        'discountCode',
+    ];
+
+    constructor({
+        id,
+        type,
+        bhRef,
+        pageId,
+        align = 'center',
+        hideAfterChecked = 0,
+        clickShowCodeBtn,
+        clickCopyCodeBtn,
+        ...rest
+    }: DiscountData) {
         super(arguments[0]);
 
         this.data = rest;
+        this.align = align;
         this.hideAfterChecked = hideAfterChecked;
         this.clickShowCodeBtn = clickShowCodeBtn;
         this.clickCopyCodeBtn = clickCopyCodeBtn;
+
+        this.check();
 
         this.fbAttrs = {
             messengerAppId, pageId,
@@ -52,20 +75,6 @@ export default class Discount extends BaseWidget implements WidgetCommon {
             size: window.innerWidth < 768 ? 'small' : 'large',
             userRef: '',
         };
-
-        this.$el = document.getElementById(this.id) || undefined;
-
-        if (!this.$el) {
-            this.elNotFound();
-            this.canRender = false;
-            return this;
-        }
-
-        // 设置隐藏，且在隐藏时间范围内
-        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
-            this.canRender = false;
-            return this;
-        }
     }
 
     /** “自动隐藏”存储的键名 */
@@ -73,6 +82,25 @@ export default class Discount extends BaseWidget implements WidgetCommon {
         return `discount-hide:${this.id}`;
     }
 
+    check() {
+        if (!this.checkRequired()) {
+            this.canRender = false;
+            return;
+        }
+
+        this.$el = this.renderWarpperById();
+
+        if (!this.$el) {
+            this.canRender = false;
+            return;
+        }
+
+        // 设置隐藏，且在隐藏时间范围内
+        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
+            this.canRender = false;
+            return;
+        }
+    }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
             log(`Skip Checkbox with id ${this.id}`);
@@ -91,6 +119,7 @@ export default class Discount extends BaseWidget implements WidgetCommon {
                 id: this.id,
                 fbAttrs: this.fbAttrs,
                 data: this.data,
+                align: this.align,
                 loading: true,
                 isChecked: false,
                 clickShowCodeBtn: this.clickShowCodeBtn,
@@ -110,8 +139,10 @@ export default class Discount extends BaseWidget implements WidgetCommon {
         if (!alreadyRender) {
             bindEvent(this, {
                 onRendered: () => this.$component!.update({ loading: false }),
-                onCheck: () => this.$component!.update({ isChecked: true }),
                 onUnCheck: () => this.$component!.update({ isChecked: false }),
+                onCheck: () => {
+                    this.$component!.update({ isChecked: true });
+                },
             });
         }
     }

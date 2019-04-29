@@ -1,6 +1,5 @@
 import { CheckboxData, ComponentProps } from './constant';
 import { overHiddenTime, bindEvent } from './helper';
-import { CheckboxEvent } from 'typings/facebook';
 
 import { componentWarpper, ComponentType } from '../helper';
 import { BaseWidget, WidgetCommon } from '../base/base';
@@ -16,19 +15,14 @@ export { CheckboxData };
 /**
  * [确认框插件](https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox)
  */
-export default class Checkbox extends BaseWidget implements WidgetCommon {
+export default class Checkbox extends BaseWidget<CheckboxData> implements WidgetCommon {
     fbAttrs: ComponentProps['attrs'];
     hideAfterChecked: number;
 
-    $el?: HTMLElement;
-    $component?: ComponentType<ComponentProps>;
-
     /** 当前是否已经勾选 */
     isChecked = false;
-    /** 是否可以渲染 */
-    canRender = true;
-    /** 是否已经完成渲染 */
-    isRendered = false;
+    /** 组件渲染 */
+    $component?: ComponentType<ComponentProps>;
 
     /**
      * Checkbox 点击选中事件
@@ -48,26 +42,14 @@ export default class Checkbox extends BaseWidget implements WidgetCommon {
         this.onCheck = check;
         this.onUnCheck = unCheck;
 
+        this.check();
+
         this.fbAttrs = {
             ...attrs,
             userRef: '',
             origin: location.origin,
             messengerAppId,
         };
-
-        this.$el = document.getElementById(this.id) || undefined;
-
-        if (!this.$el) {
-            this.elNotFound();
-            this.canRender = false;
-            return this;
-        }
-
-        // 设置隐藏，且在隐藏时间范围内
-        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
-            this.canRender = false;
-            return this;
-        }
     }
 
     /** “自动隐藏”存储的键名 */
@@ -75,6 +57,25 @@ export default class Checkbox extends BaseWidget implements WidgetCommon {
         return `checkbox-hide:${this.id}`;
     }
 
+    check() {
+        if (!this.checkRequired()) {
+            this.canRender = false;
+            return;
+        }
+
+        this.$el = this.renderWarpperById();
+
+        if (!this.$el) {
+            this.canRender = false;
+            return;
+        }
+
+        // 设置隐藏，且在隐藏时间范围内
+        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
+            this.canRender = false;
+            return;
+        }
+    }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
             log(`Skip ${this.name} with id ${this.id}`);

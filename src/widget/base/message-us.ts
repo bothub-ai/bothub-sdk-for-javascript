@@ -13,12 +13,12 @@ export interface MessageUsData extends WidgetDataCommon {
      * 主题颜色
      *  - 默认为`blue`
      */
-    color: 'blue' | 'white';
+    color?: 'blue' | 'white';
     /**
      * 插件大小
      *  - 默认为`large`
      */
-    size: 'standard' | 'large' | 'xlarge';
+    size?: 'standard' | 'large' | 'xlarge';
 }
 
 const fbClass = 'fb-messengermessageus';
@@ -27,20 +27,14 @@ const bhClass = 'bothub-messengermessageus';
 /**
  * [“给我们发消息”插件](https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin)
  */
-export default class MessageUs extends BaseWidget implements WidgetCommon {
+export default class MessageUs extends BaseWidget<MessageUsData> implements WidgetCommon {
     fbAttrs: Omit<MessageUsData, 'id' | 'type' | 'bhRef'>;
-
-    canRender = true;
-    isRendered = false;
-
-    $el?: HTMLElement;
 
     constructor({ id, type, bhRef, ...attrs }: MessageUsData) {
         super(arguments[0]);
 
+        this.check();
         this.fbAttrs = attrs;
-        this.$el = this.renderWarpperById();
-        this.canRender = Boolean(this.$el);
     }
 
     parse(focus = false) {

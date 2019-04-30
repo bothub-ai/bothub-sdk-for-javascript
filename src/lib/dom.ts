@@ -1,4 +1,4 @@
-import { unique, deleteVal } from './native';
+import { unique, deleteVal } from './array';
 import { isString, isArray } from './assert';
 
 /** 给 DOM 元素添加 class */

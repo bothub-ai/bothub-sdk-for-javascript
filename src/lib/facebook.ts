@@ -42,9 +42,9 @@ function bothubFacebookInit() {
         version: 'v3.2',
     });
 
-    // 允许立即渲染，延迟 500 毫秒，渲染所有插件
+    // 允许立即渲染，延迟 500 毫秒，非强制渲染所有插件
     if (renderImmediately) {
-        setTimeout(render, 500);
+        setTimeout(() => render(false), 500);
     }
 }
 

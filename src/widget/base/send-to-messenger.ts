@@ -1,10 +1,11 @@
 import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
+import { shallowCopyExclude } from 'src/lib/object';
 import { addClass, setAttributes } from 'src/lib/dom';
 import { SendToMessengerEvent } from 'typings/facebook';
 
 import { WidgetType } from '../helper';
-import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
+import { BaseWidget, WidgetDataCommon } from './base';
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {
@@ -47,8 +48,8 @@ const bhClass = 'bothub-send-to-messenger';
 /**
  * [“发送至 Messenger”插件](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/)
  */
-export default class SendToMessenger extends BaseWidget<SendToMessengerData> implements WidgetCommon {
-    fbAttrs: Omit<SendToMessengerData, 'id' | 'type' | 'bhRef' | 'click'>;
+export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
+    fbAttrs!: Omit<SendToMessengerData, 'id' | 'type' | 'bhRef' | 'click'>;
 
     /** 是否已经发送数据 */
     sent = false;
@@ -56,14 +57,17 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> imp
     /** 点击事件 */
     onClick?(): void;
 
-    constructor({ id, type, bhRef, click, ...attrs }: SendToMessengerData) {
-        super(arguments[0]);
+    constructor(data: SendToMessengerData) {
+        super(data);
 
+        this.init();
         this.check();
-        this.onClick = click;
-        this.fbAttrs = attrs;
     }
 
+    init() {
+        this.onClick = this.origin.click;
+        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'bhRef', 'click']);
+    }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
             log(`Skip ${this.name} with id ${this.id}`);

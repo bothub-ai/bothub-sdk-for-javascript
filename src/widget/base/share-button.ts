@@ -2,7 +2,7 @@ import { log } from 'src/lib/print';
 import { addClass, setAttributes } from 'src/lib/dom';
 
 import { WidgetType } from '../helper';
-import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
+import { BaseWidget, WidgetDataCommon } from './base';
 
 /** 分享按钮插件 */
 export interface ShareButtonData extends WidgetDataCommon {
@@ -28,16 +28,15 @@ const bhClass = 'bothub-share-button';
 /**
  * [分享按钮插件](https://developers.facebook.com/docs/plugins/share-button/)
  */
-export default class ShareButton extends BaseWidget<ShareButtonData> implements WidgetCommon {
-    fbAttrs: Omit<ShareButtonData, 'id' | 'type' | 'bhRef'>;
+export default class ShareButton extends BaseWidget<ShareButtonData> {
+    fbAttrs!: Omit<ShareButtonData, 'id' | 'type' | 'bhRef'>;
+    requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href', 'bhRef'];
 
-    readonly requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href', 'bhRef'];
+    constructor(data: ShareButtonData) {
+        super(data);
 
-    constructor({ id, type, bhRef, ...attrs }: ShareButtonData) {
-        super(arguments[0]);
-
+        this.init();
         this.check();
-        this.fbAttrs = attrs;
     }
 
     parse(focus = false) {

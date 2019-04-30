@@ -1,8 +1,8 @@
-import { CheckboxData, ComponentProps } from './constant';
+import { CheckboxData, FbCheckboxAttrs, ComponentProps } from './constant';
 import { overHiddenTime, bindEvent } from './helper';
 
+import { BaseWidget } from '../base/base';
 import { componentWarpper, ComponentType } from '../helper';
-import { BaseWidget, WidgetCommon } from '../base/base';
 
 import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
@@ -10,14 +10,14 @@ import { messengerAppId } from 'src/store';
 
 import Component from './component';
 
-export { CheckboxData };
+export { CheckboxData, FbCheckboxAttrs };
 
 /**
  * [确认框插件](https://developers.facebook.com/docs/messenger-platform/reference/web-plugins#checkbox)
  */
-export default class Checkbox extends BaseWidget<CheckboxData> implements WidgetCommon {
-    fbAttrs: ComponentProps['attrs'];
-    hideAfterChecked: number;
+export default class Checkbox extends BaseWidget<CheckboxData> {
+    fbAttrs!: FbCheckboxAttrs;
+    hideAfterChecked = 0;
 
     /** 当前是否已经勾选 */
     isChecked = false;
@@ -35,14 +35,24 @@ export default class Checkbox extends BaseWidget<CheckboxData> implements Widget
      */
     onUnCheck?(userRef: string): void;
 
-    constructor({ id, type, bhRef, hideAfterChecked = 0, check, unCheck, ...attrs }: CheckboxData) {
-        super(arguments[0]);
+    constructor(data: CheckboxData) {
+        super(data);
 
-        this.hideAfterChecked = hideAfterChecked;
+        this.init();
+        this.check();
+    }
+
+    /** “自动隐藏”存储的键名 */
+    get hidenKey() {
+        return `checkbox-hide:${this.id}`;
+    }
+
+    init() {
+        const { id, type, bhRef, hideAfterChecked = 0, check, unCheck, ...attrs } = this.origin;
+
         this.onCheck = check;
         this.onUnCheck = unCheck;
-
-        this.check();
+        this.hideAfterChecked = hideAfterChecked;
 
         this.fbAttrs = {
             ...attrs,
@@ -51,12 +61,6 @@ export default class Checkbox extends BaseWidget<CheckboxData> implements Widget
             messengerAppId,
         };
     }
-
-    /** “自动隐藏”存储的键名 */
-    get hidenKey() {
-        return `checkbox-hide:${this.id}`;
-    }
-
     check() {
         if (!this.checkRequired()) {
             this.canRender = false;

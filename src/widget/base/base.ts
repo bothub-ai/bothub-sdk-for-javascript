@@ -1,51 +1,12 @@
-import { get } from 'src/lib/native';
+import { get } from 'src/lib/array';
 import { warn } from 'src/lib/print';
 import { addClass } from 'src/lib/dom';
 import { isUndef } from 'src/lib/assert';
+import { shallowCopyExclude } from 'src/lib/object';
 import { WidgetType, ComponentType } from '../helper';
 
 /** 包装 DOM 的 class 名称 */
 export const WarpperClassName = 'bothub-widget-warpper';
-
-/** 类的公共实现 */
-export interface WidgetCommon {
-    /** 当前插件的唯一编号 */
-    id: string;
-    /** 当前插件的类型 */
-    type: WidgetType;
-    /** 插件名称 */
-    name: string;
-    /** bothub 引用标记 */
-    bhRef: string;
-
-    /** 当前插件的核心 facebook 插件属性 */
-    fbAttrs: object;
-
-    /** 是否可以渲染 */
-    canRender: boolean;
-    /** 当前是否已经渲染 */
-    isRendered: boolean;
-
-    /** 当前插件的 DOM 元素 */
-    $el?: HTMLElement;
-    /** 当前插件的虚拟组件 */
-    $component?: ComponentType;
-
-    // /**
-    //  * 插件初始化并判断能否渲染
-    //  *  - 会附带
-    //  */
-    // init() {
-
-    // }
-    /**
-     * 当前插件的渲染函数
-     * @param {boolean} [focus] 是否强制刷新
-     *  - 默认为`false`
-     *  - 非强制刷新模式时，插件如果已经渲染出来，则不会触发重新渲染
-     */
-    parse(focus?: boolean): void;
-}
 
 /** 插件数据公共接口 */
 export interface WidgetDataCommon {
@@ -68,18 +29,25 @@ export interface WidgetDataCommon {
 
 /** 插件基类 */
 export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> {
+    /** 当前插件的唯一编号 */
     id: string;
-    bhRef: string;
+    /** 当前插件的类型 */
     type: T['type'];
-    position?(): HTMLElement | null;
+    /** bothub 引用标记 */
+    bhRef: string;
+
+    /** 当前插件的核心 facebook 插件属性 */
+    fbAttrs!: object;
 
     /** 是否允许渲染 */
     canRender = true;
     /** 是否已经渲染完成 */
     isRendered = false;
 
-    /** 插件在网页中的元素引用（并非最外层的包装元素） */
+    /** 当前插件的元素引用（并非最外层的包装元素） */
     $el?: HTMLElement;
+    /** 当前插件的虚拟组件 */
+    $component?: ComponentType;
 
     /** 原始数据 */
     origin: T;
@@ -87,11 +55,10 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     /** 必填项键名 */
     readonly requiredKeys: (keyof T)[] = ['id', 'type', 'pageId', 'bhRef'];
 
-    constructor({ id, type, bhRef, position }: T) {
+    constructor({ id, type, bhRef }: T) {
         this.id = id;
         this.type = type;
         this.bhRef = bhRef;
-        this.position = position;
         this.origin = arguments[0];
     }
 
@@ -104,6 +71,10 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
         return get(this.id.split('-'), -1);
     }
 
+    /** 插件属性初始化 */
+    init() {
+        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'bhRef']);
+    }
     /** 检查是否允许渲染 */
     check() {
         this.canRender = Boolean(
@@ -131,13 +102,13 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
 
         // 未找到包装的 DOM
         if (!warpper) {
-            if (!this.position) {
+            if (!this.origin.position) {
                 this.elNotFound();
                 return;
             }
 
             // 定位元素
-            const el = this.position();
+            const el = this.origin.position();
             // 定位元素未找到
             if (!el) {
                 this.elNotFound();
@@ -151,7 +122,7 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
             );
         }
 
-        if (!warpper && !this.position) {
+        if (!warpper && !this.origin.position) {
             this.elNotFound();
             return;
         }
@@ -163,5 +134,15 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
         }
 
         return warpper;
+    }
+
+    /**
+     * 当前插件的渲染函数
+     * @param {boolean} [focus] 是否强制刷新
+     *  - 默认为`false`
+     *  - 非强制刷新模式时，插件如果已经渲染出来，则不会触发重新渲染
+     */
+    parse(focus?: boolean) {
+        warn(`${this.name} don't have parse method`);
     }
 }

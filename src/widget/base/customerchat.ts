@@ -2,7 +2,7 @@ import { log, warn } from 'src/lib/print';
 import { addClass, setAttributes } from 'src/lib/dom';
 
 import { WidgetType } from '../helper';
-import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
+import { BaseWidget, WidgetDataCommon } from './base';
 
 /** 顾客聊天插件数据接口 */
 export interface CustomerchatData extends WidgetDataCommon {
@@ -37,14 +37,14 @@ const bhClass = 'bothub-customerchat';
 /**
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
  */
-export default class Customerchat extends BaseWidget<CustomerchatData> implements WidgetCommon {
-    fbAttrs: Omit<CustomerchatData, 'id' | 'type' | 'bhRef'>;
+export default class Customerchat extends BaseWidget<CustomerchatData> {
+    fbAttrs!: Omit<CustomerchatData, 'id' | 'type' | 'bhRef'>;
 
-    constructor({ id, type, bhRef, ...attrs }: CustomerchatData) {
-        super(arguments[0]);
+    constructor(data: CustomerchatData) {
+        super(data);
 
+        this.init();
         this.check();
-        this.fbAttrs = attrs;
     }
 
     check() {

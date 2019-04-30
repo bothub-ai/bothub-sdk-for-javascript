@@ -32,6 +32,7 @@ export function setWidget(config: InputWidgetData | InputWidgetData[]) {
     const data = isArray(config) ? config : [config];
 
     data.forEach((item) => {
+        // 原始数据
         const origin = widgetData.find(({ id: local }) => local === item.id);
 
         // 找到编号重复的插件，合并
@@ -41,6 +42,13 @@ export function setWidget(config: InputWidgetData | InputWidgetData[]) {
         // 未找到编号重复的插件，则添加新插件
         else {
             widgetData.push(toWidgetData(item));
+        }
+
+        // 已渲染插件
+        const widget = widgets.find(({ id: local }) => local === item.id);
+
+        if (widget) {
+            widget.init();
         }
     });
 }

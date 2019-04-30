@@ -3,7 +3,7 @@ import { addClass, setAttributes } from 'src/lib/dom';
 import { messengerAppId } from 'src/store';
 
 import { WidgetType } from '../helper';
-import { BaseWidget, WidgetCommon, WidgetDataCommon } from './base';
+import { BaseWidget, WidgetDataCommon } from './base';
 
 /** “给我们发消息”插件 */
 export interface MessageUsData extends WidgetDataCommon {
@@ -27,14 +27,14 @@ const bhClass = 'bothub-messengermessageus';
 /**
  * [“给我们发消息”插件](https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin)
  */
-export default class MessageUs extends BaseWidget<MessageUsData> implements WidgetCommon {
-    fbAttrs: Omit<MessageUsData, 'id' | 'type' | 'bhRef'>;
+export default class MessageUs extends BaseWidget<MessageUsData> {
+    fbAttrs!: Omit<MessageUsData, 'id' | 'type' | 'bhRef'>;
 
-    constructor({ id, type, bhRef, ...attrs }: MessageUsData) {
-        super(arguments[0]);
+    constructor(data: MessageUsData) {
+        super(data);
 
+        this.init();
         this.check();
-        this.fbAttrs = attrs;
     }
 
     parse(focus = false) {

@@ -29,8 +29,8 @@ const bhClass = 'bothub-share-button';
  * [分享按钮插件](https://developers.facebook.com/docs/plugins/share-button/)
  */
 export default class ShareButton extends BaseWidget<ShareButtonData> {
-    fbAttrs!: Omit<ShareButtonData, 'id' | 'type' | 'bhRef'>;
-    requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href', 'bhRef'];
+    fbAttrs!: Omit<ShareButtonData, 'id' | 'type'>;
+    requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href'];
 
     constructor(data: ShareButtonData) {
         super(data);

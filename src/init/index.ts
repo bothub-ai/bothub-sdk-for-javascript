@@ -2,6 +2,8 @@ import './polyfill';
 import 'src/style';
 
 import Bothub from './bothub';
+
+import { sandBox } from 'src/lib/utils';
 import { isArray } from 'src/lib/assert';
 
 // 初始化入口
@@ -17,9 +19,9 @@ setTimeout(() => {
     const bhAsyncInit = window.bhAsyncInit;
 
     if (isArray(bhAsyncInit)) {
-        bhAsyncInit.forEach((cb) => cb());
+        bhAsyncInit.forEach((cb) => sandBox(cb)());
     }
-    else {
-        bhAsyncInit && bhAsyncInit();
+    else if (bhAsyncInit) {
+        sandBox(bhAsyncInit)();
     }
 });

@@ -34,7 +34,6 @@ export default class Discount extends BaseWidget<DiscountData> {
     readonly requiredKeys: (keyof DiscountData)[] = [
         'id',
         'type',
-        'bhRef',
         'pageId',
         'title',
         'subtitle',
@@ -61,7 +60,6 @@ export default class Discount extends BaseWidget<DiscountData> {
         const {
             id,
             type,
-            bhRef,
             pageId,
             align = 'center',
             hideAfterChecked = 0,

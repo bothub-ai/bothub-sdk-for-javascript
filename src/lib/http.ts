@@ -1,6 +1,9 @@
 import uuid from 'uuid';
 import { isBaseType, isUndef } from './assert';
 
+/** 全局后端地址常量 */
+const apiServer = process.env.api as string;
+
 /**
  * 获取 Url 查询参数
  * @param {stirng} name
@@ -24,23 +27,26 @@ export function urlEncode(params: object) {
         let ans = '';
 
         for (const key in from) {
-            if (params.hasOwnProperty(key)) {
+            if (from.hasOwnProperty(key)) {
                 const val = from[key];
 
                 if (isUndef(val)) {
                     continue;
                 }
 
+                // 非顶级属性则需要加上方括号
+                const uKey = pre.length > 0 ? `[${key}]` : key;
+                // 连接参数
                 ans += isBaseType(val)
-                    ? `&${pre}[${key}]=${encodeURIComponent(val!.toString())}`
-                    : `&${objEncode(val, `${pre}[${key}]`)}`;
+                    ? `&${pre}${uKey}=${encodeURIComponent(val!.toString())}`
+                    : `&${objEncode(val, `${pre}${uKey}`)}`;
             }
         }
 
-        return ans;
+        return ans.substring(1);
     }
 
-    const result = objEncode(params).substring(1);
+    const result = objEncode(params);
 
     return result.length > 0 ? ('?' + result) : '';
 }
@@ -75,7 +81,7 @@ export function jsonp<T>(url: string, params: object = {}) {
         };
 
         script.type = 'text/javascript';
-        script.src = url + urlEncode(urlParams);
+        script.src = apiServer + url + urlEncode(urlParams);
 
         document.body.appendChild(script);
     });
@@ -86,15 +92,13 @@ function ajax<T extends object>(type: 'GET' | 'POST', url: string, data?: object
     return new Promise<T>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
-        xhr.open(type, url);
+        xhr.open(type, apiServer + url);
 
         if (type === 'POST') {
             xhr.setRequestHeader('Content-Type', 'application/json');
         }
 
-        if (type === 'POST' && data) {
-            xhr.send(JSON.stringify(data));
-        }
+        xhr.send((type === 'POST' && data) ? JSON.stringify(data) : null);
 
         xhr.onreadystatechange = () => {
             if (xhr.readyState !== 4) {

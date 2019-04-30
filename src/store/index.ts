@@ -1,5 +1,5 @@
 import { isDef } from 'src/lib/assert';
-import { InputWidgetData, WidgetData, Widget, setWidget } from 'src/widget';
+import { InputWidgetData, WidgetData, Widget, setConfig } from 'src/widget';
 
 import * as utils from 'src/lib/utils';
 
@@ -69,6 +69,6 @@ export function setGlobalParams(param: BothubInitParams) {
 
     // 合并插件列表
     if (param.widgets) {
-        setWidget(param.widgets);
+        setConfig(param.widgets);
     }
 }

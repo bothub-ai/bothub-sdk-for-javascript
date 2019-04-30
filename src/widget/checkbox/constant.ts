@@ -47,7 +47,7 @@ export interface CheckboxData extends WidgetDataCommon {
 /** Facebook 核心插件的属性 */
 export interface FbCheckboxAttrs extends Omit<
     CheckboxData,
-    'type' | 'id' | 'check' | 'unCheck' | 'bhRef' | 'hideAfterChecked'
+    'type' | 'id' | 'check' | 'unCheck' | 'hideAfterChecked'
 > {
     /** 插件加载网址的基域 */
     origin: string;

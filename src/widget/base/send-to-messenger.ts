@@ -1,5 +1,7 @@
+import { post } from 'src/lib/http';
 import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
+import { isFunc, isObject } from 'src/lib/assert';
 import { shallowCopyExclude } from 'src/lib/object';
 import { addClass, setAttributes } from 'src/lib/dom';
 import { SendToMessengerEvent } from 'typings/facebook';
@@ -37,6 +39,13 @@ export interface SendToMessengerData extends WidgetDataCommon {
         'SEND_ME_UPDATES' | 'MESSAGE_ME' | 'LET_ME_KNOW' | 'KEEP_ME_UPDATED' | 'TELL_ME_MORE' | 'SUBSCRIBE_IN_MESSENGER' |
         'SUBSCRIBE_TO_UPDATES' | 'GET_MESSAGES' | 'SUBSCRIBE' | 'GET_STARTED_IN_MESSENGER' | 'LEARN_MORE_IN_MESSENGER' | 'GET_STARTED';
     /**
+     * 向后端发送的事件
+     *  - 允许是常量对象也允许是函数
+     *  - 内容信息将会和插件 code 合并然后经 base64 编码后发送到 facebook
+     *  - 此插件发送事件是默认的，只要点击就会发送，所以即便此项为空，仍然会向 facebook 发送事件
+     */
+    message?: AnyObject | (() => AnyObject);
+    /**
      * 点击事件
      */
     click?(): void;
@@ -49,13 +58,10 @@ const bhClass = 'bothub-send-to-messenger';
  * [“发送至 Messenger”插件](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/)
  */
 export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
-    fbAttrs!: Omit<SendToMessengerData, 'id' | 'type' | 'bhRef' | 'click'>;
+    fbAttrs!: Omit<SendToMessengerData, 'id' | 'type' | 'message' | 'click'>;
 
     /** 是否已经发送数据 */
     sent = false;
-
-    /** 点击事件 */
-    onClick?(): void;
 
     constructor(data: SendToMessengerData) {
         super(data);
@@ -64,9 +70,40 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.check();
     }
 
+    /** 引用编译 */
+    get ref() {
+        const data: AnyObject = {
+            gateway: 'engagement',
+            code: this.code,
+        };
+
+        const { message } = this.origin;
+
+        if (isFunc(message)) {
+            data.message = message() || {};
+        }
+        else if (isObject(message)) {
+            data.message = message || {};
+        }
+
+        return window.btoa(JSON.stringify(data));
+    }
+
+    /** 点击事件 */
+    onClick() {
+        if (this.origin.click) {
+            this.origin.click();
+        }
+    }
+    /** 渲染完成事件 */
+    onRendered() {
+        if (this.origin.message) {
+            post('tr/', this.origin.message);
+        }
+    }
+
     init() {
-        this.onClick = this.origin.click;
-        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'bhRef', 'click']);
+        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'message', 'click']);
     }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
@@ -86,7 +123,7 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
 
         setAttributes(dom, this.fbAttrs);
 
-        dom.setAttribute('data-ref', window.btoa(this.id));
+        dom.setAttribute('data-ref', this.ref);
         dom.setAttribute('messenger_app_id', messengerAppId);
 
         window.FB.XFBML.parse(this.$el);
@@ -99,14 +136,13 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
                     return;
                 }
 
-                const getId = window.atob(ev.ref);
-
-                if (getId !== this.id) {
+                if (ev.ref !== this.ref) {
                     return;
                 }
 
                 if (ev.event === 'rendered') {
                     this.isRendered = true;
+                    this.onRendered();
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                 }
                 else if (ev.event === 'clicked' && this.onClick) {

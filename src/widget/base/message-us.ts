@@ -28,7 +28,7 @@ const bhClass = 'bothub-messengermessageus';
  * [“给我们发消息”插件](https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin)
  */
 export default class MessageUs extends BaseWidget<MessageUsData> {
-    fbAttrs!: Omit<MessageUsData, 'id' | 'type' | 'bhRef'>;
+    fbAttrs!: Omit<MessageUsData, 'id' | 'type'>;
 
     constructor(data: MessageUsData) {
         super(data);

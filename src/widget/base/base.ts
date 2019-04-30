@@ -16,8 +16,6 @@ export interface WidgetDataCommon {
     type: WidgetType;
     /** Facebook 主页编号 */
     pageId: string;
-    /** bothub 引用标记 */
-    bhRef: string;
 
     /**
      * 获取元素位置的函数
@@ -33,8 +31,6 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     id: string;
     /** 当前插件的类型 */
     type: T['type'];
-    /** bothub 引用标记 */
-    bhRef: string;
 
     /** 当前插件的核心 facebook 插件属性 */
     fbAttrs!: object;
@@ -53,12 +49,11 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     origin: T;
 
     /** 必填项键名 */
-    readonly requiredKeys: (keyof T)[] = ['id', 'type', 'pageId', 'bhRef'];
+    readonly requiredKeys: (keyof T)[] = ['id', 'type', 'pageId'];
 
-    constructor({ id, type, bhRef }: T) {
+    constructor({ id, type }: T) {
         this.id = id;
         this.type = type;
-        this.bhRef = bhRef;
         this.origin = arguments[0];
     }
 
@@ -73,7 +68,7 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
 
     /** 插件属性初始化 */
     init() {
-        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'bhRef']);
+        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type']);
     }
     /** 检查是否允许渲染 */
     check() {

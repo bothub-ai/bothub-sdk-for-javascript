@@ -7,6 +7,7 @@ import { componentWarpper, ComponentType } from '../helper';
 import { log } from 'src/lib/print';
 import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
+import { shallowCopyExclude } from 'src/lib/object';
 
 import Component from './component';
 
@@ -24,17 +25,6 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
     /** 组件渲染 */
     $component?: ComponentType<ComponentProps>;
 
-    /**
-     * Checkbox 点击选中事件
-     * @param {string} userRef 当前用户编号
-     */
-    onCheck?(userRef: string): void;
-    /**
-     * Checkbox 点击取消事件
-     * @param {string} userRef 当前用户编号
-     */
-    onUnCheck?(userRef: string): void;
-
     constructor(data: CheckboxData) {
         super(data);
 
@@ -47,18 +37,35 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         return `checkbox-hide:${this.id}`;
     }
 
-    init() {
-        const { id, type, bhRef, hideAfterChecked = 0, check, unCheck, ...attrs } = this.origin;
+    /**
+     * Checkbox 点击选中事件
+     * @param {string} userRef 当前用户编号
+     */
+    onCheck(userRef: string) {
+        if (this.origin.check) {
+            this.origin.check(userRef);
+        }
+    }
+    /**
+     * Checkbox 点击取消事件
+     * @param {string} userRef 当前用户编号
+     */
+    onUnCheck(userRef: string) {
+        if (this.origin.unCheck) {
+            this.origin.unCheck(userRef);
+        }
+    }
 
-        this.onCheck = check;
-        this.onUnCheck = unCheck;
-        this.hideAfterChecked = hideAfterChecked;
+    init() {
+        this.hideAfterChecked = this.origin.hideAfterChecked || 0;
 
         this.fbAttrs = {
-            ...attrs,
+            ...shallowCopyExclude(this.origin, [
+                'id', 'type', 'hideAfterChecked', 'check', 'unCheck',
+            ]),
             userRef: '',
-            origin: location.origin,
             messengerAppId,
+            origin: location.origin,
         };
     }
     check() {
@@ -114,8 +121,8 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         // 首次渲染，需要绑定事件
         if (!alreadyRender) {
             bindEvent(this, {
-                onCheck: this.onCheck,
-                onUnCheck: this.onUnCheck,
+                onCheck: (ev) => this.onCheck(ev),
+                onUnCheck: (ev) => this.onUnCheck(ev),
                 onRendered: () => this.$component!.update({ loading: false }),
             });
         }

@@ -1,7 +1,7 @@
 import { WidgetType } from './helper';
 import { log, warn } from 'src/lib/print';
 import { widgetData, widgets } from 'src/store';
-import { isNumber, isArray, isBoolean } from 'src/lib/assert';
+import { isDef, isNumber, isArray, isBoolean } from 'src/lib/assert';
 
 import { default as Checkbox, CheckboxData } from './checkbox';
 import { default as Discount, DiscountData } from './discount';
@@ -20,15 +20,20 @@ export type InputWidgetData = Omit<WidgetData, 'type'> & {
 };
 
 /** 插件类型全部映射到数字 */
-const toWidgetData = (item: InputWidgetData): WidgetData => {
-    return isNumber(item.type) ? item : {
-        ...item,
-        type: WidgetType[item.type],
-    } as any;
+const fixWidgetData = (item: InputWidgetData): WidgetData => {
+    if (isDef(item.type)) {
+        return isNumber(item.type) ? item : {
+            ...item,
+            type: WidgetType[item.type],
+        } as any;
+    }
+    else {
+        return item as any;
+    }
 };
 
 /** 设置插件属性 */
-export function setWidget(config: InputWidgetData | InputWidgetData[]) {
+export function setConfig(config: InputWidgetData | InputWidgetData[]) {
     const data = isArray(config) ? config : [config];
 
     data.forEach((item) => {
@@ -37,11 +42,11 @@ export function setWidget(config: InputWidgetData | InputWidgetData[]) {
 
         // 找到编号重复的插件，合并
         if (origin) {
-            Object.assign(origin, toWidgetData(item));
+            Object.assign(origin, fixWidgetData(item));
         }
         // 未找到编号重复的插件，则添加新插件
         else {
-            widgetData.push(toWidgetData(item));
+            widgetData.push(fixWidgetData(item));
         }
 
         // 已渲染插件

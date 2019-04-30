@@ -38,7 +38,7 @@ const bhClass = 'bothub-customerchat';
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
  */
 export default class Customerchat extends BaseWidget<CustomerchatData> {
-    fbAttrs!: Omit<CustomerchatData, 'id' | 'type' | 'bhRef'>;
+    fbAttrs!: Omit<CustomerchatData, 'id' | 'type'>;
 
     constructor(data: CustomerchatData) {
         super(data);

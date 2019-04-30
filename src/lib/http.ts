@@ -1,4 +1,5 @@
-import { isBaseType, isFunc, isUndef } from './assert';
+import uuid from 'uuid';
+import { isBaseType, isUndef } from './assert';
 
 /**
  * 获取 Url 查询参数
@@ -14,39 +15,48 @@ export function getQueryString(name: string) {
 
 /**
  * 由输入对象创建 url 链接参数
- * TODO: 输入参数的属性值为对象
  * @param {object} params 参数对象
  * @returns {string}
  */
-export function createUrlParam(params: any) {
-    if (isBaseType(params)) {
-        return '';
-    }
+export function urlEncode(params: object) {
+    /** 解析参数中的对象 */
+    function objEncode(from: object, pre = '') {
+        let ans = '';
 
-    const result = [];
+        for (const key in from) {
+            if (params.hasOwnProperty(key)) {
+                const val = from[key];
 
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            const value = isFunc(params[key]) ? params[key]() : params[key];
-            const paramKey = encodeURIComponent(key);
-            const paramValue = encodeURIComponent(isUndef(value) ? '' : value);
+                if (isUndef(val)) {
+                    continue;
+                }
 
-            result.push(`${paramKey}=${paramValue}`);
+                ans += isBaseType(val)
+                    ? `&${pre}[${key}]=${encodeURIComponent(val!.toString())}`
+                    : `&${objEncode(val, `${pre}[${key}]`)}`;
+            }
         }
+
+        return ans;
     }
 
-    return result.join('&');
+    const result = objEncode(params).substring(1);
+
+    return result.length > 0 ? ('?' + result) : '';
 }
 
 /** jsonp 请求接口 */
-export function jsonp<T>(url: string, params: AnyObject = {}): Promise<T> {
-    return new Promise((resolve, reject) => {
+export function jsonp<T>(url: string, params: object = {}) {
+    return new Promise<T>((resolve, reject) => {
         const script = document.createElement('script');
-        const callbackName = 'jsonp_callback_bh' + Math.round(100000 * Math.random());
+        const callbackName = 'jsonp_callback_bh_' + uuid().replace('-', '_');
         const timer = setTimeout(() => (cleanup(), reject(new Error('jsonp timeout'))), 15000);
+        const urlParams = {
+            ...params,
+            callback: callbackName,
+        };
 
-        params.callback = callbackName;
-
+        /** 清除此次请求在全局的痕迹 */
         function cleanup() {
             if (script.parentNode) {
                 script.parentNode.removeChild(script);
@@ -65,42 +75,44 @@ export function jsonp<T>(url: string, params: AnyObject = {}): Promise<T> {
         };
 
         script.type = 'text/javascript';
-        script.src = `${url}?${createUrlParam(params)}`;
+        script.src = url + urlEncode(urlParams);
 
         document.body.appendChild(script);
     });
 }
 
-type Callback = (response: any, err?: Error) => any;
-
 /** ajax 请求接口 */
-function ajax<T>(type: 'GET' | 'POST', url: string, data: AnyObject, callback: Callback) {
-    const xhr = new XMLHttpRequest();
+function ajax<T extends object>(type: 'GET' | 'POST', url: string, data?: object) {
+    return new Promise<T>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
 
-    xhr.open(type, url);
+        xhr.open(type, url);
 
-    if (type === 'POST') {
-        xhr.setRequestHeader('Content-Type', 'application/json');
-    }
-
-    xhr.send(type === 'GET' ? null : JSON.stringify(data));
-
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState !== 4) {
-            return;
+        if (type === 'POST') {
+            xhr.setRequestHeader('Content-Type', 'application/json');
         }
 
-        if (xhr.status >= 200 && xhr.status < 300) {
-            callback(JSON.parse(xhr.responseText));
+        if (type === 'POST' && data) {
+            xhr.send(JSON.stringify(data));
         }
-        else {
-            callback(undefined, new Error(`Network Error: ${xhr.status}`));
-        }
-    };
+
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState !== 4) {
+                return;
+            }
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(JSON.parse(xhr.responseText));
+            }
+            else {
+                reject(new Error(`Network Error: ${xhr.status}`));
+            }
+        };
+    });
 }
 
 /** GET 请求 */
-export const get = <T>(url: string, callback: Callback) => ajax<T>('GET', url, {}, callback);
+export const get = <T extends object>(url: string, params: object = {}) => ajax<T>('GET', `${url}${urlEncode(params)}`);
 
 /** POST 请求 */
-export const post = <T>(url: string, data: any, callback: Callback) => ajax<T>('POST', url, data, callback);
+export const post = <T extends object>(url: string, data?: object) => ajax<T>('POST', url, data);

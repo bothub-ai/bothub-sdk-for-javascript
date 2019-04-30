@@ -49,6 +49,7 @@ export function setWidget(config: InputWidgetData | InputWidgetData[]) {
 
         if (widget) {
             widget.init();
+            widget.check();
         }
     });
 }

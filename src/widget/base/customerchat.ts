@@ -48,6 +48,8 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
     }
 
     check() {
+        this.canRender = true;
+
         if (!this.checkRequired()) {
             this.canRender = false;
             return;

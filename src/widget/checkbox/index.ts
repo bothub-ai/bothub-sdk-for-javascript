@@ -62,6 +62,8 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         };
     }
     check() {
+        this.canRender = true;
+
         if (!this.checkRequired()) {
             this.canRender = false;
             return;

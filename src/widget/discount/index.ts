@@ -87,6 +87,8 @@ export default class Discount extends BaseWidget<DiscountData> {
         };
     }
     check() {
+        this.canRender = true;
+
         if (!this.checkRequired()) {
             this.canRender = false;
             return;

@@ -5,23 +5,11 @@ import { isBaseType, isUndef } from './assert';
 const apiServer = process.env.api as string;
 
 /**
- * 获取 Url 查询参数
- * @param {stirng} name
- * @returns {string}
- */
-export function getQueryString(name: string) {
-    const reg = `(^|&)${name}=([^&]*)(&|$)`;
-    const result = window.location.search.substr(1).match(reg);
-
-    return result ? unescape(result[2]) : null;
-}
-
-/**
  * 由输入对象创建 url 链接参数
  * @param {object} params 参数对象
  * @returns {string}
  */
-export function urlEncode(params: object) {
+function urlEncode(params: object) {
     /** 解析参数中的对象 */
     function objEncode(from: object, pre = '') {
         let ans = '';
@@ -51,11 +39,38 @@ export function urlEncode(params: object) {
     return result.length > 0 ? ('?' + result) : '';
 }
 
+/**
+ *  编译请求地址
+ * @param {string} url 请求地址
+ */
+function getUrl(url: string) {
+    // url 为完整网址时，直接返回
+    if (url.indexOf('http') === 0) {
+        return url;
+    }
+    // 不完整的链接要补齐请求地址
+    else {
+        return apiServer + url.replace(/^\/+/, '');
+    }
+}
+
+/**
+ * 获取 Url 查询参数
+ * @param {stirng} name
+ * @returns {string}
+ */
+export function getQueryString(name: string) {
+    const reg = `(^|&)${name}=([^&]*)(&|$)`;
+    const result = window.location.search.substr(1).match(reg);
+
+    return result ? unescape(result[2]) : null;
+}
+
 /** jsonp 请求接口 */
 export function jsonp<T>(url: string, params: object = {}) {
     return new Promise<T>((resolve, reject) => {
         const script = document.createElement('script');
-        const callbackName = 'jsonp_callback_bh_' + uuid().replace('-', '_');
+        const callbackName = 'jsonp_callback_bh_' + uuid().replace(/-/g, '_');
         const timer = setTimeout(() => (cleanup(), reject(new Error('jsonp timeout'))), 15000);
         const urlParams = {
             ...params,
@@ -81,7 +96,7 @@ export function jsonp<T>(url: string, params: object = {}) {
         };
 
         script.type = 'text/javascript';
-        script.src = apiServer + url + urlEncode(urlParams);
+        script.src = getUrl(url) + urlEncode(urlParams);
 
         document.body.appendChild(script);
     });
@@ -92,7 +107,7 @@ function ajax<T extends object>(type: 'GET' | 'POST', url: string, data?: object
     return new Promise<T>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
-        xhr.open(type, apiServer + url);
+        xhr.open(type, getUrl(url));
 
         if (type === 'POST') {
             xhr.setRequestHeader('Content-Type', 'application/json');

@@ -67,7 +67,7 @@ export function getQueryString(name: string) {
 }
 
 /** jsonp 请求接口 */
-export function jsonp<T>(url: string, params: object = {}) {
+export function jsonp<T = any>(url: string, params: object = {}) {
     return new Promise<T>((resolve, reject) => {
         const script = document.createElement('script');
         const callbackName = 'jsonp_callback_bh_' + uuid().replace(/-/g, '_');
@@ -103,7 +103,7 @@ export function jsonp<T>(url: string, params: object = {}) {
 }
 
 /** ajax 请求接口 */
-function ajax<T extends object>(type: 'GET' | 'POST', url: string, data?: object) {
+function ajax<T>(type: 'GET' | 'POST', url: string, data?: object) {
     return new Promise<T>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -131,7 +131,7 @@ function ajax<T extends object>(type: 'GET' | 'POST', url: string, data?: object
 }
 
 /** GET 请求 */
-export const get = <T extends object>(url: string, params: object = {}) => ajax<T>('GET', `${url}${urlEncode(params)}`);
+export const get = <T = any>(url: string, params: object = {}) => ajax<T>('GET', `${url}${urlEncode(params)}`);
 
 /** POST 请求 */
-export const post = <T extends object>(url: string, data?: object) => ajax<T>('POST', url, data);
+export const post = <T = any>(url: string, data?: object) => ajax<T>('POST', url, data);

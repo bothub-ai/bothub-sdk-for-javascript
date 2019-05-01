@@ -2,12 +2,39 @@ import { post } from 'src/lib/http';
 import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
 import { isFunc, isObject } from 'src/lib/assert';
-import { shallowCopyExclude } from 'src/lib/object';
-import { addClass, setAttributes } from 'src/lib/dom';
 import { SendToMessengerEvent } from 'typings/facebook';
+import { addClass, setAttributes } from 'src/lib/dom';
+import { shallowCopyExclude } from 'src/lib/object';
 
 import { WidgetType } from '../helper';
 import { BaseWidget, WidgetDataCommon } from './base';
+
+/** 向 Bothub 发送的数据格式 */
+interface SendBhData {
+    /** 数据编号 */
+    id: string;
+    /** 数据类型 */
+    type: 'feed' | 'receipt';
+    /** 当前页面在 facebook 的编号 */
+    pageId: string;
+    /** 完整数据 */
+    data: AnyObject;
+}
+
+/** 附带的元数据 */
+type MessageMeta = Omit<SendBhData, 'pageId'>;
+
+/**
+ * 引用编译元数据
+ *  - 因为点击之后会自动将此处信息发送至 facebook
+ *  - 所以这里也能理解为是向 facebook 发送的数据接口
+ */
+interface RefData extends Partial<Pick<SendBhData, 'id' | 'type'>> {
+    /** 插件事件标记 */
+    gateway: 'engagement';
+    /** 插件编号 */
+    code: string;
+}
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {
@@ -38,13 +65,11 @@ export interface SendToMessengerData extends WidgetDataCommon {
         'GET_CUSTOMER_SERVICE' | 'GET_SUPPORT' | 'LET_US_CHAT' | 'SEND_ME_MESSAGES' | 'ALERT_ME_IN_MESSENGER' |
         'SEND_ME_UPDATES' | 'MESSAGE_ME' | 'LET_ME_KNOW' | 'KEEP_ME_UPDATED' | 'TELL_ME_MORE' | 'SUBSCRIBE_IN_MESSENGER' |
         'SUBSCRIBE_TO_UPDATES' | 'GET_MESSAGES' | 'SUBSCRIBE' | 'GET_STARTED_IN_MESSENGER' | 'LEARN_MORE_IN_MESSENGER' | 'GET_STARTED';
+
     /**
-     * 向后端发送的事件
-     *  - 允许是常量对象也允许是函数
-     *  - 内容信息将会和插件 code 合并然后经 base64 编码后发送到 facebook
-     *  - 此插件发送事件是默认的，只要点击就会发送，所以即便此项为空，仍然会向 facebook 发送事件
+     * 向后端发送事件的元数据
      */
-    message?: AnyObject | (() => AnyObject);
+    message?: MessageMeta | (() => MessageMeta);
     /**
      * 点击事件
      */
@@ -70,20 +95,47 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.check();
     }
 
-    /** 引用编译 */
-    get ref() {
-        const data: AnyObject = {
-            gateway: 'engagement',
-            code: this.code,
-        };
-
+    /** 包含的发送信息 */
+    get message(): SendBhData | null {
         const { message } = this.origin;
 
+        if (!message) {
+            return null;
+        }
+
+        let data: MessageMeta;
+
         if (isFunc(message)) {
-            data.message = message() || {};
+            data = message();
+
+            if (!data) {
+                return null;
+            }
         }
         else if (isObject(message)) {
-            data.message = message || {};
+            data = message;
+        }
+        else {
+            return null;
+        }
+
+        return {
+            ...data,
+            pageId: this.origin.pageId,
+        };
+    }
+    /** 引用编译 */
+    get ref() {
+        const { message, code } = this;
+
+        const data: RefData = {
+            code,
+            gateway: 'engagement',
+        };
+
+        if (message) {
+            data.id = message.id;
+            data.type = message.type;
         }
 
         return window.btoa(JSON.stringify(data));
@@ -97,8 +149,8 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
     }
     /** 渲染完成事件 */
     onRendered() {
-        if (this.origin.message) {
-            post('tr/', this.origin.message);
+        if (this.message) {
+            post('tr/', this.message);
         }
     }
 

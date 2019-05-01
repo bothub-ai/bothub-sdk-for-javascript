@@ -12,7 +12,11 @@ export function shallowCopy<T extends object, U extends keyof T>(from: T, props?
 
     const result: Pick<T, U> = {} as any;
 
-    props.forEach((key) => result[key] = from[key]);
+    props.forEach((key) => {
+        if (key in from) {
+            result[key] = from[key];
+        }
+    });
 
     return result;
 }

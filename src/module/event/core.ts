@@ -1,10 +1,20 @@
-import { jsonp } from 'src/lib/http';
-import { messengerAppId, disableFacebook } from 'src/store';
-import { getEventId, getUserRef } from 'src/lib/utils';
-import { AppEventNames, AppParameterNames } from 'typings/facebook';
+import { UA } from 'src/lib/env';
+import { log, warn } from 'src/lib/print';
+import { jsonp, post } from 'src/lib/http';
+
+import * as store from 'src/store';
+
+import { getEventId } from './utils';
+import { BhEventName } from './custom';
+
+import { WidgetType } from 'src/widget/helper';
+import { AppParameterNames } from 'typings/facebook';
 
 /** bothub 标准参数名称 */
 export interface BothubParameter {
+    /** 指向某个插件 */
+    widget?: string;
+
     /** International Article Number (EAN) when applicable, or other product or content identifier */
     id: string;
     /** For example music, video, or product description */
@@ -30,7 +40,7 @@ export interface BothubParameter {
 }
 
 /** bothub 标准参数名称映射至 facebook */
-export function toFbParameter(params: Partial<BothubParameter>, valueToSumKey?: string) {
+export function transformParameter(params: Partial<BothubParameter>, valueToSumKey?: string) {
     type bothubMap = { [key in keyof BothubParameter]: AppParameterNames };
 
     // 这里不放在外面作为常量是因为 fb sdk 加载是异步的
@@ -50,96 +60,122 @@ export function toFbParameter(params: Partial<BothubParameter>, valueToSumKey?: 
     };
 
     let valueToSum: number | null = null;
+    let widget: string | undefined = void 0;
+
     const result: object = Object.create(null);
 
     for (const key in params) {
         if (params.hasOwnProperty(key)) {
-            if (key === valueToSumKey) {
+            // 限定指向某个插件
+            if (key === 'widget') {
+                widget = params[key];
+            }
+            else if (key === valueToSumKey) {
                 valueToSum = params[key];
             }
-            else {
+            else if (key in paramMap) {
                 result[paramMap[key]] = params[key];
+            }
+            else {
+                log(`The parameter named '${key}' is not a standard parameter, we will not change its name.`);
+                result[key] = params[key];
             }
         }
     }
 
-    return [valueToSum, result] as const;
+    return [valueToSum, result, widget] as const;
 }
 
-/** 发送时间 */
-export function logEvent(name: string | AppEventNames, value: number | null = null, params?: object) {
-    // const {
-    //     EventNames: event,
-    //     ParameterNames: param,
-    //     logEvent: fbEvent,
-    // } = window.FB.AppEvents;
+/** 记录 facebook 事件 */
+function logFbEvent(name: string, value: number | null, params: object) {
+    const { AppEvents } = window.FB;
 
-    // fbEvent(name, value, params);
+    if (name === BhEventName.purchase) {
+        AppEvents.logPurchase(value as number, params[AppEvents.ParameterNames.CURRENCY], params);
+    }
+    else {
+        AppEvents.logEvent(name, value, params);
+    }
+}
 
-//     /**
-//      * @param {string}  eventName
-//      * @param {number}  valueToSum
-//      * @param {object}  params
-//      */
-//     logEvent(eventName, valueToSum, params) {
-//         if (!eventName) return;
-//         if (!valueToSum) valueToSum = null;
-//         if (!(params instanceof Object)) params = {};
-//         const Messenger = this.parent.Messenger;
+/**
+ * 记录 bothub 事件
+ * @param {string} [id] - 对应的 bothub 插件编号
+ * @param {object} params - 此次 facebook 事件的参数
+ */
+function logBhEvent(id: string | undefined, params: object) {
+    const widget = store.widgets.find(({ id: local }) => id === local);
 
-//         let event = {
-//             id: getEventId(),
-//             ev: eventName,
-//             params: copy(params),
-//         };
+    if (!widget) {
+        warn(`Can not find this Plugin with id ${id}`);
+        return;
+    }
+    else if (widget.type !== WidgetType.Checkbox) {
+        warn(`The Plugin must be Checkbox`);
+        return;
+    }
+    else if (!widget.isChecked) {
+        warn(`User has not checked the Checkbox`, true);
+        return;
+    }
 
-//         if (this.parent.entrance.fb_messenger_checkbox_ref) {
-//             event = Object.assign(event, this.parent.entrance.fb_messenger_checkbox_ref);
-//         }
+    // 事件参数
+    const event = {
+        ev: name,
+        id: getEventId(),
+        params: params || {},
+        user_agent: UA,
+        custom_user_id: store.customUserId,
+        fb_user_id: store.fbUserId,
+        ...(widget.message || {}),
+    };
 
-//         event.custom_user_id = this.parent.custom_user_id;
-//         event.user_agent = window.navigator && window.navigator.userAgent;
+    // checkbox 确认参数
+    const MessengerParams = {
+        app_id: store.messengerAppId,
+        page_id: widget.origin.pageId,
+        user_ref: widget.fbAttrs.userRef,
+        ref: JSON.stringify(event),
+    };
 
-//         if (this.parent.fb_user_id) {
-//             params.fb_user_id = this.parent.fb_user_id;
-//             event.fb_user_id = this.parent.fb_user_id;
-//         }
+    // 禁用 facebook 功能，则将数据发送回 bothub
+    if (store.disableFacebook) {
+        delete MessengerParams.user_ref;
 
-//         if (!event.user_id && !event.fb_user_id && !event.custom_user_id) {
-//             return;
-//         }
+        jsonp('analytics/events', {
+            action: 'store',
+            cd: MessengerParams,
+        });
+    }
+    else {
+        // 发送 checkbox 确认事件
+        window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, {
+            app_id: store.messengerAppId,
+            page_id: widget.origin.pageId,
+            user_ref: widget.fbAttrs.userRef,
+            ref: JSON.stringify(event),
+        });
 
-//         params.user_ref = getUserRef();
-//         params.ref = JSON.stringify(event);
+        // 向后端发送完整信息
+        if (widget.message) {
+            post('tr/', widget.message);
+        }
+    }
+}
 
-//         const MessengerParams = {
-//             'app_id': Messenger.messenger_app_id,
-//             'page_id': Messenger.page_id,
-//             'user_ref': params.user_ref,
-//             'ref': params.ref,
-//         };
+/**
+ * 发送事件标准函数
+ * @param {string} name 事件名称
+ * @param {number|null} value 用于累加的数值
+ * @param {object} [param] 附带的参数
+ * @param {string} [widgetId] 指向某个插件的编号（注：此参数不对客户开放）
+ */
+export function logEvent(name: string, value: number | null = null, params: object = {}, widgetId?: string) {
+    // 发送 bothub 事件
+    logBhEvent(widgetId, params);
 
-//         if (this.parent.platforms.indexOf('facebook') >= 0) {
-//             const analyticsParams = copy(params);
-//             delete analyticsParams.user_ref;
-//             delete analyticsParams.ref;
-
-//             if (eventName === 'fb_mobile_purchase') {
-//                 FB.AppEvents.logPurchase(
-//                     valueToSum,
-//                     params[FB.AppEvents.ParameterNames.CURRENCY],
-//                     analyticsParams
-//                 );
-//             } else {
-//                 FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
-//                 FB.AppEvents.logEvent(eventName, valueToSum, analyticsParams);
-//                 log('FB.AppEvents.logEvent', { eventName, valueToSum, analyticsParams });
-//             }
-//         } else if (this.parent.platforms.indexOf('bothub') >= 0) {
-//             delete MessengerParams.user_ref;
-//             window.query = { cd: MessengerParams };
-//             const query = urlEncode({ cd: MessengerParams });
-//             jsonp(`${this.parent.api_server}analytics/events?action=store${query}`);
-//         }
-//     }
+    // 发送 facebook 事件
+    if (!store.disableFacebook) {
+        logFbEvent(name, value, params);
+    }
 }

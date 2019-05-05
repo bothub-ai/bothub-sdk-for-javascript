@@ -12,5 +12,6 @@
  */
 
 export { logEvent } from './core';
+
 export * from './standard';
 export * from './custom';

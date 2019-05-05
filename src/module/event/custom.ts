@@ -1,4 +1,9 @@
-import { BothubParameter, toFbParameter, logEvent } from './core';
+import { BothubParameter, transformParameter, logEvent } from './core';
+
+/** bothub 自定义事件名称 */
+export enum BhEventName {
+    purchase = 'bh_purchase',
+}
 
 /** 完成购物事件参数 */
 interface CompletePaymentParams extends Pick<BothubParameter, 'id' | 'type' | 'currency'> {
@@ -7,9 +12,9 @@ interface CompletePaymentParams extends Pick<BothubParameter, 'id' | 'type' | 'c
 }
 
 /** 完成购物事件 */
-export function completePayment(params: CompletePaymentParams) {
+export function logPurchase(params: CompletePaymentParams) {
     logEvent(
-        'fb_mobile_complete_payment',
-        ...toFbParameter(params, 'totalPrice'),
+        BhEventName.purchase,
+        ...transformParameter(params, 'totalPrice'),
     );
 }

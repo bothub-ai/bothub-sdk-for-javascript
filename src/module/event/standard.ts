@@ -1,4 +1,4 @@
-import { BothubParameter, toFbParameter, logEvent } from './core';
+import { BothubParameter, transformParameter, logEvent } from './core';
 
 /** 添加至购物车事件参数 */
 interface AddedToCartParams extends Pick<BothubParameter, 'id' | 'type' | 'currency'> {
@@ -7,10 +7,11 @@ interface AddedToCartParams extends Pick<BothubParameter, 'id' | 'type' | 'curre
 }
 
 /** 添加至购物车事件 */
-export function addedToCartEvent(param: AddedToCartParams) {
+export function addedToCart(param: AddedToCartParams) {
+    debugger;
     logEvent(
         window.FB.AppEvents.EventNames.ADDED_TO_CART,
-        ...toFbParameter(param, 'price'),
+        ...transformParameter(param, 'price'),
     );
 }
 
@@ -21,10 +22,10 @@ interface AddedToWishlistParams extends Pick<BothubParameter, 'id' | 'type' | 'c
 }
 
 /** 添加至愿望单事件 */
-export function addedToWishlistEvent(param: AddedToWishlistParams) {
+export function addedToWishlist(param: AddedToWishlistParams) {
     logEvent(
         window.FB.AppEvents.EventNames.ADDED_TO_WISHLIST,
-        ...toFbParameter(param, 'price'),
+        ...transformParameter(param, 'price'),
     );
 }
 
@@ -35,9 +36,9 @@ interface InitiatedCheckoutParams extends Pick<BothubParameter, 'id' | 'type' | 
 }
 
 /** 购物车结算事件 */
-export function initiatedCheckoutEvent(param: InitiatedCheckoutParams) {
+export function initiatedCheckout(param: InitiatedCheckoutParams) {
     logEvent(
         window.FB.AppEvents.EventNames.INITIATED_CHECKOUT,
-        ...toFbParameter(param, 'totalPrice'),
+        ...transformParameter(param, 'totalPrice'),
     );
 }

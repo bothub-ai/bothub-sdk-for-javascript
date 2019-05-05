@@ -32,11 +32,6 @@ export function getCustomUserId() {
     return newId;
 }
 
-/** 获取随机的 Event Id */
-export function getEventId() {
-    return `bh_eid_${uuid().replace(/-/g, '_')}`;
-}
-
 /** 获取随机的 User Ref */
 export function getUserRef() {
     return `${location.host}_${uuid()}`.replace(/[\.-]/g, '_');

@@ -18,8 +18,6 @@ export const widgetData: WidgetData[] = [];
 /** 页面上的所有插件 */
 export const widgets: Widget[] = [];
 
-/** 当前用户引用参数 */
-export const userRef = utils.getUserRef();
 /** 当前用户的自定义编号 */
 export const customUserId = utils.getCustomUserId();
 /** 当前用户的 Facebook 编号  */

@@ -1,16 +1,14 @@
 import './style.less';
 
-import { DiscountData, ComponentProps } from './constant';
-import { overHiddenTime, bindEvent } from '../checkbox/helper';
-
 import { log } from 'src/lib/print';
-import { getUserRef } from 'src/lib/utils';
-import { messengerAppId } from 'src/store';
+import { shallowCopy } from 'src/lib/object';
 
 import { BaseWidget } from '../base/base';
-import { componentWarpper, ComponentType } from '../helper';
+import { DiscountData, ComponentProps } from './constant';
+import { WidgetType, componentWarpper, ComponentType, setHiddenTime, checkHiddenTime } from '../helper';
 
 import Component from './component';
+import Checkbox from '../base/checkbox';
 
 export { DiscountData };
 
@@ -19,17 +17,16 @@ export { DiscountData };
  */
 export default class Discount extends BaseWidget<DiscountData> {
     data!: ComponentProps['data'];
-    fbAttrs!: ComponentProps['fbAttrs'];
-    hideAfterChecked = 0;
 
-    /** 当前是否已经勾选 */
-    isChecked = false;
+    /** 内部组件 */
+    widget!: Checkbox;
     /** 组件渲染 */
     $component?: ComponentType<ComponentProps>;
 
+    /** 插件自动隐藏配置 */
+    hideAfterChecked = 0;
+    /** 插件对齐配置 */
     align: NonNullable<DiscountData['align']> = 'center';
-    clickShowCodeBtn: DiscountData['clickShowCodeBtn'];
-    clickCopyCodeBtn: DiscountData['clickCopyCodeBtn'];
 
     readonly requiredKeys: (keyof DiscountData)[] = [
         'id',
@@ -37,7 +34,7 @@ export default class Discount extends BaseWidget<DiscountData> {
         'pageId',
         'title',
         'subtitle',
-        'notice',
+        'discount',
         'showCodeBtnText',
         'copyCodeBtnText',
         'discountText',
@@ -55,34 +52,62 @@ export default class Discount extends BaseWidget<DiscountData> {
     get hidenKey() {
         return `discount-hide:${this.id}`;
     }
+    /** 内部 checkbox 编号 */
+    get checkboxId() {
+        return `${this.id}-discount-checkbox`;
+    }
+    /** 当前是否已经勾选 */
+    get isChecked() {
+        return this.widget.isChecked;
+    }
 
     init() {
-        const {
-            id,
-            type,
-            pageId,
-            align = 'center',
-            hideAfterChecked = 0,
-            clickShowCodeBtn,
-            clickCopyCodeBtn,
-            ...rest
-        } = this.origin;
+        const { origin } = this;
 
-        this.data = rest;
-        this.align = align;
-        this.hideAfterChecked = hideAfterChecked;
-        this.clickShowCodeBtn = clickShowCodeBtn;
-        this.clickCopyCodeBtn = clickCopyCodeBtn;
+        this.align = origin.align || 'center';
+        this.hideAfterChecked = origin.hideAfterChecked || 0;
+        this.data = shallowCopy(origin, [
+            'title',
+            'subtitle',
+            'showCodeBtnText',
+            'discount',
+            'copyCodeBtnText',
+            'discountText',
+            'discountCode',
+        ]);
 
-        this.fbAttrs = {
-            messengerAppId, pageId,
-            origin: location.origin,
+        this.off();
+        this.on('clickShowCodeBtn', origin.clickShowCodeBtn);
+        this.on('clickCopyCodeBtn', origin.clickCopyCodeBtn);
+
+        // checkbox 初始化
+        this.widget = new Checkbox({
+            type: WidgetType.Checkbox,
+            id: this.checkboxId,
+            pageId: this.origin.pageId,
             // 强制居中
             centerAlign: true,
             // 手机界面显示 small，PC 界面显示 large
             size: window.innerWidth < 768 ? 'small' : 'large',
-            userRef: '',
-        };
+        });
+
+        // 内部器件标记
+        this.widget.isInside = true;
+
+        this.widget.on('rendered', () => {
+            this.isRendered = true;
+            this.$component!.update({
+                loading: false,
+            });
+        });
+
+        this.widget.on('check', () => {
+            this.$component!.update({ isChecked: this.isChecked });
+        });
+
+        this.widget.on('uncheck', () => {
+            this.$component!.update({ isChecked: this.isChecked });
+        });
     }
     check() {
         this.canRender = true;
@@ -92,6 +117,7 @@ export default class Discount extends BaseWidget<DiscountData> {
             return;
         }
 
+        // 网页中寻找元素
         this.$el = this.renderWarpperById();
 
         if (!this.$el) {
@@ -100,7 +126,7 @@ export default class Discount extends BaseWidget<DiscountData> {
         }
 
         // 设置隐藏，且在隐藏时间范围内
-        if (this.hideAfterChecked > 0 && !overHiddenTime(this)) {
+        if (this.hideAfterChecked > 0 && !checkHiddenTime(this)) {
             this.canRender = false;
             return;
         }
@@ -111,9 +137,6 @@ export default class Discount extends BaseWidget<DiscountData> {
             return;
         }
 
-        /** 是否是重复渲染 */
-        const alreadyRender = this.isRendered;
-
         // 渲染标志位初始化
         this.isRendered = false;
 
@@ -121,33 +144,20 @@ export default class Discount extends BaseWidget<DiscountData> {
         if (!this.$component) {
             this.$component = componentWarpper(Component, this.$el, {
                 id: this.id,
-                fbAttrs: this.fbAttrs,
                 data: this.data,
                 align: this.align,
+                checkboxId: this.checkboxId,
                 loading: true,
                 isChecked: false,
-                clickShowCodeBtn: this.clickShowCodeBtn,
-                clickCopyCodeBtn: this.clickCopyCodeBtn,
+                emit: (name: string) => this.emit(name),
             });
         }
 
-        // 更新 user-ref
-        this.fbAttrs.userRef = getUserRef();
         // 组件初次渲染
         this.$component.update({ loading: true });
 
-        // facebook 渲染
-        window.FB.XFBML.parse(this.$el);
-
-        // 首次渲染，需要绑定事件
-        if (!alreadyRender) {
-            bindEvent(this, {
-                onRendered: () => this.$component!.update({ loading: false }),
-                onUnCheck: () => this.$component!.update({ isChecked: false }),
-                onCheck: () => {
-                    this.$component!.update({ isChecked: true });
-                },
-            });
-        }
+        // checkbox 渲染
+        this.widget.check();
+        this.widget.parse();
     }
 }

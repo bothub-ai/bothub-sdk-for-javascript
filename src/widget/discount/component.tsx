@@ -1,16 +1,10 @@
 import { h, Component } from 'preact';
-import { underlineObject } from '../helper';
 import { WarpperClassName } from '../base/base';
 import { ComponentProps, bhClass } from './constant';
 
 import { log } from 'src/lib/print';
 import { copy } from 'src/lib/utils';
 import { parseClass } from 'src/lib/dom';
-
-import {
-    bhClass as bhCheckboxClass,
-    fbClass as fbCheckboxClass,
-} from '../checkbox/constant';
 
 import Loading from 'src/widget/components/loading';
 
@@ -31,34 +25,21 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
     };
 
     render() {
-        const {
-            id,
-            data,
-            align,
-            fbAttrs,
-            loading,
-            isChecked,
-            clickShowCodeBtn,
-            clickCopyCodeBtn,
-        } = this.props;
-
-        const {
-            showCode,
-            shakeBox,
-            isCopied,
-        } = this.state;
+        const { props, state } = this;
+        const { showCode, shakeBox, isCopied } = state;
+        const { id, checkboxId, data, emit, loading, isChecked } = props;
 
         const clickButton = () => {
             if (showCode) {
+                this.setState({ isCopied: true });
                 log(`Copy the code to Clipboard, ${data.discountCode}`);
                 copy(data.discountCode);
-                clickCopyCodeBtn && clickCopyCodeBtn();
-                this.setState({ isCopied: true });
+                emit('clickCopyCodeBtn');
             }
             else if (isChecked) {
                 // TODO: 这里的 code 也可能是从后端取过来的
                 this.setState({ showCode: true });
-                clickShowCodeBtn && clickShowCodeBtn;
+                emit('clickShowCodeBtn');
             }
             else {
                 this.setState({ shakeBox: true });
@@ -68,7 +49,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
 
         return (
             <div id={id} class={WarpperClassName}>
-                <section class={`${bhClass} ${bhClass}__${align}`}>
+                <section class={`${bhClass} ${bhClass}__${props.align}`}>
                     <header class={`${bhClass}__header`}>
                         <div class={`${bhClass}__title`}>{ data.title }</div>
                         <div class={`${bhClass}__subtitle`}>{ data.subtitle }</div>
@@ -82,30 +63,23 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                                 <div class={`${bhClass}__msg`}>SUCCESS</div>
                             </div>
                             : <div class={`${bhClass}__tip`} style='color: #FF6969'>
-                                <div class={`${bhClass}__notice`}>{ data.notice }</div>
+                                <div class={`${bhClass}__notice`}>{ data.discount }</div>
                                 <div class={`${bhClass}__msg`}>DISCOUNT</div>
                             </div>
                         }
                         <div class={`${bhClass}__content`}>
                             { loading ? <Loading /> : '' }
+                            {/* checkbox 插件元素 */}
                             <div
-                                data-ref={window.btoa(id)}
-                                class={`${bhCheckboxClass} ${fbCheckboxClass}`}
+                                id={checkboxId}
                                 style={(loading || !showCode) ? '' : {
                                     opacity: '0',
                                     zIndex: -1,
                                     position: 'absolute',
                                 }}
-                                {...underlineObject(fbAttrs)}
                             />
-                            { showCode
-                                ? <div class={`${bhClass}__content-text`}>{ data.discountText }</div>
-                                : ''
-                            }
-                            { showCode
-                                ? <div class={`${bhClass}__content-code`}>{ data.discountCode }</div>
-                                : ''
-                            }
+                            { showCode ? <div class={`${bhClass}__content-text`}>{ data.discountText }</div> : '' }
+                            { showCode ? <div class={`${bhClass}__content-code`}>{ data.discountCode }</div> : '' }
                         </div>
                     </article>
                     <button

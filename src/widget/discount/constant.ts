@@ -1,6 +1,7 @@
 import { WidgetType } from '../helper';
 import { WidgetDataCommon } from '../base/base';
-import { FbCheckboxAttrs } from '../checkbox/constant';
+
+import EventController from 'src/lib/event';
 
 /** 砍价插件数据接口 */
 export interface DiscountData extends WidgetDataCommon {
@@ -19,7 +20,7 @@ export interface DiscountData extends WidgetDataCommon {
     /** 复制按钮文本 */
     copyCodeBtnText: string;
     /** 折扣 */
-    notice: string;
+    discount: string;
     /**
      * 用户勾选确认后多少天内自动隐藏
      *  - 默认为`-1`，意为不使用此功能
@@ -41,21 +42,24 @@ export interface DiscountData extends WidgetDataCommon {
 }
 
 /** 虚拟组件参数 */
-export interface ComponentProps extends Pick<DiscountData, 'align' | 'clickCopyCodeBtn' | 'clickShowCodeBtn'> {
+export interface ComponentProps extends Pick<DiscountData, 'align'> {
     /** 当前组件编号 */
     id: string;
+    /** checkbox 编号 */
+    checkboxId: string;
     /** 等待 facebook 插件加载 */
     loading: boolean;
     /** 选择框是否被选中 */
     isChecked: boolean;
-    /** facebook 核心插件属性集合 */
-    fbAttrs: FbCheckboxAttrs;
     /** 当前组件的数据 */
     data: Pick<
         DiscountData,
-        'title' | 'subtitle' | 'showCodeBtnText' | 'notice' |
+        'title' | 'subtitle' | 'showCodeBtnText' | 'discount' |
         'copyCodeBtnText' | 'discountText' | 'discountCode'
     >;
+
+    /** 触发事件 */
+    emit: EventController['emit'];
 }
 
 export const bhClass = 'bothub-widget-discount';

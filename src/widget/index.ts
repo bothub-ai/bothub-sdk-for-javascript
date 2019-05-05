@@ -3,17 +3,22 @@ import { log, warn } from 'src/lib/print';
 import { widgetData, widgets } from 'src/store';
 import { isDef, isNumber, isArray, isBoolean } from 'src/lib/assert';
 
-import { default as Checkbox, CheckboxData } from './checkbox';
 import { default as Discount, DiscountData } from './discount';
+import { default as Checkbox, CheckboxData } from './base/checkbox';
 import { default as MessageUs, MessageUsData } from './base/message-us';
 import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
 /** 插件类 */
-export type Widget = Checkbox | Discount | MessageUs | Customerchat | SendToMessenger | ShareButton;
+export type Widget =
+    Checkbox | Discount | MessageUs | Customerchat |
+    SendToMessenger | ShareButton;
 /** 插件标准数据 */
-export type WidgetData = CheckboxData | MessageUsData | DiscountData | CustomerchatData | SendToMessengerData | ShareButtonData;
+export type WidgetData =
+    CheckboxData | MessageUsData | DiscountData | CustomerchatData |
+    SendToMessengerData | ShareButtonData;
+
 /** 插件输入数据类型 */
 export type InputWidgetData = Omit<WidgetData, 'type'> & {
     type: WidgetType | keyof typeof WidgetType;

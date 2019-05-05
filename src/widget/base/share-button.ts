@@ -22,6 +22,9 @@ export interface ShareButtonData extends WidgetDataCommon {
     size?: 'large' | 'small';
 }
 
+/** facebook “发送至 Messenger”插件属性 */
+export type FbShareButtonAttrs = Omit<ShareButtonData, 'id' | 'type'>;
+
 const fbClass = 'fb-share-button';
 const bhClass = 'bothub-share-button';
 
@@ -29,7 +32,7 @@ const bhClass = 'bothub-share-button';
  * [分享按钮插件](https://developers.facebook.com/docs/plugins/share-button/)
  */
 export default class ShareButton extends BaseWidget<ShareButtonData> {
-    fbAttrs!: Omit<ShareButtonData, 'id' | 'type'>;
+    fbAttrs!: FbShareButtonAttrs;
     requiredKeys: (keyof ShareButtonData)[] = ['id', 'type', 'href'];
 
     constructor(data: ShareButtonData) {
@@ -57,6 +60,7 @@ export default class ShareButton extends BaseWidget<ShareButtonData> {
         window.FB.XFBML.parse(this.$el, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
+            this.emit('rendered');
         });
     }
 }

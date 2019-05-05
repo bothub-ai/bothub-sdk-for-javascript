@@ -1,8 +1,7 @@
 import { log } from 'src/lib/print';
-import { addClass, setAttributes } from 'src/lib/dom';
-import { messengerAppId } from 'src/store';
-
 import { WidgetType } from '../helper';
+import { messengerAppId } from 'src/store';
+import { addClass, setAttributes } from 'src/lib/dom';
 import { BaseWidget, WidgetDataCommon } from './base';
 
 /** “给我们发消息”插件 */
@@ -21,6 +20,9 @@ export interface MessageUsData extends WidgetDataCommon {
     size?: 'standard' | 'large' | 'xlarge';
 }
 
+/** facebook “给我们发消息”插件属性 */
+export type FbMessageUsAttrs = Omit<MessageUsData, 'id' | 'type'>;
+
 const fbClass = 'fb-messengermessageus';
 const bhClass = 'bothub-messengermessageus';
 
@@ -28,7 +30,7 @@ const bhClass = 'bothub-messengermessageus';
  * [“给我们发消息”插件](https://developers.facebook.com/docs/messenger-platform/discovery/message-us-plugin)
  */
 export default class MessageUs extends BaseWidget<MessageUsData> {
-    fbAttrs!: Omit<MessageUsData, 'id' | 'type'>;
+    fbAttrs!: FbMessageUsAttrs;
 
     constructor(data: MessageUsData) {
         super(data);
@@ -57,6 +59,7 @@ export default class MessageUs extends BaseWidget<MessageUsData> {
         window.FB.XFBML.parse(this.$el, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
+            this.emit('rendered');
         });
     }
 }

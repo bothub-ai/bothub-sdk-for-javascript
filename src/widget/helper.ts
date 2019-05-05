@@ -1,3 +1,6 @@
+import { log } from 'src/lib/print';
+import { local } from 'src/lib/cache';
+import { daysOffset } from 'src/lib/time';
 import { fromCamelCase } from 'src/lib/string';
 
 import {
@@ -11,12 +14,14 @@ import {
 
 /** 插件类型 */
 export enum WidgetType {
+    // 原生
     Checkbox,
     Customerchat,
-    Discount,
     SendToMessenger,
     MessageUs,
     ShareButton,
+    // 封装
+    Discount,
 }
 
 /** 对象属性名称由驼峰转为下划线 */
@@ -43,7 +48,7 @@ const isFunctional = <U extends object>(x: AnyComponent<U>): x is FunctionalComp
     return Object.getPrototypeOf(x) !== Component;
 };
 
-/** react 组件包装器 */
+/** preact 组件包装器 */
 export function componentWarpper<T extends object>(
     component: FunctionalComponent<T> | ComponentConstructor<T, object>,
     warpperEle: Element,
@@ -91,4 +96,41 @@ export function componentWarpper<T extends object>(
         update,
         destroy,
     };
+}
+
+/** 可以设定自动隐藏的组件所需要的基础接口 */
+interface HiddenWidget {
+    /** 组件编号 */
+    id: string;
+    /** 组件名称 */
+    name: string;
+    /** 储存隐藏时间的键名 */
+    hidenKey: string;
+    /** 自动隐藏配置 */
+    hideAfterChecked: number;
+}
+
+/** 设置自动隐藏储存数据 */
+export function setHiddenTime(widget: HiddenWidget) {
+    if (widget.hideAfterChecked > 0) {
+        local.set(widget.hidenKey, new Date().getTime());
+    }
+}
+
+/** 检查是否自动隐藏 */
+export function checkHiddenTime(widget: HiddenWidget) {
+    const lastHideTime = local.get<number>(widget.hidenKey) || 0;
+    const offset = daysOffset(new Date(), lastHideTime);
+
+    // 还在隐藏时间范围内
+    if (offset < widget.hideAfterChecked) {
+        log(`${widget.name} with id ${widget.id}, set auto hide, skip`);
+        return false;
+    }
+    // 超过时间范围
+    else {
+        local.remove(widget.hidenKey);
+    }
+
+    return true;
 }

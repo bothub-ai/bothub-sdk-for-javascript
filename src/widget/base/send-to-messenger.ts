@@ -1,40 +1,12 @@
 import { post } from 'src/lib/http';
 import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
-import { isFunc, isObject } from 'src/lib/assert';
 import { SendToMessengerEvent } from 'typings/facebook';
 import { addClass, setAttributes } from 'src/lib/dom';
 import { shallowCopyExclude } from 'src/lib/object';
 
 import { WidgetType } from '../helper';
 import { BaseWidget, WidgetDataCommon } from './base';
-
-/** 向 Bothub 发送的数据格式 */
-interface SendBhData {
-    /** 数据编号 */
-    id: string;
-    /** 数据类型 */
-    type: 'feed' | 'receipt';
-    /** 当前页面在 facebook 的编号 */
-    pageId: string;
-    /** 完整数据 */
-    data: AnyObject;
-}
-
-/** 附带的元数据 */
-type MessageMeta = Omit<SendBhData, 'pageId'>;
-
-/**
- * 引用编译元数据
- *  - 因为点击之后会自动将此处信息发送至 facebook
- *  - 所以这里也能理解为是向 facebook 发送的数据接口
- */
-interface RefData extends Partial<Pick<SendBhData, 'id' | 'type'>> {
-    /** 插件事件标记 */
-    gateway: 'engagement';
-    /** 插件编号 */
-    code: string;
-}
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {
@@ -67,14 +39,17 @@ export interface SendToMessengerData extends WidgetDataCommon {
         'SUBSCRIBE_TO_UPDATES' | 'GET_MESSAGES' | 'SUBSCRIBE' | 'GET_STARTED_IN_MESSENGER' | 'LEARN_MORE_IN_MESSENGER' | 'GET_STARTED';
 
     /**
-     * 向后端发送事件的元数据
-     */
-    message?: MessageMeta | (() => MessageMeta);
-    /**
      * 点击事件
      */
     click?(): void;
+    /**
+     * 渲染完成事件
+     */
+    rendered?(): void;
 }
+
+/** facebook “发送至 Messenger”插件属性 */
+export type FbSendToMessengerAttrs = Omit<SendToMessengerData, 'id' | 'type' | 'message' | 'click'>;
 
 const fbClass = 'fb-send-to-messenger';
 const bhClass = 'bothub-send-to-messenger';
@@ -83,7 +58,7 @@ const bhClass = 'bothub-send-to-messenger';
  * [“发送至 Messenger”插件](https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/)
  */
 export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
-    fbAttrs!: Omit<SendToMessengerData, 'id' | 'type' | 'message' | 'click'>;
+    fbAttrs!: FbSendToMessengerAttrs;
 
     /** 是否已经发送数据 */
     sent = false;
@@ -95,67 +70,18 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.check();
     }
 
-    /** 包含的发送信息 */
-    get message(): SendBhData | null {
-        const { message } = this.origin;
+    init() {
+        const { origin, message } = this;
 
-        if (!message) {
-            return null;
-        }
+        this.fbAttrs = shallowCopyExclude(origin, ['id', 'type', 'message', 'click']);
 
-        let data: MessageMeta;
-
-        if (isFunc(message)) {
-            data = message();
-
-            if (!data) {
-                return null;
-            }
-        }
-        else if (isObject(message)) {
-            data = message;
-        }
-        else {
-            return null;
-        }
-
-        return {
-            ...data,
-            pageId: this.origin.pageId,
-        };
-    }
-    /** 引用编译 */
-    get ref() {
-        const { message, code } = this;
-
-        const data: RefData = {
-            code,
-            gateway: 'engagement',
-        };
+        this.off();
+        this.on('click', origin.click);
+        this.on('rendered', origin.rendered);
 
         if (message) {
-            data.id = message.id;
-            data.type = message.type;
+            this.on('click', () => post('tr/', message).then(() => this.sent = true));
         }
-
-        return window.btoa(JSON.stringify(data));
-    }
-
-    /** 点击事件 */
-    onClick() {
-        if (this.origin.click) {
-            this.origin.click();
-        }
-    }
-    /** 渲染完成事件 */
-    onRendered() {
-        if (this.message) {
-            post('tr/', this.message);
-        }
-    }
-
-    init() {
-        this.fbAttrs = shallowCopyExclude(this.origin, ['id', 'type', 'message', 'click']);
     }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
@@ -193,13 +119,12 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
                 }
 
                 if (ev.event === 'rendered') {
-                    this.isRendered = true;
-                    this.onRendered();
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
+                    this.isRendered = true;
+                    this.emit('rendered');
                 }
-                else if (ev.event === 'clicked' && this.onClick) {
-                    this.sent = true;
-                    this.onClick();
+                else if (ev.event === 'clicked') {
+                    this.emit('click');
                 }
             });
         }

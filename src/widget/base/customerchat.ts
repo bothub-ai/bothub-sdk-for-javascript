@@ -31,6 +31,9 @@ export interface CustomerchatData extends WidgetDataCommon {
     greetingDialogDelay?: number;
 }
 
+/** facebook “给我们发消息”插件属性 */
+export type FbCustomerchatAttrs = Omit<CustomerchatData, 'id' | 'type'>;
+
 const fbClass = 'fb-customerchat';
 const bhClass = 'bothub-customerchat';
 
@@ -38,7 +41,7 @@ const bhClass = 'bothub-customerchat';
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
  */
 export default class Customerchat extends BaseWidget<CustomerchatData> {
-    fbAttrs!: Omit<CustomerchatData, 'id' | 'type'>;
+    fbAttrs!: FbCustomerchatAttrs;
 
     constructor(data: CustomerchatData) {
         super(data);
@@ -90,6 +93,7 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         window.FB.XFBML.parse(this.$el, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
+            this.emit('rendered');
         });
     }
 }

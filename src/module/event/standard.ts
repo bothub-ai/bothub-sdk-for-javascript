@@ -8,7 +8,6 @@ interface AddedToCartParams extends Pick<BothubParameter, 'id' | 'type' | 'curre
 
 /** 添加至购物车事件 */
 export function addedToCart(param: AddedToCartParams) {
-    debugger;
     logEvent(
         window.FB.AppEvents.EventNames.ADDED_TO_CART,
         ...transformParameter(param, 'price'),

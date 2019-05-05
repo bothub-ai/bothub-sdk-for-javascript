@@ -8,7 +8,7 @@ import { getEventId } from './utils';
 import { BhEventName } from './custom';
 
 import { WidgetType } from 'src/widget/helper';
-import { AppParameterNames } from 'typings/facebook';
+import { AppEventNames, AppParameterNames } from 'typings/facebook';
 
 /** bothub 标准参数名称 */
 export interface BothubParameter {
@@ -170,12 +170,12 @@ function logBhEvent(id: string | undefined, params: object) {
  * @param {object} [param] 附带的参数
  * @param {string} [widgetId] 指向某个插件的编号（注：此参数不对客户开放）
  */
-export function logEvent(name: string, value: number | null = null, params: object = {}, widgetId?: string) {
+export function logEvent(name: string | AppEventNames, value: number | null = null, params: object = {}, widgetId?: string) {
     // 发送 bothub 事件
     logBhEvent(widgetId, params);
 
     // 发送 facebook 事件
     if (!store.disableFacebook) {
-        logFbEvent(name, value, params);
+        logFbEvent(name as string, value, params);
     }
 }

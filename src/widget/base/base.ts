@@ -1,6 +1,7 @@
-import { get } from 'src/lib/array';
-import { warn } from 'src/lib/print';
+import { log, warn } from 'src/lib/print';
 import { addClass } from 'src/lib/dom';
+import { widgets } from 'src/store';
+import { get, deleteVal } from 'src/lib/array';
 import { shallowCopyExclude } from 'src/lib/object';
 import { isUndef, isFunc, isObject } from 'src/lib/assert';
 import { WidgetType, ComponentType } from '../helper';
@@ -236,5 +237,37 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
      */
     parse(focus?: boolean) {
         warn(`${this.name} don't have parse method`);
+    }
+    /** 销毁函数 */
+    destroy() {
+        // 解除所有事件绑定
+        this.off();
+
+        // 已经渲染了网页元素
+        if (!this.$el) {
+            return;
+        }
+
+        const warpper = this.$el.parentElement!;
+        const parent = warpper.parentElement!;
+
+        // 是由函数定位的，则直接移除包装器
+        if (this.origin.position) {
+            parent.removeChild(warpper);
+        }
+        // 是在网页中用 div 元素定位的
+        else {
+            const newWarpper = parent.insertBefore(document.createElement('div'), warpper);
+            newWarpper.setAttribute('id', this.id);
+        }
+
+        setTimeout(() => {
+            deleteVal(widgets, this as any);
+
+            // 非内部插件销毁打印日志
+            if (!this.isInside) {
+                log(`Plugin with id ${this.id} has been destroyed`);
+            }
+        });
     }
 }

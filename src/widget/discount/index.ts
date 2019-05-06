@@ -5,7 +5,7 @@ import { shallowCopy } from 'src/lib/object';
 
 import { BaseWidget } from '../base/base';
 import { DiscountData, ComponentProps } from './constant';
-import { WidgetType, componentWarpper, ComponentType, setHiddenTime, checkHiddenTime } from '../helper';
+import { WidgetType, componentWarpper, ComponentType, checkHiddenTime } from '../helper';
 
 import Component from './component';
 import Checkbox from '../base/checkbox';
@@ -159,5 +159,9 @@ export default class Discount extends BaseWidget<DiscountData> {
         // checkbox 渲染
         this.widget.check();
         this.widget.parse();
+    }
+    destroy() {
+        this.widget.destroy();
+        BaseWidget.prototype.destroy.call(this);
     }
 }

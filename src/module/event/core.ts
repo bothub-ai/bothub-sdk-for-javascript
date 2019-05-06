@@ -9,7 +9,7 @@ import { BhEventName } from './custom';
 
 import Checkbox from 'src/widget/base/checkbox';
 
-import { WidgetType } from 'src/widget';
+import { WidgetType } from 'src/widget/helper';
 import { AppEventNames, AppParameterNames } from 'typings/facebook';
 
 /** bothub 标准参数名称 */

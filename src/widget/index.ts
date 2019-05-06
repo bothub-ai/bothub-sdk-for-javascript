@@ -10,8 +10,6 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-export { WidgetType };
-
 /** 插件类 */
 export type Widget =
     Checkbox | Discount | MessageUs | Customerchat |
@@ -66,7 +64,7 @@ export function setConfig(config: InputWidgetData | InputWidgetData[]) {
     });
 }
 
-/** 渲染函数 */
+/** 渲染插件 */
 export function render(focus?: boolean): boolean;
 export function render(id?: string, focus?: boolean): boolean;
 export function render(id?: string | boolean, focus?: boolean) {
@@ -142,4 +140,24 @@ export function render(id?: string | boolean, focus?: boolean) {
     }
 
     return widget.canRender;
+}
+
+/** 销毁插件 */
+export function destroy(id?: string) {
+    if (!id) {
+        widgets.forEach(({ id: local }) => destroy(local));
+        return;
+    }
+
+    // 当前插件数据
+    const widget = widgets.find(({ id: local }) => id === local);
+
+    // 插件不存在
+    if (!widget) {
+        warn(`Can not find this Plugin with id ${id}`);
+        return;
+    }
+
+    // 销毁插件
+    widget.destroy();
 }

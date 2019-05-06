@@ -50,11 +50,19 @@ app.use((ctx: Context, next: Function) => {
         return (false);
     }
 
-    const filePath = ctx.path[ctx.path.length - 1] === '/'
-        ? join(output, ctx.path, 'index.html')
-        : join(output, ctx.path);
+    const findPath = (path: string) => {
+        const extensions = ['', 'index.html'];
 
-    if (!fs.existsSync(filePath)) {
+        return (
+            extensions
+                .map((item) => join(output, path, item))
+                .find((item) => fs.existsSync(item) && !fs.statSync(item).isDirectory())
+        );
+    };
+
+    const filePath = findPath(ctx.path);
+
+    if (!filePath) {
         ctx.status = 404;
         ctx.length = 0;
         next();

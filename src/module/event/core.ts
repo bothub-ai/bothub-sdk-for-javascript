@@ -7,7 +7,9 @@ import * as store from 'src/store';
 import { getEventId } from './utils';
 import { BhEventName } from './custom';
 
-import { WidgetType } from 'src/widget/helper';
+import Checkbox from 'src/widget/base/checkbox';
+
+import { WidgetType } from 'src/widget';
 import { AppEventNames, AppParameterNames } from 'typings/facebook';
 
 /** bothub 标准参数名称 */
@@ -100,33 +102,34 @@ function logFbEvent(name: string, value: number | null, params: object) {
 
 /**
  * 记录 bothub 事件
- * @param {string} [id] - 对应的 bothub 插件编号
+ * @param {string} id - 对应的 bothub 插件编号
+ * @param {string} name - 事件名称
  * @param {object} params - 此次 facebook 事件的参数
  */
-function logBhEvent(id: string | undefined, params: object) {
-    const widget = store.widgets.find(({ id: local }) => id === local);
+async function logBhEvent(id: string, name: string, params: object) {
+    const widget = (id.length === 0)
+        ? store.widgets.find(({ type }) => type === WidgetType.Checkbox) as Checkbox
+        : store.widgets.find(({ id: local, type }) => id === local && type === WidgetType.Checkbox) as Checkbox;
 
+    // 未找到指定的 checkbox
     if (!widget) {
-        warn(`Can not find this Plugin with id ${id}`);
-        return;
-    }
-    else if (widget.type !== WidgetType.Checkbox) {
-        warn(`The Plugin must be Checkbox`);
-        return;
-    }
-    else if (!widget.isChecked) {
-        warn(`User has not checked the Checkbox`, true);
+        // 指定了插件编号
+        if (id) {
+            warn(`Can not find Checkbox with id ${id}`);
+        }
+
         return;
     }
 
     // 事件参数
     const event = {
-        ev: name,
+        name,
+        params,
         id: getEventId(),
-        params: params || {},
+
         user_agent: UA,
-        custom_user_id: store.customUserId,
         fb_user_id: store.fbUserId,
+        custom_user_id: store.customUserId,
         ...(widget.message || {}),
     };
 
@@ -142,24 +145,19 @@ function logBhEvent(id: string | undefined, params: object) {
     if (store.disableFacebook) {
         delete MessengerParams.user_ref;
 
-        jsonp('analytics/events', {
+        await jsonp('analytics/events', {
             action: 'store',
             cd: MessengerParams,
         });
     }
     else {
-        // 发送 checkbox 确认事件
-        window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, {
-            app_id: store.messengerAppId,
-            page_id: widget.origin.pageId,
-            user_ref: widget.fbAttrs.userRef,
-            ref: JSON.stringify(event),
-        });
-
         // 向后端发送完整信息
         if (widget.message) {
-            post('tr/', widget.message);
+            await post('tr/', widget.message);
         }
+
+        // 发送 checkbox 确认事件
+        await window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
     }
 }
 
@@ -170,12 +168,12 @@ function logBhEvent(id: string | undefined, params: object) {
  * @param {object} [param] 附带的参数
  * @param {string} [widgetId] 指向某个插件的编号（注：此参数不对客户开放）
  */
-export function logEvent(name: string | AppEventNames, value: number | null = null, params: object = {}, widgetId?: string) {
+export async function logEvent(name: string | AppEventNames, value: number | null = null, params: object = {}, widgetId: string = '') {
     // 发送 bothub 事件
-    logBhEvent(widgetId, params);
+    await logBhEvent(widgetId, name as string, params);
 
     // 发送 facebook 事件
     if (!store.disableFacebook) {
-        logFbEvent(name as string, value, params);
+        await logFbEvent(name as string, value, params);
     }
 }

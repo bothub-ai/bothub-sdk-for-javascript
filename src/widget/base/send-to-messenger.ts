@@ -79,8 +79,12 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.on('click', origin.click);
         this.on('rendered', origin.rendered);
 
+        // 发送消息之后，状态位赋值
+        this.on('click', () => this.sent = true);
+
+        // 如果包含有信息，则渲染完成之后立即发送
         if (message) {
-            this.on('click', () => post('tr/', message).then(() => this.sent = true));
+            this.on('rendered', () => post('tr/', message).then(() => this.sent = true));
         }
     }
     parse(focus = false) {

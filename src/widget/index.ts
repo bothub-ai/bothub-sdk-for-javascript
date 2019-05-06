@@ -10,6 +10,8 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
+export { WidgetType };
+
 /** 插件类 */
 export type Widget =
     Checkbox | Discount | MessageUs | Customerchat |

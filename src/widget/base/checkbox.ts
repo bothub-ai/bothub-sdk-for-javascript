@@ -21,7 +21,7 @@ export interface CheckboxData extends WidgetDataCommon {
      * 插件大小
      *  - 默认为`large`
      */
-    size?: 'small' | 'medium' | 'large' | 'standard' | 'xlarge';
+    size?: 'small' | 'medium' | 'standard' | 'large' | 'xlarge';
     /**
      * 插件内容的色彩主题
      *  - `light`：插件显示深色文本

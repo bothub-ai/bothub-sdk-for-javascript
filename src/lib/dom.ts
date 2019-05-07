@@ -63,8 +63,22 @@ export function setAttributes<
             return `_${item1.toLowerCase()}`;
         }) : key as string;
 
-        if (attrs[key]) {
+        if (attrs.hasOwnProperty(key)) {
             dom.setAttribute(name, String(attrs[key]));
         }
     });
+}
+
+/** 由 css 选择器移除元素 */
+export function removeDom(select: string) {
+    const nodes = document.querySelectorAll(select);
+
+    for (let i = 0; i < nodes.length; i++) {
+        const el = nodes[i];
+        const parent = el.parentElement;
+
+        if (parent) {
+            parent.removeChild(el);
+        }
+    }
 }

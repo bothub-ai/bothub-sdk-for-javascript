@@ -36,6 +36,8 @@ export interface WidgetDataCommon {
     /** Facebook 主页编号 */
     pageId: string;
 
+    /** 是否是内部器件 */
+    isInside?: boolean;
     /** 附带的数据 */
     message?: MessageMeta;
 
@@ -81,7 +83,7 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     /** 是否是内部器件 */
     isInside = false;
 
-    /** 当前插件的元素引用（并非最外层的包装元素） */
+    /** 当前插件的包装器引用（除开 customerchat） */
     $el?: HTMLElement;
     /** 当前插件的虚拟组件 */
     $component?: ComponentType;
@@ -92,11 +94,12 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     /** 必填项键名 */
     readonly requiredKeys: (keyof T)[] = ['id', 'type', 'pageId'];
 
-    constructor({ id, type }: T) {
+    constructor({ id, type, isInside = false }: T) {
         super();
 
         this.id = id;
         this.type = type;
+        this.isInside = isInside;
         this.origin = arguments[0];
     }
 
@@ -187,7 +190,9 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
         let warpper = document.getElementById(this.id);
 
         const elNotFound = () => {
-            warn(`Can not find the ${this.name} Plugin element with ID: ${this.id}, Skip`, true);
+            if (!this.isInside) {
+                warn(`Can not find the ${this.name} Plugin element with ID: ${this.id}, Skip`, true);
+            }
         };
 
         // 未找到包装的 DOM

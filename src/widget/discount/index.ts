@@ -81,33 +81,34 @@ export default class Discount extends BaseWidget<DiscountData> {
         this.on('clickCopyCodeBtn', origin.clickCopyCodeBtn);
 
         // checkbox 初始化
-        this.widget = new Checkbox({
-            type: WidgetType.Checkbox,
-            id: this.checkboxId,
-            pageId: this.origin.pageId,
-            // 强制居中
-            centerAlign: true,
-            // 手机界面显示 small，PC 界面显示 large
-            size: window.innerWidth < 768 ? 'small' : 'large',
-        });
-
-        // 内部器件标记
-        this.widget.isInside = true;
-
-        this.widget.on('rendered', () => {
-            this.isRendered = true;
-            this.$component!.update({
-                loading: false,
+        if (!this.widget) {
+            this.widget = new Checkbox({
+                type: WidgetType.Checkbox,
+                id: this.checkboxId,
+                pageId: this.origin.pageId,
+                // 内部器件标记
+                isInside: true,
+                // 强制居中
+                centerAlign: true,
+                // 手机界面显示 small，PC 界面显示 large
+                size: window.innerWidth < 768 ? 'small' : 'large',
             });
-        });
 
-        this.widget.on('check', () => {
-            this.$component!.update({ isChecked: this.isChecked });
-        });
+            this.widget.on('rendered', () => {
+                this.isRendered = true;
+                this.$component!.update({
+                    loading: false,
+                });
+            });
 
-        this.widget.on('uncheck', () => {
-            this.$component!.update({ isChecked: this.isChecked });
-        });
+            this.widget.on('check', () => {
+                this.$component!.update({ isChecked: this.isChecked });
+            });
+
+            this.widget.on('uncheck', () => {
+                this.$component!.update({ isChecked: this.isChecked });
+            });
+        }
     }
     check() {
         this.canRender = true;
@@ -140,25 +141,31 @@ export default class Discount extends BaseWidget<DiscountData> {
         // 渲染标志位初始化
         this.isRendered = false;
 
-        // 生成组件
+        // 组件数据
+        const data = {
+            id: this.id,
+            data: this.data,
+            align: this.align,
+            checkboxId: this.checkboxId,
+            loading: false,
+            isChecked: false,
+            emit: (name: string) => this.emit(name),
+        };
+
+        // 初次渲染
         if (!this.$component) {
-            this.$component = componentWarpper(Component, this.$el, {
-                id: this.id,
-                data: this.data,
-                align: this.align,
-                checkboxId: this.checkboxId,
-                loading: true,
-                isChecked: false,
-                emit: (name: string) => this.emit(name),
-            });
+            // 创建组件
+            this.$component = componentWarpper(Component, this.$el, data);
+            // 渲染
+            this.$component.update({ loading: true });
+            // checkbox 渲染
+            this.widget.check();
+            this.widget.parse();
         }
-
-        // 组件初次渲染
-        this.$component.update({ loading: true });
-
-        // checkbox 渲染
-        this.widget.check();
-        this.widget.parse();
+        // 重复渲染
+        else {
+            this.$component.update(data);
+        }
     }
     destroy() {
         this.widget.destroy();

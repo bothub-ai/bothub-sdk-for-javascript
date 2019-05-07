@@ -1,5 +1,5 @@
 import { log, warn } from 'src/lib/print';
-import { addClass, setAttributes } from 'src/lib/dom';
+import { addClass, removeDom, setAttributes } from 'src/lib/dom';
 
 import { WidgetType } from '../helper';
 import { BaseWidget, WidgetDataCommon } from './base';
@@ -75,6 +75,11 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         if ((!focus && this.isRendered) || !this.canRender) {
             log(`Skip ${this.name} with id ${this.id}`);
             return;
+        }
+
+        // 重新渲染时需要移除以前的元素
+        if (this.isRendered) {
+            removeDom('div[class*=fb_customer_chat]');
         }
 
         this.isRendered = false;

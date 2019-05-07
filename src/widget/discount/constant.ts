@@ -19,7 +19,7 @@ export interface DiscountData extends WidgetDataCommon {
     showCodeBtnText: string;
     /** 复制按钮文本 */
     copyCodeBtnText: string;
-    /** 折扣 */
+    /** 折扣数量 */
     discount: string;
     /**
      * 用户勾选确认后多少天内自动隐藏

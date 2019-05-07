@@ -58,6 +58,8 @@ export function componentWarpper<T extends object>(
     let storeProps = firstProps;
     /** 当前包装器的编号 */
     const id = warpperEle.getAttribute('id')!;
+    /** 当前包装器的父级元素 */
+    const parent = warpperEle.parentElement!;
     /** 是否是函数式组件 */
     const isFunction = isFunctional(component);
 
@@ -67,12 +69,12 @@ export function componentWarpper<T extends object>(
 
         // 函数式组件
         if (isFunction) {
-            render((component as FunctionalComponent)(storeProps), document.body, warpperEle);
+            render((component as FunctionalComponent)(storeProps), parent, warpperEle);
         }
         // 类组件
         else {
             // FIXME: 真的能这样刷新？
-            render(h(component as any, storeProps), document.body, warpperEle);
+            render(h(component as any, storeProps), parent, warpperEle);
         }
     }
 

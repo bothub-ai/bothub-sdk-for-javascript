@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="/sdk.js"></script>
+    <script src="/utils.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="bothub-widget-header">插件说明和预览</header>
+        <article class="bothub-widget-article">
+            <!-- 说明 -->
+            <section class="bothub-widget-discription">
+                <li class="bothub-widget-discription__item">
+                    <code>id</code>
+                    <p>这是有 Bothub 自动生成的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>type</code>
+                    <p>这是一个固定的值<code>Customerchat</code>，表示此插件的类型。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>pageId</code>
+                    <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>themeColor</code>
+                    <p>主题颜色，表示插件的主要背景色，选填。</p>
+                    <p>应填入合法的颜色编码，如<code>#FF9966</code>或<code>rgba(100, 100, 200, .5)</code></p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>loggedInGreeting</code>
+                    <p>对当前已登录 Facebook 的用户显示的欢迎语，选填。</p>
+                    <p>不超过 80 个字符。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>loggedOutGreeting</code>
+                    <p>对当前未登录 Facebook 的用户显示的欢迎语，选填。</p>
+                    <p>不超过 80 个字符。</p>
+                </li>
+                <!-- <li class="bothub-widget-discription__item">
+                    <code>greetingDialogDisplay</code>
+                    <p>设置欢迎对话框的显示方式，选填。</p>
+                    <p><code>show</code>: 通过<code>greetingDialogDelay</code>属性设置延迟多少秒才在桌面端和移动端显示欢迎对话框，并保持开启。</p>
+                    <p><code>hide</code>: 欢迎对话框将一直隐藏，除非用户在桌面端和移动端点击插件才会显示。</p>
+                    <p><code>fade</code>: 通过<code>greetingDialogDelay</code>属性设置延迟多少秒才短暂显示欢迎对话框，之后使其淡出，并在桌面端隐藏。对话框会在移动端隐藏</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>greetingDialogDelay</code>
+                    <p>设置插件加载后延迟多少秒才显示欢迎对话框，选填。</p>
+                    <p>填入数字，单位为<code>秒</code></p>
+                </li> -->
+            </section>
+            <!-- 预览 -->
+            <section>
+                <div class="bothub-widget-card" style="width: 440px">
+                    <header class="bothub-widget-card__header">
+                        <span>Customerchat 预览</span>
+                        <el-button size="small" type="primary" @click="parseWidget">刷新插件</el-button>
+                    </header>
+                    <article class="bothub-widget-card__article">
+                            <el-row :gutter="10" class="bothub-widget-card__input">
+                                <el-col :span="10" class="bothub-widget-card__input-label" >主题颜色 (选填)</el-col>
+                                <el-col :span="14">
+                                    <el-input
+                                        v-model="config.themeColor"
+                                        size="small"
+                                        style="width: 100%">
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" class="bothub-widget-card__input">
+                                <el-col :span="10" class="bothub-widget-card__input-label" >登录用户欢迎语 (选填)</el-col>
+                                <el-col :span="14">
+                                    <el-input
+                                        v-model="config.loggedInGreeting"
+                                        size="small"
+                                        style="width: 100%">
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" class="bothub-widget-card__input">
+                                <el-col :span="10" class="bothub-widget-card__input-label" >未登录用户欢迎语 (选填)</el-col>
+                                <el-col :span="14">
+                                    <el-input
+                                        v-model="config.loggedOutGreeting"
+                                        size="small"
+                                        style="width: 100%">
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                            <!-- <el-row :gutter="10" class="bothub-widget-card__input">
+                                <el-col :span="10" class="bothub-widget-card__input-label" >对话框显示方式 (选填)</el-col>
+                                <el-col :span="14">
+                                    <el-select
+                                        v-model="config.greetingDialogDisplay"
+                                        size="small"
+                                        style="width: 100%">
+                                        <el-option label="直接显示并保持开启" value="show"></el-option>
+                                        <el-option label="隐藏，直到用户点击" value="hide"></el-option>
+                                        <el-option label="显示一段时间后淡出" value="fade"></el-option>
+                                    </el-select>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="10" class="bothub-widget-card__input">
+                                <el-col :span="10" class="bothub-widget-card__input-label" >对话框显示延迟 (选填)</el-col>
+                                <el-col :span="14">
+                                    <el-input
+                                        v-model="config.greetingDialogDelay"
+                                        size="small"
+                                        style="width: 100%">
+                                    </el-select>
+                                </el-col>
+                            </el-row> -->
+                        <pre
+                            class="bothub-widget-card__code"
+                            v-text="toStringify()">
+                        </pre>
+                    </article>
+                    <footer class="bothub-widget-card__footer bothub-widget-preview">
+                        见屏幕右下角
+                    </footer>
+                </div>
+            </section>
+        </article>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -1,8 +1,101 @@
-body {padding: 40px}
-button {padding: 8px 12px;cursor: pointer;background: #3273dc;border: none;color: white;border-radius: 3px}
-button:hover {background: #4384ed}
-h2 {margin-top: 20px;border-bottom: 1px solid #ddd;font-size: 15px;line-height: 34px;font-weight: noraml}
-h3 {margin-top: 30px}
-.row {margin-top: 15px}
-.fb-messenger-checkbox {margin-left: -12px}
-.fb_iframe_widget {display: block !important; margin-bottom: 20px}
+html, body, #app {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 20px 40px;
+}
+
+.bothub-widget-header {
+    font-size: 20px;
+    line-height: 36px;
+    padding: 0 6px;
+    color: #303133;
+    border-bottom: 1px solid #ccc;
+}
+
+.bothub-widget-article {
+    display: flex;
+    margin-top: 30px;
+}
+
+.bothub-widget-article > *{
+    width: 50%;
+}
+
+.bothub-widget-discription {
+    margin-right: 40px;
+}
+
+.bothub-widget-discription__item code {
+    font-size: 14px;
+    color: rgba(0,0,0,.8);
+    background-color: rgba(0,0,0,.15);
+    padding: 2px 3px;
+    margin: 0 1px;
+    border-radius: 4px;
+}
+
+.bothub-widget-discription__item p {
+    font-size: 16px;
+    color: rgba(0,0,0,.8);
+    text-indent: 24px;
+    margin: 4px 0 4px 24px;
+}
+
+
+.bothub-widget-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bothub-widget-card {
+    width: 360px;
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    overflow: hidden;
+    color: #303133;
+    transition: .3s;
+    display: block;
+    /* margin: auto; */
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+
+.bothub-widget-card .bothub-widget-card__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid #ebeef5;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bothub-widget-card .bothub-widget-card__article {
+    padding: 14px;
+}
+
+.bothub-widget-card__code {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ebeef5;
+}
+
+.bothub-widget-card .bothub-widget-card__footer {
+    padding: 12px 14px;
+    border-top: 1px solid #ebeef5;
+}
+
+.bothub-widget-card__input+.bothub-widget-card__input {
+    margin-top: 10px;
+}
+
+.bothub-widget-card__input .bothub-widget-card__input-label {
+    line-height: 32px;
+    font-size: 14px;
+}

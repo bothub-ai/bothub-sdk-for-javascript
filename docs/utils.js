@@ -4,3 +4,8 @@ function getQueryString(name) {
 
     return result ? unescape(result[2]) : null;
 }
+
+// 全局 pageId
+var pageId = getQueryString('pageId') || 374118179628713;
+// 全局 appId
+var appId = getQueryString('appId');

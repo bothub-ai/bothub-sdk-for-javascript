@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="/sdk.js"></script>
+    <script src="/utils.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="bothub-widget-header">插件说明和预览</header>
+        <article class="bothub-widget-article">
+            <!-- 说明 -->
+            <section class="bothub-widget-discription">
+                <li class="bothub-widget-discription__item">
+                    <code>id</code>
+                    <p>这是有 Bothub 自动生成的编号，你需要将带有此编号的元素放入您的网页中，SDK 将会自动将其按照配置渲染成为对应的插件。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>type</code>
+                    <p>这是一个固定的值<code>SendToMessenger</code>，表示此插件的类型。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>pageId</code>
+                    <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>color</code>
+                    <p>主题颜色，表示插件的主要背景色，选填。</p>
+                    <p>默认为<code>blue</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>size</code>
+                    <p>插件大小，表示插件呈现的尺寸大小，选填。</p>
+                    <p>默认为<code>large</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>enforceLogin</code>
+                    <p>表示用户是否需要强制登录，选填。</p>
+                    <p>如果为<code>true</code>，则点击该按钮时，即便是已登录用户也必须重新登录。</p>
+                    <p>默认为<code>false</code></p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>ctaText</code>
+                    <p>按钮上显示的文本，选填。</p>
+                    <p>默认为<code>Send to Messenger</code>。</p>
+                </li>
+            </section>
+            <!-- 预览 -->
+            <section>
+                <div class="bothub-widget-card" style="width: 360px">
+                    <header class="bothub-widget-card__header">
+                        <span>Send To Messenger 预览</span>
+                    </header>
+                    <article class="bothub-widget-card__article">
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="8" class="bothub-widget-card__input-label" >主题颜色 (选填)</el-col>
+                            <el-col :span="16">
+                                <el-select
+                                    v-model="config.color"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="蓝色（默认）" value="blue"></el-option>
+                                    <el-option label="白色" value="white"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="8" class="bothub-widget-card__input-label" >插件大小 (选填)</el-col>
+                            <el-col :span="16">
+                                <el-select
+                                    v-model="config.size"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="standard" value="standard"></el-option>
+                                    <el-option label="large（默认）" value="large"></el-option>
+                                    <el-option label="xlarge" value="xlarge"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="8" class="bothub-widget-card__input-label" >是否强制登录</el-col>
+                            <el-col :span="16">
+                                <el-select
+                                    v-model="config.enforceLogin"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="是" :value="true"></el-option>
+                                    <el-option label="否（默认）" :value="false"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="8" class="bothub-widget-card__input-label" >按钮文本</el-col>
+                            <el-col :span="16">
+                                <el-select
+                                    v-model="config.ctaText"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="Send to Messenger（默认）" :value="''"></el-option>
+                                    <el-option label="Get this in Messenger" value="GET_THIS_IN_MESSENGER"></el-option>
+                                    <el-option label="Receive this in Messenger" value="RECEIVE_THIS_IN_MESSENGER"></el-option>
+                                    <el-option label="Send this to me" value="SEND_THIS_TO_ME"></el-option>
+                                    <el-option label="Get customer assistance" value="GET_CUSTOMER_ASSISTANCE"></el-option>
+                                    <el-option label="Get customer service" value="GET_CUSTOMER_SERVICE"></el-option>
+                                    <el-option label="Get support" value="GET_SUPPORT"></el-option>
+                                    <el-option label="Let's chat" value="LET_US_CHAT"></el-option>
+                                    <el-option label="Send me messages" value="SEND_ME_MESSAGES"></el-option>
+                                    <el-option label="Alert me in Messenger" value="ALERT_ME_IN_MESSENGER"></el-option>
+                                    <el-option label="Send me updates" value="SEND_ME_UPDATES"></el-option>
+                                    <el-option label="Message me" value="MESSAGE_ME"></el-option>
+                                    <el-option label="Let me know" value="LET_ME_KNOW"></el-option>
+                                    <el-option label="Keep me updated" value="KEEP_ME_UPDATED"></el-option>
+                                    <el-option label="Tell me more" value="TELL_ME_MORE"></el-option>
+                                    <el-option label="Subscribe in Messenger" value="SUBSCRIBE_IN_MESSENGER"></el-option>
+                                    <el-option label="Subscribe to updates" value="SUBSCRIBE_TO_UPDATES"></el-option>
+                                    <el-option label="Get messages" value="GET_MESSAGES"></el-option>
+                                    <el-option label="Subscribe" value="SUBSCRIBE"></el-option>
+                                    <el-option label="Get started in Messenger" value="GET_STARTED_IN_MESSENGER"></el-option>
+                                    <el-option label="Learn more in Messenger" value="LEARN_MORE_IN_MESSENGER"></el-option>
+                                    <el-option label="Get Started" value="GET_STARTED"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <pre
+                            class="bothub-widget-card__code"
+                            v-text="toStringify()">
+                        </pre>
+                    </article>
+                    <footer class="bothub-widget-card__footer bothub-widget-preview">
+                        <div :id="config.id"></div>
+                    </footer>
+                </div>
+            </section>
+        </article>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

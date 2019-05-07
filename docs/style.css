@@ -20,6 +20,7 @@ body {
 .bothub-widget-article {
     display: flex;
     margin-top: 30px;
+    padding-bottom: 80px;
 }
 
 .bothub-widget-article > *{

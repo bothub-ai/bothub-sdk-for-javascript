@@ -60,8 +60,11 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
 
         // 网页只能有一个对话插件
         if (
-            document.getElementsByClassName(fbClass).length !== 0 ||
-            document.getElementsByClassName(bhClass).length !== 0
+            !this.isRendered &&
+            (
+                document.getElementsByClassName(fbClass).length !== 0 ||
+                document.getElementsByClassName(bhClass).length !== 0
+            )
         ) {
             warn(`There are already other ${this.name} plugins in this page, skip the widget with id ${this.id}`);
             this.canRender = false;
@@ -76,21 +79,25 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
 
         this.isRendered = false;
 
+        let warpper: Element | undefined = void 0;
+
         if (!this.$el) {
-            this.$el = document.createElement('div');
-            this.$el.appendChild(document.createElement('div'));
+            // 首次加载需要一个临时的包装器
+            warpper = document.body.appendChild(document.createElement('div'));
+            this.$el = warpper.appendChild(document.createElement('div'));
         }
 
-        const dom = this.$el.firstElementChild!;
+        // 之后的刷新过程，这个包装器并非我们在首次加载时手动加上的
+        if (!warpper) {
+            warpper = this.$el.parentElement!;
+        }
 
-        document.body.appendChild(this.$el);
+        addClass(this.$el, fbClass);
+        addClass(this.$el, bhClass);
 
-        addClass(dom, fbClass);
-        addClass(dom, bhClass);
+        setAttributes(this.$el, this.fbAttrs);
 
-        setAttributes(dom, this.fbAttrs);
-
-        window.FB.XFBML.parse(this.$el, () => {
+        window.FB.XFBML.parse(warpper, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
             this.emit('rendered');

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="../../sdk.js"></script>
+    <script src="../../utils.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="bothub-widget-header">Discount 插件说明</header>
+        <article class="bothub-widget-article">
+            <!-- 说明 -->
+            <section class="bothub-widget-discription">
+                <li class="bothub-widget-discription__item">
+                    <code>id</code>
+                    <p>这是有 Bothub 自动生成的编号，你需要将带有此编号的元素放入您的网页中，SDK 将会自动将其按照配置渲染成为对应的插件。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>type</code>
+                    <p>这是一个固定的值<code>Discount</code>，表示此插件的类型。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>pageId</code>
+                    <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>title</code>
+                    <p>优惠券标题</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>subtitle</code>
+                    <p>优惠券副标题</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>discountText</code>
+                    <p>折扣优惠码的提示文本</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>discountCode</code>
+                    <p>折扣优惠码</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>showCodeBtnText</code>
+                    <p>折扣按钮文本</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>copyCodeBtnText</code>
+                    <p>复制按钮文本</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>discount</code>
+                    <p>折扣</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>hideAfterChecked</code>
+                    <p>用户勾选确认后多少天内自动隐藏，选填。</p>
+                    <p>默认<code>不启用</code>此功能。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>align</code>
+                    <p>插件对齐方式，选填。</p>
+                    <p>默认为<code>居中</code>。</p>
+                </li>
+            </section>
+            <!-- 预览 -->
+            <section>
+                <div class="bothub-widget-card" style="width: 400px">
+                    <header class="bothub-widget-card__header">
+                        <span>预览</span>
+                        <el-button size="small" type="primary" @click="parseWidget">刷新插件</el-button>
+                    </header>
+                    <article class="bothub-widget-card__article">
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">标题</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.title"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">副标题</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.subtitle"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">折扣优惠码的提示文本</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.discountText"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">折扣的优惠码</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.discountCode"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">折扣按钮文本</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.showCodeBtnText"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">复制按钮文本</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.copyCodeBtnText"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">折扣数量</el-col>
+                            <el-col :span="14">
+                                <el-input
+                                    v-model="config.discount"
+                                    size="small"
+                                    style="width: 100%">
+                                </el-input>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">选中后隐藏 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.hideAfterChecked"
+                                    size="small"
+                                    style="width: 100%">
+                                    <el-option label="不启用" :value="-1"></el-option>
+                                    <el-option v-for="i in 15" :label="`${i} 天`" :value="i"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">对齐方式 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.align"
+                                    size="small"
+                                    style="width: 100%">
+                                    <el-option label="居中（默认）" value="center"></el-option>
+                                    <el-option label="左对齐" value="left"></el-option>
+                                    <el-option label="右对齐" value="right"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <pre
+                            class="bothub-widget-card__code"
+                            v-text="toStringify()">
+                        </pre>
+                    </article>
+                    <footer
+                        class="bothub-widget-card__footer bothub-widget-preview"
+                        style="justify-content: flex-start;">
+                        <div :id="config.id"></div>
+                    </footer>
+                </div>
+            </section>
+        </article>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

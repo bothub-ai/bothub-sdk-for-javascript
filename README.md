@@ -8,7 +8,8 @@ SDK 提供了聊天插件、事件跟踪等功能，并能够根据相关事件�
 **浏览器最低兼容版本 IE 10，Firefox 30，Chrome 30** 
 
 ## 开发说明
-命令行说明
+
+### 命令行说明
 ```bash
 # 调试
 npm run dev <mode>
@@ -21,6 +22,8 @@ npm run deploy <mode>
 其中`mode`为选填，表示编译的模式，可填`uat`、`uat2`、`prod`。
 `dev`模式下默认为`uat`，`build`和`deploy`默认为`prod`。
 
+三种模式主要是`appId`以及向后端通讯的接口地址不同以及代码内部的部分差异，具体的配置可以参考[环境变量]('./build/env.ts')
+
 ### 安装证书
 由于 SDK 需要运行在`https`环境下，所以在开始调试之前需要安装证书。  
 使用 mkcerts 工具生成本地证书：https://github.com/FiloSottile/mkcert  
@@ -32,3 +35,7 @@ mkcert -install
 # 生成域名证书
 mkcert local-fe.bothub.ai localhost 127.0.0.1
 ```
+
+## 使用说明
+
+插件使用说明以及预览请见：[插件预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/)

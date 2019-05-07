@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="../../sdk.js"></script>
+    <script src="../../utils.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="bothub-widget-header">Checkbox 插件说明</header>
+        <article class="bothub-widget-article">
+            <!-- 说明 -->
+            <section class="bothub-widget-discription">
+                <li class="bothub-widget-discription__item">
+                    <code>id</code>
+                    <p>这是有 Bothub 自动生成的编号，你需要将带有此编号的元素放入您的网页中，SDK 将会自动将其按照配置渲染成为对应的插件。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>type</code>
+                    <p>这是一个固定的值<code>Checkbox</code>，表示此插件的类型。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>pageId</code>
+                    <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>skin</code>
+                    <p>插件内容的色彩主题，选填。</p>
+                    <p><code>浅色主题</code>插件显示深色文本</p>
+                    <p><code>深色主题</code>插件显示白色文本、透明 messenger 图标和白色闪电图标</p>
+                    <p>默认为<code>浅色主题</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>size</code>
+                    <p>插件大小，表示插件呈现的尺寸大小，选填。</p>
+                    <p>默认为<code>大</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>allowLogin</code>
+                    <p>让用户能够在没有现有会话的情况下登录，同时启用“不是你”选项，选填。</p>
+                    <p>默认为<code>true</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>centerAlign</code>
+                    <p>插件内容是否居中对齐，选填。</p>
+                    <p>默认为<code>false</code>。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>hideAfterChecked</code>
+                    <p>用户勾选确认后多少天内自动隐藏，选填。</p>
+                    <p>默认<code>不启用</code>此功能。</p>
+                </li>
+            </section>
+            <!-- 预览 -->
+            <section>
+                <div class="bothub-widget-card" style="width: 360px">
+                    <header class="bothub-widget-card__header">
+                        <span>预览</span>
+                    </header>
+                    <article class="bothub-widget-card__article">
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">色彩主题 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.skin"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="浅色主题（默认）" value="light"></el-option>
+                                    <el-option label="深色主题" value="dark"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">插件大小 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.size"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="小" value="small"></el-option>
+                                    <el-option label="中" value="medium"></el-option>
+                                    <el-option label="常规" value="standard"></el-option>
+                                    <el-option label="大（默认）" value="large"></el-option>
+                                    <el-option label="超大" value="xlarge"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">是否居中对齐 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.centerAlign"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="是" :value="true"></el-option>
+                                    <el-option label="否（默认）" :value="false"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">选中后隐藏 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.hideAfterChecked"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="不启用" :value="-1"></el-option>
+                                    <el-option v-for="i in 15" :label="`${i} 天`" :value="i"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <pre
+                            class="bothub-widget-card__code"
+                            v-text="toStringify()">
+                        </pre>
+                    </article>
+                    <footer class="bothub-widget-card__footer bothub-widget-preview">
+                        <div :id="config.id"></div>
+                    </footer>
+                </div>
+            </section>
+        </article>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -15,7 +15,7 @@
 </head>
 <body>
     <div id="app">
-        <header class="bothub-widget-header">插件说明和预览</header>
+        <header class="bothub-widget-header">Customerchat 插件说明和预览</header>
         <article class="bothub-widget-article">
             <!-- 说明 -->
             <section class="bothub-widget-discription">
@@ -63,12 +63,12 @@
             <section>
                 <div class="bothub-widget-card" style="width: 440px">
                     <header class="bothub-widget-card__header">
-                        <span>Customerchat 预览</span>
+                        <span>预览</span>
                         <el-button size="small" type="primary" @click="parseWidget">刷新插件</el-button>
                     </header>
                     <article class="bothub-widget-card__article">
                             <el-row :gutter="10" class="bothub-widget-card__input">
-                                <el-col :span="10" class="bothub-widget-card__input-label" >主题颜色 (选填)</el-col>
+                                <el-col :span="10" class="bothub-widget-card__input-label">主题颜色 (选填)</el-col>
                                 <el-col :span="14">
                                     <el-input
                                         v-model="config.themeColor"
@@ -78,7 +78,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10" class="bothub-widget-card__input">
-                                <el-col :span="10" class="bothub-widget-card__input-label" >登录用户欢迎语 (选填)</el-col>
+                                <el-col :span="10" class="bothub-widget-card__input-label">登录用户欢迎语 (选填)</el-col>
                                 <el-col :span="14">
                                     <el-input
                                         v-model="config.loggedInGreeting"
@@ -88,7 +88,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10" class="bothub-widget-card__input">
-                                <el-col :span="10" class="bothub-widget-card__input-label" >未登录用户欢迎语 (选填)</el-col>
+                                <el-col :span="10" class="bothub-widget-card__input-label">未登录用户欢迎语 (选填)</el-col>
                                 <el-col :span="14">
                                     <el-input
                                         v-model="config.loggedOutGreeting"
@@ -98,7 +98,7 @@
                                 </el-col>
                             </el-row>
                             <!-- <el-row :gutter="10" class="bothub-widget-card__input">
-                                <el-col :span="10" class="bothub-widget-card__input-label" >对话框显示方式 (选填)</el-col>
+                                <el-col :span="10" class="bothub-widget-card__input-label">对话框显示方式 (选填)</el-col>
                                 <el-col :span="14">
                                     <el-select
                                         v-model="config.greetingDialogDisplay"
@@ -111,7 +111,7 @@
                                 </el-col>
                             </el-row>
                             <el-row :gutter="10" class="bothub-widget-card__input">
-                                <el-col :span="10" class="bothub-widget-card__input-label" >对话框显示延迟 (选填)</el-col>
+                                <el-col :span="10" class="bothub-widget-card__input-label">对话框显示延迟 (选填)</el-col>
                                 <el-col :span="14">
                                     <el-input
                                         v-model="config.greetingDialogDelay"

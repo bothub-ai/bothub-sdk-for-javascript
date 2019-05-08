@@ -1,3 +1,6 @@
+import { warn } from './print';
+import { sandBox } from './utils';
+
 const enum StorageType {
     local,
     session,
@@ -26,24 +29,14 @@ class StorageWapper {
             return null;
         }
 
-        let result: T;
+        let result: T | Error = sandBox((val) => JSON.parse(val))(value);
 
-        try {
-            result = JSON.parse(value);
-        }
-        catch (e) {
+        if (result instanceof Error) {
+            warn(result.message);
             result = value as any;
-
-            // 兼容以前的版本
-            if (key === 'language' && this.storage === localStorage) {
-                this.storage.setItem('language', JSON.stringify(value));
-            }
-            else {
-                console.warn(e);
-            }
         }
 
-        return result;
+        return result as T;
     }
 
     set(key: string, value: any) {

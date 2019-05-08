@@ -19,10 +19,10 @@ npm run build <mode>
 npm run deploy <mode>
 ```
 
-其中`mode`为选填，表示编译的模式，可填`uat`、`uat2`、`prod`。
-`dev`模式下默认为`uat`，`build`和`deploy`默认为`prod`。
+其中`mode`为选填，表示编译的模式，可填`uat`、`uat2`、`prod`。  
+`dev`模式下默认为`uat`，`build`和`deploy`默认为`prod`。  
 
-三种模式主要是`appId`以及向后端通讯的接口地址不同以及代码内部的部分差异，具体的配置可以参考[环境变量]('./build/env.ts')
+三种模式主要是`appId`以及向后端通讯的接口地址不同以及代码内部的部分差异，具体的配置可以参考：[环境变量](./build/env.ts)
 
 ### 安装证书
 由于 SDK 需要运行在`https`环境下，所以在开始调试之前需要安装证书。  

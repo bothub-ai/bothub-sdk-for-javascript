@@ -36,6 +36,9 @@ mkcert -install
 mkcert local-fe.bothub.ai localhost 127.0.0.1
 ```
 
+### 代码上传
+代码上传需要提供`Gcloud`的密钥，请询问项目组成员，将文件更名为`gcloud.json`放置在项目根目录即可。
+
 ## 使用说明
 
 插件使用说明以及预览请见：[插件预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/)

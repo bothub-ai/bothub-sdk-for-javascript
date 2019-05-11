@@ -1,7 +1,7 @@
 import { UA } from 'src/lib/env';
 import { jsonp } from 'src/lib/http';
 import { isDef } from 'src/lib/assert';
-import { log, warn } from 'src/lib/print';
+import { warn } from 'src/lib/print';
 
 import * as store from 'src/store';
 

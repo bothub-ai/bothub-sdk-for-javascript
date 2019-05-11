@@ -183,6 +183,9 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                         this.emit('uncheck', ev.user_ref);
                     }
                 }
+                else if (ev.event === 'hidden') {
+                    warn(`${this.name} Plugin with ID ${this.id} has been hidden`);
+                }
             });
         }
     }

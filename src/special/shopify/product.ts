@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { CheckboxData } from 'src/widget';
+import { DiscountData } from 'src/widget';
 import { getAddToCartBtn, getSelectedVariantId } from './utils';
 
 /** Checkbox 初始化 */
@@ -8,20 +8,19 @@ export function initCheckbox() {
     // 获取页面添加购物车按钮
     const btn = getAddToCartBtn();
 
-    // checkbox 是否勾选
-    let isChecked = false;
-
     // 复选框数据
-    const data: CheckboxData = {
+    const data: DiscountData = {
         id: `bothub-shopify-${uuid()}`,
-        type: 'Checkbox' as any,
+        type: 'Discount' as any,
         position: getAddToCartBtn,
-        check() {
-            isChecked = true;
-        },
-        unCheck() {
-            isChecked = false;
-        },
+        title: 'Get 5% off from your order',
+        subtitle: 'Reveal discount to our Messenger list',
+        discountText: 'Your discount code:',
+        discountCode: 'GET15',
+        showCodeBtnText: 'Get Your Discount',
+        copyCodeBtnText: 'Copy the code',
+        discount: '5%',
+        align: 'center',
     };
 
     // 没有找到添加按钮，退出
@@ -31,11 +30,6 @@ export function initCheckbox() {
 
     // 按钮绑定事件
     btn.addEventListener('click', () => {
-        // 未勾选就不触发事件记录
-        if (!isChecked) {
-            return;
-        }
-
         const skuId = getSelectedVariantId();
 
         if (!skuId) {
@@ -43,7 +37,7 @@ export function initCheckbox() {
             return;
         }
 
-        const { BH, ShopifyAnalytics } = window;
+        const { ShopifyAnalytics, BH: { Event }} = window;
         const { currency, product } = ShopifyAnalytics.meta;
 
         const skuData = product!.variants.find(({ id }) => id === +skuId);
@@ -53,7 +47,7 @@ export function initCheckbox() {
             return;
         }
 
-        BH.Event.addedToCart({
+        Event.addedToCart({
             sku: skuId,
             name: product!.type,
             currency,

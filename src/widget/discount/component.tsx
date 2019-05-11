@@ -72,8 +72,8 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                             {/* checkbox 插件元素 */}
                             <div
                                 id={checkboxId}
-                                style={(loading || !showCode) ? '' : {
-                                    opacity: '0',
+                                style={(!loading && !showCode) ? '' : {
+                                    opacity: 0,
                                     zIndex: -1,
                                     position: 'absolute',
                                 }}

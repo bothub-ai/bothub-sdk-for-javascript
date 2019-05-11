@@ -78,7 +78,12 @@ function insertSendMessengerWarpper(id: string) {
 
 /** 获取当前订单信息 */
 function getReceiptData() {
-    const order = window.Shopify.checkout!;
+    const order = window.Shopify.checkout;
+
+    if (!order) {
+        return {};
+    }
+
     const {
         shipping_address: shipping,
         credit_card: card,
@@ -136,7 +141,12 @@ function getReceiptData() {
 
 /** 记录 purchase 事件 */
 export function logPurchaseEvent() {
-    const order = window.Shopify.checkout!;
+    const order = window.Shopify.checkout;
+
+    // 当前页面不含有订单信息，退出
+    if (!order) {
+        return;
+    }
 
     window.BH.Event.purchase({
         orderNumber: String(order.order_id),

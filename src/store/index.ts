@@ -1,14 +1,17 @@
 import { isDef } from 'src/lib/assert';
+import { getQueryString } from 'src/lib/http';
 import { InputWidgetData, WidgetData, Widget, setConfig } from 'src/widget';
 
 import * as utils from 'src/lib/utils';
 
 /** 是否是调试模式 */
-export let debug = false;
+export const debug = getQueryString('bothubDebugMode') === 'true';
 /** APP 编号 */
 export let messengerAppId = process.env.appId as string;
-/** 是否强行禁用 Facebook 相关事件 */
-export let disableFacebook = false;
+/** 用户连接的 facebook 页面编号 */
+export let pageId = '';
+/** 是否不记录 Facebook 事件 */
+export let noFacebookLogEvent = false;
 /** 语言类型 */
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
 /** 是否在初始化后立即渲染 */
@@ -25,17 +28,14 @@ export const widgets: Widget[] = [];
 
 /** 初始化参数 */
 interface BothubInitParams {
-    /** 是否是调试模式 */
-    debug?: typeof debug;
-    /**
-     * APP 编号
-     *  - debug 选项为`true`时才会生效
-     */
+    /** 用户连接的 facebook 页面编号 */
+    pageId: typeof pageId;
+    /** APP 编号（`debug`选项为`true`时才会生效） */
     appId?: typeof messengerAppId;
     /** 自定义用户编号 */
     customUserId?: typeof customUserId;
-    /** 是否禁用 Facebook 相关功能 */
-    disableFacebook?: typeof disableFacebook;
+    /** 是否禁用 Facebook 事件功能 */
+    noFacebookLogEvent?: typeof noFacebookLogEvent;
     /** 语言类型 */
     language?: typeof language;
     /** 是否初始化后立即渲染 */
@@ -46,25 +46,28 @@ interface BothubInitParams {
 
 /** 初始化函数 */
 export function setGlobalParams(param: BothubInitParams) {
+    // 页面编号为必填，初始化
+    pageId = param.pageId;
+
     if (param.language) {
         language = param.language;
     }
 
-    if (param.disableFacebook) {
-        disableFacebook = param.disableFacebook;
+    if (param.noFacebookLogEvent) {
+        noFacebookLogEvent = param.noFacebookLogEvent;
     }
 
     if (param.customUserId) {
         customUserId = param.customUserId;
+        utils.setCustomUserId(customUserId);
     }
 
     if (isDef(param.renderImmediately)) {
         renderImmediately = param.renderImmediately;
     }
 
-    if (param.debug) {
-        debug = param.debug;
-
+    // 调试模式开
+    if (debug) {
         // 只有调试模式允许
         if (param.appId) {
             messengerAppId = param.appId;

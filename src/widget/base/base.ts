@@ -1,9 +1,9 @@
 import { log, warn } from 'src/lib/print';
 import { addClass } from 'src/lib/dom';
+import { isUndef } from 'src/lib/assert';
 import { widgets } from 'src/store';
 import { get, deleteVal } from 'src/lib/array';
 import { shallowCopyExclude } from 'src/lib/object';
-import { isUndef, isFunc, isObject } from 'src/lib/assert';
 import { WidgetType, ComponentType } from '../helper';
 
 import EventController from 'src/lib/event';
@@ -11,59 +11,29 @@ import EventController from 'src/lib/event';
 /** 包装 DOM 的 class 名称 */
 export const WarpperClassName = 'bothub-widget-warpper';
 
-/** 附带的事件数据 */
-export interface BothubMessage {
-    /** 数据编号 */
-    id: string;
-    /** 数据类型 */
-    type: 'feed' | 'receipt';
-    /** 当前页面在 facebook 的编号 */
-    pageId: string;
-    /** 完整数据 */
-    data: AnyObject;
-}
-
-/** 附带的元数据 */
-type MessageInPlugin = Omit<BothubMessage, 'pageId'>;
-type MessageMeta = MessageInPlugin | (() => MessageInPlugin);
-
 /** 插件数据公共接口 */
 export interface WidgetDataCommon {
     /** 当前插件的唯一编号 */
     id: string;
     /** 插件类型 */
     type: WidgetType;
-    /** Facebook 主页编号 */
-    pageId: string;
 
+    /** Facebook 主页编号 */
+    pageId?: string;
     /** 是否是内部器件 */
     isInside?: boolean;
-    /** 附带的数据 */
-    message?: MessageMeta;
 
     /**
      * 获取元素位置的函数
      *  - 该插件将会创建在返回元素的后面
-     * @return {HTMLElement}
+     * @return {Element}
      */
-    position?(): HTMLElement;
+    position?(): Element | undefined | null;
 
     /**
      * 渲染完成事件
      */
     rendered?(): void;
-}
-
-/**
- * 引用编译元数据
- *  - 因为点击之后会自动将此处信息发送至 facebook
- *  - 所以这里也能理解为是向 facebook 发送的数据接口
- */
-export interface RefData extends Partial<Pick<BothubMessage, 'id' | 'type'>> {
-    /** 插件事件标记 */
-    gateway: 'engagement';
-    /** 插件编号 */
-    code: string;
 }
 
 /** 插件基类 */
@@ -110,51 +80,6 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     /** 插件元素在 bothub 的编号 */
     get code() {
         return get(this.id.split('-'), -1);
-    }
-    /** 标准数据 */
-    get message() {
-        const { message, pageId } = this.origin;
-
-        if (!message) {
-            return null;
-        }
-
-        let data: MessageMeta;
-
-        if (isFunc(message)) {
-            data = message();
-
-            if (!data) {
-                return null;
-            }
-        }
-        else if (isObject(message)) {
-            data = message;
-        }
-        else {
-            return null;
-        }
-
-        return {
-            ...data,
-            pageId,
-        };
-    }
-    /** 引用编译 */
-    get ref() {
-        const { code, message } = this;
-
-        const data: RefData = {
-            code,
-            gateway: 'engagement',
-        };
-
-        if (message && message.id) {
-            data.id = message.id;
-            data.type = message.type;
-        }
-
-        return window.btoa(JSON.stringify(data));
     }
 
     /** 插件属性初始化 */

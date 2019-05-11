@@ -1,6 +1,6 @@
 import { UA } from 'src/lib/env';
+import { jsonp } from 'src/lib/http';
 import { log, warn } from 'src/lib/print';
-import { jsonp, post } from 'src/lib/http';
 
 import * as store from 'src/store';
 
@@ -42,7 +42,7 @@ export interface BothubParameter {
 }
 
 /** bothub 标准参数名称映射至 facebook */
-export function transformParameter(params: Partial<BothubParameter>, valueToSumKey?: string) {
+export function transformParameter(params: Partial<BothubParameter> = {}, valueToSumKey?: string) {
     type bothubMap = { [key in keyof BothubParameter]: AppParameterNames };
 
     // 这里不放在外面作为常量是因为 fb sdk 加载是异步的
@@ -73,7 +73,7 @@ export function transformParameter(params: Partial<BothubParameter>, valueToSumK
                 widget = params[key];
             }
             else if (key === valueToSumKey) {
-                valueToSum = params[key];
+                valueToSum = Number(params[key]);
             }
             else if (key in paramMap) {
                 result[paramMap[key]] = params[key];
@@ -106,7 +106,7 @@ function logFbEvent(name: string, value: number | null, params: object) {
  * @param {string} name - 事件名称
  * @param {object} params - 此次 facebook 事件的参数
  */
-async function logBhEvent(id: string, name: string, params: object) {
+function logBhEvent(id: string, name: string, params: object) {
     const widget = (id.length === 0)
         ? store.widgets.find(({ type }) => type === WidgetType.Checkbox) as Checkbox
         : store.widgets.find(({ id: local, type }) => id === local && type === WidgetType.Checkbox) as Checkbox;
@@ -130,7 +130,6 @@ async function logBhEvent(id: string, name: string, params: object) {
         user_agent: UA,
         fb_user_id: store.fbUserId,
         custom_user_id: store.customUserId,
-        ...(widget.message || {}),
     };
 
     // checkbox 确认参数
@@ -142,22 +141,17 @@ async function logBhEvent(id: string, name: string, params: object) {
     };
 
     // 禁用 facebook 功能，则将数据发送回 bothub
-    if (store.disableFacebook) {
+    if (store.noFacebookLogEvent) {
         delete MessengerParams.user_ref;
 
-        await jsonp('analytics/events', {
+        jsonp('analytics/events', {
             action: 'store',
             cd: MessengerParams,
         });
     }
     else {
-        // 向后端发送完整信息
-        if (widget.message) {
-            await post('tr/', widget.message);
-        }
-
         // 发送 checkbox 确认事件
-        await window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
+        window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
     }
 }
 
@@ -168,12 +162,12 @@ async function logBhEvent(id: string, name: string, params: object) {
  * @param {object} [param] 附带的参数
  * @param {string} [widgetId] 指向某个插件的编号（注：此参数不对客户开放）
  */
-export async function logEvent(name: string | AppEventNames, value: number | null = null, params: object = {}, widgetId: string = '') {
+export function logEvent(name: string | AppEventNames, value: number | null = null, params: object = {}, widgetId: string = '') {
     // 发送 bothub 事件
-    await logBhEvent(widgetId, name as string, params);
+    logBhEvent(widgetId, name as string, params);
 
     // 发送 facebook 事件
-    if (!store.disableFacebook) {
-        await logFbEvent(name as string, value, params);
+    if (!store.noFacebookLogEvent) {
+        logFbEvent(name as string, value, params);
     }
 }

@@ -6,13 +6,13 @@ export enum BhEventName {
 }
 
 /** 完成购物事件参数 */
-interface CompletePaymentParams extends Pick<BothubParameter, 'id' | 'type' | 'currency'> {
+interface CompletePaymentParams extends Pick<BothubParameter, 'id' | 'currency' | 'type'> {
     /** 此次购物共付款 */
-    totalPrice: string;
+    totalPrice: string | number;
 }
 
 /** 完成购物事件 */
-export function logPurchase(params: CompletePaymentParams) {
+export function logPurchase(params?: CompletePaymentParams) {
     logEvent(
         BhEventName.purchase,
         ...transformParameter(params, 'totalPrice'),

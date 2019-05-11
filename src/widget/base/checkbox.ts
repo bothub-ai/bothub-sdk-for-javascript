@@ -149,7 +149,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         addClass(dom, bhClass);
         setAttributes(dom, this.fbAttrs);
 
-        dom.setAttribute('data-ref', this.ref);
+        dom.setAttribute('data-ref', this.code);
         dom.setAttribute('messenger_app_id', messengerAppId);
 
         // facebook 渲染
@@ -163,7 +163,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                     return;
                 }
 
-                if (ev.ref !== this.ref) {
+                if (ev.ref !== this.code) {
                     return;
                 }
 

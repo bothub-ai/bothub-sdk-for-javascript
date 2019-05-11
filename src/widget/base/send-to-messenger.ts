@@ -3,10 +3,35 @@ import { log, warn } from 'src/lib/print';
 import { messengerAppId } from 'src/store';
 import { SendToMessengerEvent } from 'typings/facebook';
 import { addClass, setAttributes } from 'src/lib/dom';
-import { shallowCopyExclude } from 'src/lib/object';
+import { shallowCopy } from 'src/lib/object';
+import { isFunc, isObject } from 'src/lib/assert';
 
 import { WidgetType } from '../helper';
 import { BaseWidget, WidgetDataCommon } from './base';
+
+import uuid from 'uuid';
+
+/**
+ * 引用编译元数据
+ *  - 因为点击之后会自动将此处信息发送至 facebook
+ *  - 所以这里也能理解为是向 facebook 发送的数据接口
+ */
+interface RefData {
+    /** 数据编号 */
+    id?: string;
+    /** 插件事件标记 */
+    gateway: 'engagement';
+    /** 插件编号 */
+    code: string;
+}
+
+/** 附带的元数据 */
+interface MessageMeta {
+    /** 数据类型 */
+    type: 'feed' | 'receipt';
+    /** 完整数据 */
+    data: AnyObject;
+}
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {
@@ -38,6 +63,9 @@ export interface SendToMessengerData extends WidgetDataCommon {
         'SEND_ME_UPDATES' | 'MESSAGE_ME' | 'LET_ME_KNOW' | 'KEEP_ME_UPDATED' | 'TELL_ME_MORE' | 'SUBSCRIBE_IN_MESSENGER' |
         'SUBSCRIBE_TO_UPDATES' | 'GET_MESSAGES' | 'SUBSCRIBE' | 'GET_STARTED_IN_MESSENGER' | 'LEARN_MORE_IN_MESSENGER' | 'GET_STARTED';
 
+    /** 附带的数据 */
+    message?: MessageMeta | (() => MessageMeta);
+
     /**
      * 点击事件
      */
@@ -49,7 +77,7 @@ export interface SendToMessengerData extends WidgetDataCommon {
 }
 
 /** facebook “发送至 Messenger”插件属性 */
-export type FbSendToMessengerAttrs = Omit<SendToMessengerData, 'id' | 'type' | 'message' | 'click'>;
+export type FbSendToMessengerAttrs = Pick<SendToMessengerData, 'color' | 'size' | 'enforceLogin' | 'ctaText' | 'pageId'>;
 
 const fbClass = 'fb-send-to-messenger';
 const bhClass = 'bothub-send-to-messenger';
@@ -62,6 +90,8 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
 
     /** 是否已经发送数据 */
     sent = false;
+    /** 每次事件生成的唯一编号 */
+    message?: AnyObject;
 
     constructor(data: SendToMessengerData) {
         super(data);
@@ -70,10 +100,27 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.check();
     }
 
-    init() {
-        const { origin, message } = this;
+    /** 引用编译 */
+    get ref() {
+        const { code, message } = this;
 
-        this.fbAttrs = shallowCopyExclude(origin, ['id', 'type', 'message', 'click']);
+        const data: RefData = {
+            code,
+            gateway: 'engagement',
+        };
+
+        if (message && message.id) {
+            data.id = message.id;
+        }
+
+        return window.btoa(JSON.stringify(data));
+    }
+
+    init() {
+        const { origin } = this;
+
+        this.message = this.getMessage();
+        this.fbAttrs = shallowCopy(origin, ['color', 'size', 'enforceLogin', 'ctaText', 'pageId']);
 
         this.off();
         this.on('click', origin.click);
@@ -81,11 +128,14 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
 
         // 发送消息之后，状态位赋值
         this.on('click', () => this.sent = true);
+        // 如果包含有信息，则渲染完成之后发送完整信息
+        this.on('rendered', () => {
+            const { message } = this;
 
-        // 如果包含有信息，则渲染完成之后立即发送
-        if (message) {
-            this.on('rendered', () => post('tr/', message).then(() => this.sent = true));
-        }
+            if (message) {
+                post('tr/', message).then(() => this.sent = true);
+            }
+        });
     }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {
@@ -132,5 +182,35 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
                 }
             });
         }
+    }
+    /** 当前插件附带的数据转换为标准格式 */
+    getMessage() {
+        const { message, pageId } = this.origin;
+
+        if (!message) {
+            return;
+        }
+
+        let data: MessageMeta;
+
+        if (isFunc(message)) {
+            data = message();
+
+            if (!data) {
+                return;
+            }
+        }
+        else if (isObject(message)) {
+            data = message;
+        }
+        else {
+            return;
+        }
+
+        return {
+            ...data,
+            pageId,
+            id: uuid(),
+        };
     }
 }

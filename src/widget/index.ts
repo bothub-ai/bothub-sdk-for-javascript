@@ -1,6 +1,6 @@
 import { WidgetType } from './helper';
 import { log, warn } from 'src/lib/print';
-import { widgetData, widgets } from 'src/store';
+import { widgetData, widgets, pageId } from 'src/store';
 import { isDef, isNumber, isArray, isBoolean } from 'src/lib/assert';
 
 import { default as Discount, DiscountData } from './discount';
@@ -10,22 +10,40 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
+// 分别导出
+export {
+    DiscountData,
+    CheckboxData,
+    MessageUsData,
+    ShareButtonData,
+    CustomerchatData,
+    SendToMessengerData,
+};
+
 /** 插件类 */
 export type Widget =
     Checkbox | Discount | MessageUs | Customerchat |
     SendToMessenger | ShareButton;
+
 /** 插件标准数据 */
 export type WidgetData =
     CheckboxData | MessageUsData | DiscountData | CustomerchatData |
     SendToMessengerData | ShareButtonData;
 
 /** 插件输入数据类型 */
-export type InputWidgetData = Omit<WidgetData, 'type'> & {
+export interface InputWidgetData extends Omit<WidgetData, 'type' | 'pageId'> {
     type: WidgetType | keyof typeof WidgetType;
-};
+    pageId?: WidgetData['pageId'];
+}
 
 /** 插件类型全部映射到数字 */
 const fixWidgetData = (item: InputWidgetData): WidgetData => {
+    // 如果数据未填写页面编号，则使用全局编号
+    if (!item.pageId) {
+        item.pageId = pageId;
+    }
+
+    // 全部转换为内部数字枚举类型
     if (isDef(item.type)) {
         return isNumber(item.type) ? item : {
             ...item,

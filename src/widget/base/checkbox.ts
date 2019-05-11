@@ -168,17 +168,17 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                 }
 
                 // 渲染完成
-                if (ev.event === 'rendered') {
+                if (ev.event === 'rendered' && !this.isRendered) {
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
                     this.emit('rendered');
                 }
                 else if (ev.event === 'checkbox') {
-                    if (ev.state === 'checked') {
+                    if (ev.state === 'checked' && !this.isChecked) {
                         this.isChecked = true;
                         this.emit('check', ev.user_ref);
                     }
-                    else if (ev.state === 'unchecked') {
+                    else if (ev.state === 'unchecked' && this.isChecked) {
                         this.isChecked = false;
                         this.emit('uncheck', ev.user_ref);
                     }

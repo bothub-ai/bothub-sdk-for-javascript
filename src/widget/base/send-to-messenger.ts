@@ -172,7 +172,7 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
                     return;
                 }
 
-                if (ev.event === 'rendered') {
+                if (ev.event === 'rendered' && !this.isRendered) {
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
                     this.emit('rendered');

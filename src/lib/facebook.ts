@@ -31,8 +31,11 @@ export function loadFacebookSDK() {
 /** facebook 异步开关 */
 let _switch: () => void;
 
+/** 等待 facebook sdk 加载 */
+export const facebookReady = new Promise((resolve) => _switch = resolve);
+
 /** facebook sdk 是否加载完毕 */
-export const facebookStatus = new Promise((resolve) => _switch = resolve);
+export let isFacebookReady = false;
 
 function bothubFacebookInit() {
     // Facebook SDK 初始化
@@ -46,6 +49,9 @@ function bothubFacebookInit() {
     const delay = () => {
         // 加载完成开关打开
         _switch();
+
+        // 标志位置高
+        isFacebookReady = true;
 
         // 允许立即渲染
         if (renderImmediately) {

@@ -209,7 +209,7 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
 
         return {
             ...data,
-            pageId,
+            page_id: pageId,
             id: uuid(),
         };
     }

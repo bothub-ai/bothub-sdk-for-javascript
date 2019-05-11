@@ -1,5 +1,6 @@
 import { UA } from 'src/lib/env';
 import { jsonp } from 'src/lib/http';
+import { isDef } from 'src/lib/assert';
 import { log, warn } from 'src/lib/print';
 
 import * as store from 'src/store';
@@ -41,13 +42,17 @@ export interface BothubParameter {
     success: '1' | '0';
 }
 
-/** bothub 标准参数名称映射至 facebook */
-export function transformParameter(params: Partial<BothubParameter> = {}, valueToSumKey?: string) {
-    type bothubMap = { [key in keyof BothubParameter]: AppParameterNames };
+/**
+ * bothub 标准参数名称映射至 facebook
+ * @param {AnyObject} [params] 输入参数
+ * @param {AnyObject<string>} [map] 参数映射表
+ */
+export function transformParameter(params: AnyObject = {}, map: AnyObject<string> = {}) {
+    type BothubToFb = { [key in keyof BothubParameter]: AppParameterNames };
 
     // 这里不放在外面作为常量是因为 fb sdk 加载是异步的
     const { ParameterNames: fbParam } = window.FB.AppEvents;
-    const paramMap: bothubMap = {
+    const bhToFb: BothubToFb = {
         id: fbParam.CONTENT_ID,
         type: fbParam.CONTENT_TYPE,
         currency: fbParam.CURRENCY,
@@ -68,20 +73,24 @@ export function transformParameter(params: Partial<BothubParameter> = {}, valueT
 
     for (const key in params) {
         if (params.hasOwnProperty(key)) {
-            // 限定指向某个插件
+            // 指向某个插件
             if (key === 'widget') {
                 widget = params[key];
+                continue;
             }
-            else if (key === valueToSumKey) {
+            // 累加值
+            else if (map[key] === 'valueToSumKey') {
                 valueToSum = Number(params[key]);
+                continue;
             }
-            else if (key in paramMap) {
-                result[paramMap[key]] = params[key];
-            }
-            else {
-                log(`The parameter named '${key}' is not a standard parameter, we will not change its name.`);
-                result[key] = params[key];
-            }
+
+            // 映射到 bothub 的键名
+            const mapBhKey = isDef(map[key]) ? map[key] : key;
+            // 映射到 facebook 的键名
+            const mapFbKey = isDef(bhToFb[mapBhKey]) ? bhToFb[mapBhKey] : mapBhKey;
+
+            // 包装新参数对象
+            result[mapFbKey] = params[key];
         }
     }
 

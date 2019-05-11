@@ -1,7 +1,11 @@
 import * as path from 'path';
 import * as Env from './env';
 
+import { version } from '../package.json';
 import { CompilerOptions } from 'typescript';
+
+/** 项目版本号 */
+export { version };
 
 /** 生成定位到项目根目录的绝对路径 */
 export function resolve(...paths: string[]) {
@@ -23,7 +27,7 @@ function buildTag() {
 }
 
 /** 编译的版本号 */
-export const version = buildTag();
+export const build = buildTag();
 
 /** tsconfig.json 文件接口 */
 interface TsConfig {
@@ -71,26 +75,45 @@ export function parseTsconfig(cwd: string, baseConfig: TsConfig) {
 
 /** 获取当前命令行参数 */
 function getCommand() {
-    const args = process.argv.slice(2, 4);
-
+    /** 环境变量类型 */
     type EnvType = keyof typeof Env;
 
     // 命令行参数
     const result = {
-        isDeploy: false,
+        input: '',
+        output: '',
+        name: '',
         env: 'uat' as EnvType,
         mode: process.env.NODE_ENV as 'development' | 'production' | 'none',
     };
 
-    // 上传
-    if (args[1] === '--deploy') {
-        result.isDeploy = true;
-        result.env = (args[0] || 'prod') as EnvType;
+    /** 参数数组 */
+    const args = process.argv.slice(2);
+    /** 默认模式 */
+    const defaultMode = (result.mode === 'development') ? 'uat' : 'prod';
+
+    let entry = '';
+
+    // 是否指定当前模式
+    if (/(uat|prod)/.test(args[0])) {
+        entry = args[1];
+        result.env = args[0] as EnvType;
     }
-    // 构建或调试
     else {
-        result.isDeploy = false;
-        result.env = (args[0] || 'uat') as EnvType;
+        entry = args[0];
+        result.env = defaultMode;
+    }
+
+    // 指定入口文件
+    if (entry) {
+        result.name = entry[0].toUpperCase() + entry.substring(1);
+        result.input = resolve('src/special', entry, 'index.ts');
+        result.output = path.join('special', `${entry}.js`);
+    }
+    else {
+        result.name = 'Main';
+        result.input = resolve('src/init/index.ts');
+        result.output = result.mode === 'development' ? 'sdk.js' : `sdk-${version}.js`;
     }
 
     if (!/(uat2?)|(prod)/.test(result.env)) {

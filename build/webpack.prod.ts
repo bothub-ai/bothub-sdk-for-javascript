@@ -4,10 +4,7 @@ import chalk from 'chalk';
 import webpack from 'webpack';
 import baseConfig from './webpack.base';
 import TerserPlugin from 'terser-webpack-plugin';
-import GoogleCloudStorage from 'webpack-google-cloud-storage-plugin';
 
-import { join } from 'path';
-import { resolve, command } from './utils';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 if (!baseConfig.optimization) {
@@ -35,33 +32,10 @@ baseConfig.optimization.minimizer.push(
     }),
 );
 
-// 需要上传，则添加上传插件
-if (command.isDeploy) {
-    baseConfig.plugins!.push(
-        new GoogleCloudStorage({
-            directory: './dist/',
-            include: ['.*'],
-            storageOptions: {
-                projectId: 'bothub-1340',
-                keyFilename: resolve('gcloud.json'),
-            },
-            uploadOptions: {
-                gzip: true,
-                makePublic: true,
-                bucketName: 'assets.cartsbot.com',
-                destinationNameFn: ({ path }: any) => {
-                    return join('shopify/', path.replace('dist/', ''));
-                },
-            },
-        }),
-    );
-}
-// 不上传，则添加包分析插件
-else {
-    baseConfig.plugins!.push(
-        new BundleAnalyzerPlugin(),
-    );
-}
+// 包分析
+baseConfig.plugins!.push(
+    new BundleAnalyzerPlugin(),
+);
 
 baseConfig.performance = {
     hints: false,
@@ -84,6 +58,10 @@ webpack(baseConfig, (err, stats) => {
         colors: true,
         modules: false,
         children: false,
+        hash: false,
+        builtAt: false,
+        timings: false,
+        version: false,
     }));
 
     console.log(chalk.cyan('\n  Build complete.\n'));

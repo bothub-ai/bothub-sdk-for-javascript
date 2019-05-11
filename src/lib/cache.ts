@@ -1,6 +1,4 @@
-import { warn } from './print';
-import { sandBox } from './utils';
-
+/** 储存类型 */
 const enum StorageType {
     local,
     session,
@@ -29,10 +27,13 @@ class StorageWapper {
             return null;
         }
 
-        let result: T | Error = sandBox((val) => JSON.parse(val))(value);
+        let result: T;
 
-        if (result instanceof Error) {
-            warn(result.message);
+        try {
+            result = JSON.parse(value);
+        }
+        catch (e) {
+            console.warn(e.message);
             result = value as any;
         }
 

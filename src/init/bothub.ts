@@ -8,7 +8,7 @@ function init(...arg: Parameters<typeof Store.setGlobalParams>) {
     Store.setGlobalParams(...arg);
 
     // 禁用 facebook 相关功能
-    if (Store.disableFacebook) {
+    if (Store.noFacebookLogEvent) {
         return;
     }
 

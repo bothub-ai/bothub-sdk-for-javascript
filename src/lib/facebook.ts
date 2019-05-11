@@ -1,11 +1,12 @@
 import { warn } from 'src/lib/print';
 import { render } from 'src/widget';
+import { loadScript } from './utils';
 import { language, messengerAppId, renderImmediately } from 'src/store';
 
 /** 加载 facebook SDK */
 export function loadFacebookSDK() {
     const id = 'facebook-jssdk';
-    let script = document.getElementById(id) as HTMLScriptElement;
+    const script = document.getElementById(id) as HTMLScriptElement;
 
     // 网页已经加载脚本
     if (script) {
@@ -22,17 +23,16 @@ export function loadFacebookSDK() {
         }
     }
 
-    // 加载 facebook 脚本
-    script = document.createElement('script');
-
-    script.id = id;
-    script.async = true;
-    script.src = `https://connect.facebook.net/${language}/sdk/xfbml.customerchat.js`;
-
-    document.getElementsByTagName('head')[0].appendChild(script);
+    loadScript(`https://connect.facebook.net/${language}/sdk/xfbml.customerchat.js`, id);
 
     return true;
 }
+
+/** facebook 异步开关 */
+let _switch: () => void;
+
+/** facebook sdk 是否加载完毕 */
+export const facebookStatus = new Promise((resolve) => _switch = resolve);
 
 function bothubFacebookInit() {
     // Facebook SDK 初始化
@@ -42,10 +42,19 @@ function bothubFacebookInit() {
         version: 'v3.2',
     });
 
-    // 允许立即渲染，延迟 500 毫秒，非强制渲染所有插件
-    if (renderImmediately) {
-        setTimeout(() => render(false), 500);
-    }
+    // 延迟函数
+    const delay = () => {
+        // 加载完成开关打开
+        _switch();
+
+        // 允许立即渲染
+        if (renderImmediately) {
+            render(false);
+        }
+    };
+
+    // 延迟 500 毫秒，确认加载完成
+    setTimeout(delay, 500);
 }
 
 /** facebook SDK 初始化 */

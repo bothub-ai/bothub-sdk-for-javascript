@@ -16,10 +16,12 @@ export function getFacebookUserId() {
     return fbUserId;
 }
 
-/** 获取用户 id */
+/** 用户自定义编号存储用的键值 */
+export const CustomUserIdKey = 'bothub_custom_user_id';
+
+/** 获取用户编号 */
 export function getCustomUserId() {
-    const key = 'bothub_custom_user_id';
-    const originId = getQueryString(key) || local.get(key);
+    const originId = getQueryString(CustomUserIdKey) || local.get(CustomUserIdKey);
 
     if (originId) {
         return originId;
@@ -27,9 +29,14 @@ export function getCustomUserId() {
 
     const newId = uuid();
 
-    local.set(key, newId);
+    setCustomUserId(newId);
 
     return newId;
+}
+
+/** 记录用户编号 */
+export function setCustomUserId(id: string) {
+    local.set(CustomUserIdKey, id);
 }
 
 /** 获取随机的 User Ref */
@@ -99,4 +106,22 @@ export function copy(text: string) {
     document.body.removeChild(input);
 
     return ret;
+}
+
+/** 加载外部 script 文件 */
+export function loadScript(src: string, id?: string, callback?: () => void) {
+    const script = document.createElement('script');
+
+    if (id) {
+        script.id = id;
+    }
+
+    script.async = true;
+    script.src = src;
+
+    document.getElementsByTagName('head')[0].appendChild(script);
+
+    if (callback) {
+        script.addEventListener('load', callback);
+    }
 }

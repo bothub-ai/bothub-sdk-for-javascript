@@ -77,6 +77,7 @@ export default class Discount extends BaseWidget<DiscountData> {
         ]);
 
         this.off();
+        this.on('rendered', origin.rendered);
         this.on('clickShowCodeBtn', origin.clickShowCodeBtn);
         this.on('clickCopyCodeBtn', origin.clickCopyCodeBtn);
 
@@ -96,6 +97,7 @@ export default class Discount extends BaseWidget<DiscountData> {
             });
 
             this.widget.on('rendered', () => {
+                this.emit('rendered');
                 this.isRendered = true;
                 this.$component!.update({
                     loading: false,

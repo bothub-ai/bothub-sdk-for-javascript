@@ -103,7 +103,7 @@ export function render(id?: string | boolean, focus?: boolean) {
     }
 
     if (!id) {
-        return widgetData.map(({ id: item }) => render(item, focus)).every((n) => n);
+        return widgetData.map(({ id: item }) => item && render(item, focus)).every(Boolean);
     }
 
     // 当前插件数据
@@ -163,7 +163,10 @@ export function render(id?: string | boolean, focus?: boolean) {
 /** 销毁插件 */
 export function destroy(id?: string) {
     if (!id) {
-        widgets.forEach(({ id: local }) => destroy(local));
+        widgets
+            .filter(({ id: local }) => isDef(local))
+            .forEach(({ id: local }) => destroy(local));
+
         return;
     }
 

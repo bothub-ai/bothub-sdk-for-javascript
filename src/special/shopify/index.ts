@@ -29,5 +29,5 @@ window.bhAsyncInit = () => {
 loadScript(
     process.env.NODE_ENV === 'development'
         ? '../sdk.js'
-        : 'https://storage.googleapis.com/sdk.bothub.ai/dist/special/shopify.js',
+        : 'https://sdk.bothub.ai/dist/sdk-2.0.0.js?ignoreCache=1',
 );

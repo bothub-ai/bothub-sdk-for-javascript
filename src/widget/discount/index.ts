@@ -85,6 +85,7 @@ export default class Discount extends BaseWidget<DiscountData> {
             this.widget = new Checkbox({
                 type: WidgetType.Checkbox,
                 id: this.checkboxId,
+                origin: this.origin.origin,
                 pageId: this.origin.pageId,
                 // 内部器件标记
                 isInside: true,

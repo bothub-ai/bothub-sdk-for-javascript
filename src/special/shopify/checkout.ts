@@ -98,12 +98,12 @@ function getReceiptData() {
         payment_method: card.brand,
         timestamp: Math.floor(new Date(order.created_at).getTime() / 1000),
         address: {
-            street_1: shipping.address1,
-            street_2: shipping.address2,
-            city: shipping.city,
-            postal_code: shipping.zip,
-            state: shipping.province,
-            country: shipping.country,
+            street_1: shipping.address1 || '',
+            street_2: shipping.address2 || '',
+            city: shipping.city || '',
+            postal_code: shipping.zip || '000000',
+            state: shipping.province || '',
+            country: shipping.country || '',
         },
         summary: {
             subtotal: Number(order.subtotal_price),

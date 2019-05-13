@@ -22,6 +22,10 @@ export interface DiscountData extends WidgetDataCommon {
     /** 折扣数量 */
     discount: string;
     /**
+     * 插件加载网址的基域
+     */
+    origin: string;
+    /**
      * 用户勾选确认后多少天内自动隐藏
      *  - 默认为`-1`，意为不使用此功能
      */

@@ -13,6 +13,10 @@ export interface CheckboxData extends WidgetDataCommon {
     /** 确认框插件类型 */
     type: WidgetType.Checkbox;
     /**
+     * 插件加载网址的基域
+     */
+    origin: string;
+    /**
      * 让用户能够在没有现有会话的情况下登录，同时启用“不是你”选项
      *  - 默认为`true`
      */
@@ -95,11 +99,10 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         this.fbAttrs = {
             ...shallowCopy(this.origin, [
                 'allowLogin', 'size', 'skin',
-                'pageId', 'centerAlign',
+                'pageId', 'centerAlign', 'origin',
             ]),
             userRef: '',
             messengerAppId,
-            origin: location.origin,
         };
 
         this.off();

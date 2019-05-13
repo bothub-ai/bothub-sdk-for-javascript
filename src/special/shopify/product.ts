@@ -60,6 +60,7 @@ export function initCheckbox() {
     // 复选框数据
     const data: DiscountData = {
         id: 'bothub-shopify-widget-abc',
+        origin: location.origin,
         type: 'Discount' as any,
         position: getAddToCartBtn,
         title: 'Get 5% off from your order',

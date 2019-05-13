@@ -11,7 +11,7 @@ const Env = env[command.env];
 type WebpackConfig = GetArrayItem<Parameters<typeof Webpack>[0]>;
 
 const baseConfig: WebpackConfig = {
-    mode: Env.mode,
+    mode: process.env.NODE_ENV as WebpackConfig['mode'],
     entry: command.input,
     output: {
         path: output,
@@ -57,7 +57,7 @@ const baseConfig: WebpackConfig = {
             entryOnly: false,
         }),
         new Webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify(Env.mode),
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             'process.env.api': JSON.stringify(Env.api_server),
             'process.env.appId': JSON.stringify(Env.messenger_app_id),
         }),

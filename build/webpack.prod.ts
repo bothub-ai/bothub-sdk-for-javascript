@@ -58,10 +58,6 @@ webpack(baseConfig, (err, stats) => {
         colors: true,
         modules: false,
         children: false,
-        hash: false,
-        builtAt: false,
-        timings: false,
-        version: false,
     }));
 
     console.log(chalk.cyan('\n  Build complete.\n'));

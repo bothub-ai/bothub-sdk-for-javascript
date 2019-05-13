@@ -19,6 +19,8 @@ import uuid from 'uuid';
 interface RefData {
     /** 数据编号 */
     id?: string;
+    /** 数据类型 */
+    type?: 'feed' | 'receipt';
     /** 插件事件标记 */
     gateway: 'engagement';
     /** 插件编号 */
@@ -32,6 +34,11 @@ interface MessageMeta {
     /** 完整数据 */
     data: AnyObject;
 }
+
+/** 发送给 bothub 的完整数据 */
+type BothubMessage = Required<RefData> & MessageMeta & {
+    page_id: string;
+};
 
 /** “发送至 Messenger”插件 */
 export interface SendToMessengerData extends WidgetDataCommon {
@@ -91,7 +98,7 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
     /** 是否已经发送数据 */
     sent = false;
     /** 每次事件生成的唯一编号 */
-    message?: AnyObject;
+    message?: BothubMessage;
 
     constructor(data: SendToMessengerData) {
         super(data);
@@ -109,11 +116,12 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
             gateway: 'engagement',
         };
 
-        if (message && message.id) {
+        if (message) {
             data.id = message.id;
+            data.type = message.type;
         }
 
-        return window.btoa(JSON.stringify(data));
+        return `base64:${window.btoa(JSON.stringify(data))}`;
     }
 
     init() {
@@ -209,7 +217,9 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
 
         return {
             ...data,
-            page_id: pageId,
+            code: this.code,
+            page_id: pageId as string,
+            gateway: 'engagement' as const,
             id: uuid(),
         };
     }

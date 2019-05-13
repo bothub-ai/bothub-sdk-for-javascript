@@ -1,7 +1,56 @@
-import uuid from 'uuid';
-
 import { DiscountData } from 'src/widget';
-import { getAddToCartBtn, getSelectedVariantId } from './utils';
+
+/** 获取商品表单元素 */
+function getProductForm() {
+    /** 页面的所有表单元素 */
+    const forms = document.getElementsByTagName('form');
+    // 迭代所有表单元素
+    for (let i = 0; i < forms.length; i++) {
+        // 带有`cart/add`的标记就是所求
+        if (forms[i].action.match(/cart\/add/)) {
+            return forms[i];
+        }
+    }
+}
+
+/** 获取当前用户选项 */
+function getSelectedVariantId() {
+    const { meta } = window.ShopifyAnalytics;
+
+    // 如果页面已经写入选中的 VariantId，则直接返回
+    if (meta && meta.selectedVariantId) {
+        return meta.selectedVariantId;
+    }
+
+    // 商品表单元素
+    const form = getProductForm();
+
+    if (!form) {
+        return;
+    }
+
+    const formSelection = form.id as any as HTMLSelectElement;
+    const options = formSelection.options && formSelection.options[formSelection.selectedIndex];
+    const value: string = options ? options.value : (formSelection && formSelection.value);
+
+    if (value) {
+        meta.selectedVariantId = value;
+        return value;
+    }
+}
+
+/** 获取`add-to-cart`按钮 */
+function getAddToCartBtn() {
+    const form = getProductForm();
+
+    if (form) {
+        const addToCart = form.querySelector('input[type=submit], button[name=add]');
+
+        if (addToCart) {
+            return addToCart;
+        }
+    }
+}
 
 /** Checkbox 初始化 */
 export function initCheckbox() {
@@ -10,7 +59,7 @@ export function initCheckbox() {
 
     // 复选框数据
     const data: DiscountData = {
-        id: `bothub-shopify-${uuid()}`,
+        id: 'bothub-shopify-widget-abc',
         type: 'Discount' as any,
         position: getAddToCartBtn,
         title: 'Get 5% off from your order',

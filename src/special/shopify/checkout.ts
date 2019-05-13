@@ -1,6 +1,5 @@
-import uuid from 'uuid';
-
 import { SendToMessengerData } from 'src/widget';
+import { fixUrl } from './utils';
 
 /** bothub 订单回执数据结构 */
 interface BothubReceiptData {
@@ -117,7 +116,7 @@ function getReceiptData() {
             quantity: item.quantity,
             price: Number(item.price),
             currency: order.currency,
-            image_url: item.image_url,
+            image_url: fixUrl(item.image_url),
         })),
     };
 
@@ -158,7 +157,7 @@ export function logPurchaseEvent() {
 
 /** Send To Messenger 初始化 */
 export function initSendMessenger() {
-    const id = `bothub-shopify-${uuid()}`;
+    const id = 'bothub-shopify-widget-m';
     const data: SendToMessengerData = {
         id,
         type: 'SendToMessenger' as any,

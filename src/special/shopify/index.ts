@@ -8,7 +8,7 @@ import { initSendMessenger, logPurchaseEvent } from './checkout';
 // 页面编号，产品模式是由 php 注入，调试模式默认为“小猫小狗”主页，也可以在 url 中直接设置
 const pageId = process.env.NODE_ENV === 'development'
     ? getQueryString('pageId') || '374118179628713'
-    : '2266363010344967';
+    : '2312520908966205';
 
 // 初始化函数
 window.bhAsyncInit = () => {
@@ -29,5 +29,5 @@ window.bhAsyncInit = () => {
 loadScript(
     process.env.NODE_ENV === 'development'
         ? '../sdk.js'
-        : 'https://sdk.bothub.ai/dist/sdk-2.0.0.js?ignoreCache=1',
+        : 'https://storage.googleapis.com/sdk.bothub.ai/dist/sdk-2.0.0.js?ignoreCache=1',
 );

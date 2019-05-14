@@ -8,6 +8,7 @@ import * as store from 'src/store';
 import { getEventId } from './utils';
 import { BhEventName } from './custom';
 
+import Discount from 'src/widget/discount';
 import Checkbox from 'src/widget/base/checkbox';
 
 import { WidgetType } from 'src/widget/helper';
@@ -116,9 +117,22 @@ function logFbEvent(name: string, value: number | null, params: object) {
  * @param {object} params - 此次 facebook 事件的参数
  */
 function logBhEvent(id: string, name: string, params: object) {
-    const widget = (id.length === 0)
-        ? store.widgets.find(({ type }) => type === WidgetType.Checkbox) as Checkbox
-        : store.widgets.find(({ id: local, type }) => id === local && type === WidgetType.Checkbox) as Checkbox;
+    const widget = store.widgets.find(({ id: local, type }) => {
+        // 不是 discount 或者 checkbox 就跳过
+        if (type !== WidgetType.Checkbox && type !== WidgetType.Discount) {
+            return false;
+        }
+
+        // 没有输入 id
+        if (!id) {
+            return true;
+        }
+        else if (id === local) {
+            return true;
+        }
+
+        return false;
+    }) as undefined | Discount | Checkbox;
 
     // 未找到指定的 checkbox
     if (!widget) {
@@ -130,22 +144,29 @@ function logBhEvent(id: string, name: string, params: object) {
         return;
     }
 
+    // checkbox 插件
+    const checkbox = widget.type === WidgetType.Checkbox ? widget : widget.widget;
+
     // 事件参数
     const event = {
-        name,
+        ev: name,
         params,
         id: getEventId(),
 
         user_agent: UA,
         fb_user_id: store.fbUserId,
         custom_user_id: store.customUserId,
+
+        // checkbox 参数
+        gateway: 'engagement',
+        code: checkbox.code,
     };
 
     // checkbox 确认参数
     const MessengerParams = {
         app_id: store.messengerAppId,
-        page_id: widget.origin.pageId,
-        user_ref: widget.fbAttrs.userRef,
+        page_id: checkbox.origin.pageId,
+        user_ref: checkbox.fbAttrs.userRef,
         ref: JSON.stringify(event),
     };
 

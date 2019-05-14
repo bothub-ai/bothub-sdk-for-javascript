@@ -55,7 +55,7 @@ export default class Discount extends BaseWidget<DiscountData> {
     }
     /** 内部 checkbox 编号 */
     get checkboxId() {
-        return `${this.id}-discount-checkbox`;
+        return `bothub-discount-inside-checkbox-${this.code}`;
     }
     /** 当前是否已经勾选 */
     get isChecked() {
@@ -108,6 +108,13 @@ export default class Discount extends BaseWidget<DiscountData> {
                         loading: false,
                     });
                 }
+            });
+
+            this.widget.on('hidden', async () => {
+                this.isRendered = false;
+                this.$component!.update({
+                    loading: true,
+                });
             });
 
             this.widget.on('check', () => {

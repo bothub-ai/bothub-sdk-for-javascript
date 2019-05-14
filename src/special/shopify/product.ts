@@ -59,7 +59,7 @@ export function initCheckbox() {
 
     // 折扣优惠数据
     const data: DiscountData = {
-        id: 'bothub-shopify-widget-abc',
+        id: 'bothub-widget-84v',
         origin: location.origin,
         type: 'Discount' as any,
         position: getProductForm,

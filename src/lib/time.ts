@@ -19,3 +19,12 @@ export function daysOffset(late: TimeInput, early: TimeInput) {
 
     return Math.floor((subtract - reduce) / dayInMillisecond);
 }
+
+/**
+ * Generating asynchronous delay functions
+ * @param {number} time
+ * @returns {Promise<void>}
+ */
+export function delay(time = 0) {
+    return new Promise<void>((resolve) => setTimeout(resolve, time));
+}

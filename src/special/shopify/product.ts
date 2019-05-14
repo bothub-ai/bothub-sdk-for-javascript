@@ -39,7 +39,7 @@ function getSelectedVariantId() {
     }
 }
 
-/** 获取`add-to-cart`按钮 */
+/** 获取添加购物车按钮 */
 function getAddToCartBtn() {
     const form = getProductForm();
 
@@ -57,12 +57,12 @@ export function initCheckbox() {
     // 获取页面添加购物车按钮
     const btn = getAddToCartBtn();
 
-    // 复选框数据
+    // 折扣优惠数据
     const data: DiscountData = {
         id: 'bothub-shopify-widget-abc',
         origin: location.origin,
         type: 'Discount' as any,
-        position: getAddToCartBtn,
+        position: getProductForm,
         title: 'Get 5% off from your order',
         subtitle: 'Reveal discount to our Messenger list',
         discountText: 'Your discount code:',

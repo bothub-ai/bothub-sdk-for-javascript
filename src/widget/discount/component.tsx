@@ -29,7 +29,10 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         const { showCode, shakeBox, isCopied } = state;
         const { id, checkboxId, data, emit, loading, isChecked } = props;
 
-        const clickButton = () => {
+        const clickButton = (ev: MouseEvent) => {
+            ev.stopPropagation();
+            ev.stopImmediatePropagation();
+
             if (showCode) {
                 this.setState({ isCopied: true });
                 log(`Copy the code to Clipboard, ${data.discountCode}`);
@@ -82,7 +85,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                             { showCode ? <div class={`${bhClass}__content-code`}>{ data.discountCode }</div> : '' }
                         </div>
                     </article>
-                    <button
+                    <div
                         class={`${bhClass}__btn`}
                         onClick={clickButton}
                         disabled={loading}
@@ -92,7 +95,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                                 ? 'Copied!'
                                 : data.copyCodeBtnText
                             : data.showCodeBtnText
-                    }</button>
+                    }</div>
                 </section>
             </div>
         );

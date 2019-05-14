@@ -53,6 +53,10 @@ export interface CheckboxData extends WidgetDataCommon {
      * @param {string} userRef 当前用户编号
      */
     unCheck?(userRef: string): void;
+    /**
+     * Checkbox 隐藏事件
+     */
+    hidden?(): void;
 }
 
 /** facebook 确认框插件属性 */
@@ -80,6 +84,8 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
 
     /** 当前是否已经勾选 */
     isChecked = false;
+    /** 是否已经重试 */
+    isRetry = false;
 
     constructor(data: CheckboxData) {
         super(data);
@@ -94,10 +100,12 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
     }
 
     init() {
-        this.hideAfterChecked = this.origin.hideAfterChecked || 0;
+        const { origin } = this;
+
+        this.hideAfterChecked = origin.hideAfterChecked || 0;
 
         this.fbAttrs = {
-            ...shallowCopy(this.origin, [
+            ...shallowCopy(origin, [
                 'allowLogin', 'size', 'skin',
                 'pageId', 'centerAlign', 'origin',
             ]),
@@ -106,10 +114,11 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         };
 
         this.off();
-        this.on('check', this.origin.check);
+        this.on('hidden', origin.hidden);
+        this.on('check', origin.check);
         this.on('check', () => setHiddenTime(this));
-        this.on('uncheck', this.origin.unCheck);
-        this.on('rendered', this.origin.rendered);
+        this.on('uncheck', origin.unCheck);
+        this.on('rendered', origin.rendered);
     }
     check() {
         this.canRender = true;
@@ -187,7 +196,18 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                     }
                 }
                 else if (ev.event === 'hidden') {
-                    warn(`${this.name} Plugin with ID ${this.id} has been hidden`);
+                    this.emit('hidden');
+
+                    let showInDebugg = false;
+                    let message = `${this.name} Plugin with ID ${this.id} has been hidden`;
+
+                    if (!this.isRetry) {
+                        showInDebugg = true,
+                        message += ', Retry';
+                        setTimeout(() => this.parse(true));
+                    }
+
+                    warn(message, showInDebugg);
                 }
             });
         }

@@ -1,6 +1,7 @@
 import './style.less';
 
 import { log } from 'src/lib/print';
+import { delay } from 'src/lib/time';
 import { shallowCopy } from 'src/lib/object';
 
 import { BaseWidget } from '../base/base';
@@ -96,12 +97,17 @@ export default class Discount extends BaseWidget<DiscountData> {
                 size: window.innerWidth < 768 ? 'small' : 'large',
             });
 
-            this.widget.on('rendered', () => {
-                this.emit('rendered');
-                this.isRendered = true;
-                this.$component!.update({
-                    loading: false,
-                });
+            this.widget.on('rendered', async () => {
+                // 延迟一秒判断
+                await delay(2500);
+
+                if (this.widget.isRendered) {
+                    this.emit('rendered');
+                    this.isRendered = true;
+                    this.$component!.update({
+                        loading: false,
+                    });
+                }
             });
 
             this.widget.on('check', () => {

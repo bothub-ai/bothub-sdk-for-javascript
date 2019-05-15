@@ -6,10 +6,14 @@ import baseConfig from './webpack.base';
 import TerserPlugin from 'terser-webpack-plugin';
 import GoogleCloudStorage from 'webpack-google-cloud-storage-plugin';
 
+import * as env from './env';
+
 import { readdirSync } from 'fs';
 import { join, parse, relative } from 'path';
 import { output as dist } from './config';
-import { resolve, version } from './utils';
+import { resolve, version, command } from './utils';
+
+const { storage } = env[command.env];
 
 if (!baseConfig.optimization) {
     baseConfig.optimization = {};
@@ -71,7 +75,10 @@ function compile(input: string, output: string): Promise<void> {
 
 // 主流程
 async function main() {
-    const files: [string, string][] = [[resolve('src/init/index.ts'), `sdk-${version}.js`]];
+    const files: [string, string][] = [
+        [resolve('src/init/index.ts'), 'sdk-2-latest.js'],
+        [resolve('src/init/index.ts'), join('releases', `sdk-${version}.js`)],
+    ];
 
     readdirSync(resolve('src/special')).forEach((file) => files.push([
         resolve(`src/special/${file}/index.ts`),
@@ -87,14 +94,17 @@ async function main() {
                 directory: dist,
                 include: files.map(([, item]) => parse(item).base),
                 storageOptions: {
-                    projectId: 'bothub-1340',
-                    keyFilename: resolve('gcloud.json'),
+                    projectId: storage.projectId,
+                    keyFilename: resolve(storage.gcloudFileName),
                 },
                 uploadOptions: {
                     gzip: true,
                     makePublic: true,
-                    bucketName: 'sdk.bothub.ai',
+                    bucketName: storage.bucketName,
                     destinationNameFn: (item: any) => join('dist', relative(dist, item.path)),
+                    metadataFn: () => ({
+                        cacheControl: 'no-store',
+                    }),
                 },
             }));
         }

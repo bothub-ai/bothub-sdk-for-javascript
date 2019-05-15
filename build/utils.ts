@@ -116,8 +116,8 @@ function getCommand() {
         result.output = result.mode === 'development' ? 'sdk.js' : `sdk-${version}.js`;
     }
 
-    if (!/(uat2?)|(prod)/.test(result.env)) {
-        throw new Error('只允许 uat、uat2、prod 三种环境变量');
+    if (!/(uat)|(prod)/.test(result.env)) {
+        throw new Error('只允许 uat、prod 两种环境变量');
     }
 
     return result;

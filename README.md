@@ -19,7 +19,7 @@ npm run build <mode>
 npm run deploy <mode>
 ```
 
-其中`mode`为选填，表示编译的模式，可填`uat`、`uat2`、`prod`。  
+其中`mode`为选填，表示编译的模式，可填`uat`、`prod`。  
 `dev`模式下默认为`uat`，`build`和`deploy`默认为`prod`。  
 
 三种模式主要是`appId`以及向后端通讯的接口地址不同以及代码内部的部分差异，具体的配置可以参考：[环境变量](./build/env.ts)
@@ -39,6 +39,6 @@ mkcert local-fe.bothub.ai localhost 127.0.0.1
 ### 代码上传
 代码上传需要提供`Gcloud`的密钥，请询问项目组成员，将文件更名为`gcloud.json`放置在项目根目录即可。
 
-## 使用说明
+## 使用说明及预览
 
 插件使用说明以及预览请见：[插件预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/)

@@ -60,6 +60,7 @@ const baseConfig: WebpackConfig = {
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             'process.env.api': JSON.stringify(Env.api_server),
             'process.env.appId': JSON.stringify(Env.messenger_app_id),
+            'process.env.sdkHref': JSON.stringify(Env.sdk_href),
         }),
         new Webpack.HashedModuleIdsPlugin({
             hashFunction: 'sha256',

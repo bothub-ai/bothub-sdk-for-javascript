@@ -144,6 +144,11 @@ function logBhEvent(id: string, name: string, params: object) {
         return;
     }
 
+    // 插件被选中则设置隐藏
+    if (widget.isChecked) {
+        widget.setHiddenTime();
+    }
+
     // checkbox 插件
     const checkbox = widget.type === WidgetType.Checkbox ? widget : widget.widget;
 

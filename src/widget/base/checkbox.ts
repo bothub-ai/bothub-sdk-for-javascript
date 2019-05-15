@@ -116,9 +116,11 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         this.off();
         this.on('hidden', origin.hidden);
         this.on('check', origin.check);
-        this.on('check', () => setHiddenTime(this));
         this.on('uncheck', origin.unCheck);
         this.on('rendered', origin.rendered);
+    }
+    setHiddenTime() {
+        setHiddenTime(this);
     }
     check() {
         this.canRender = true;
@@ -198,16 +200,16 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                 else if (ev.event === 'hidden') {
                     this.emit('hidden');
 
-                    let showInDebugg = false;
-                    let message = `${this.name} Plugin with ID ${this.id} has been hidden`;
+                    const message = `${this.name} Plugin with ID ${this.id} has been hidden`;
 
                     if (!this.isRetry) {
-                        showInDebugg = true,
-                        message += ', Retry';
+                        this.isRetry = true;
+
+                        warn(message + ', Retry', true);
                         setTimeout(() => this.parse(true));
                     }
 
-                    warn(message, showInDebugg);
+                    warn(message);
                 }
             });
         }

@@ -58,6 +58,12 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
             return;
         }
 
+        // 是否找到对应元素
+        if (!document.getElementById(this.id)) {
+            this.canRender = false;
+            return;
+        }
+
         // 网页只能有一个对话插件
         if (
             !this.isRendered &&

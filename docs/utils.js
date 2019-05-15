@@ -20,16 +20,20 @@ function createVueComponent(data) {
             parseWidget() {
                 const widget = window.BH.Widget;
                 const data = this.config;
-    
+
                 widget.setConfig(data);
                 widget.render(data.id);
             },
             toStringify() {
                 return JSON.stringify(this.config, null, 2);
-            }
+            },
+            clearStorage() {
+                window.localStorage.clear();
+                this.parseWidget();
+            },
         },
         mounted() {
-            window.BH.init({
+            window.BH && window.BH.init({
                 debug: true,
                 language: "en_US",
                 renderImmediately: true,
@@ -37,5 +41,5 @@ function createVueComponent(data) {
                 widgets: this.config,
             });
         },
-    });    
+    });
 }

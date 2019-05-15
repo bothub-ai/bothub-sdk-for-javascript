@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Bothub SDK - Widget</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
@@ -32,9 +33,15 @@
                     <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
                 </li>
                 <li class="bothub-widget-discription__item">
+                    <code>origin</code>
+                    <p>插件加载网址的基域，必填。</p>
+                    <p>指示插件在哪个网站加载，如果不填该项，插件将会无法显示。</p>
+                    <p>在这里我们将其写死成当前网页，作为展示用。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
                     <code>skin</code>
                     <p>插件内容的色彩主题，选填。</p>
-                    <p><code>浅色主题</code>插件显示深色文本</p>
+                    <p><code>浅色主题</code>插件显示深黑色文本</p>
                     <p><code>深色主题</code>插件显示白色文本、透明 messenger 图标和白色闪电图标</p>
                     <p>默认为<code>浅色主题</code>。</p>
                 </li>
@@ -61,11 +68,17 @@
             </section>
             <!-- 预览 -->
             <section>
-                <div class="bothub-widget-card" style="width: 360px">
+                <div class="bothub-widget-card" style="width: 440px">
                     <header class="bothub-widget-card__header">
                         <span>预览</span>
                     </header>
                     <article class="bothub-widget-card__article">
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">插件加载网址的基域</el-col>
+                            <el-col :span="14">
+                                <el-input :value="location.origin" disabled></el-input>
+                            </el-col>
+                        </el-row>
                         <el-row :gutter="10" class="bothub-widget-card__input">
                             <el-col :span="10" class="bothub-widget-card__input-label">色彩主题 (选填)</el-col>
                             <el-col :span="14">
@@ -92,6 +105,19 @@
                                     <el-option label="常规" value="standard"></el-option>
                                     <el-option label="大（默认）" value="large"></el-option>
                                     <el-option label="加大" value="xlarge"></el-option>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">是否允许用户登录 (选填)</el-col>
+                            <el-col :span="14">
+                                <el-select
+                                    v-model="config.allowLogin"
+                                    size="small"
+                                    style="width: 100%"
+                                    @change="parseWidget">
+                                    <el-option label="是（默认）" :value="true"></el-option>
+                                    <el-option label="否" :value="false"></el-option>
                                 </el-select>
                             </el-col>
                         </el-row>
@@ -126,7 +152,9 @@
                             v-text="toStringify()">
                         </pre>
                     </article>
-                    <footer class="bothub-widget-card__footer bothub-widget-preview">
+                    <footer
+                        class="bothub-widget-card__footer bothub-widget-preview"
+                        :style="config.skin === 'light' ? 'background-color: #fff' : 'background-color: #aaa'">
                         <div :id="config.id"></div>
                     </footer>
                 </div>

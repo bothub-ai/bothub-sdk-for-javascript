@@ -5,6 +5,6 @@ createVueComponent({
     themeColor: '',
     loggedInGreeting: '',
     loggedOutGreeting: '',
-    greetingDialogDisplay: '',
-    greetingDialogDelay: '',
+    // greetingDialogDisplay: '',
+    // greetingDialogDelay: '',
 });

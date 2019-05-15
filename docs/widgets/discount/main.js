@@ -2,6 +2,7 @@ createVueComponent({
     id: 'bh-widget-example-discount',
     type: 'Discount',
     pageId: pageId,
+    origin: location.origin,
     title: "Get 5% off from your order",
     subtitle: "Reveal discount to our Messenger list",
     discountText: "Your discount code:",

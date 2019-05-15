@@ -1,0 +1,71 @@
+.bothub-widget-article {
+    display: flex;
+}
+
+.bothub-widget-article > *{
+    width: 50%;
+}
+
+.bothub-widget-discription {
+    margin-right: 40px;
+}
+
+.bothub-widget-discription__item p {
+    font-size: 16px;
+    color: rgba(0,0,0,.8);
+    text-indent: 24px;
+    margin: 4px 0 4px 24px;
+}
+
+.bothub-widget-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bothub-widget-card {
+    width: 360px;
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    overflow: hidden;
+    color: #303133;
+    transition: .3s;
+    display: block;
+    /* margin: auto; */
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+
+.bothub-widget-card .bothub-widget-card__header {
+    padding: 12px 14px;
+    border-bottom: 1px solid #ebeef5;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bothub-widget-card .bothub-widget-card__article {
+    padding: 14px;
+}
+
+.bothub-widget-card__code {
+    margin-bottom: 0px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ebeef5;
+}
+
+.bothub-widget-card .bothub-widget-card__footer {
+    padding: 12px 14px;
+    border-top: 1px solid #ebeef5;
+}
+
+.bothub-widget-card__input+.bothub-widget-card__input {
+    margin-top: 10px;
+}
+
+.bothub-widget-card__input .bothub-widget-card__input-label {
+    line-height: 32px;
+    font-size: 14px;
+}

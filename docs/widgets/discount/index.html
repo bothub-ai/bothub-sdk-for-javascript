@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Bothub SDK - Widget</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
@@ -30,6 +31,12 @@
                 <li class="bothub-widget-discription__item">
                     <code>pageId</code>
                     <p>Facebook 页面 ID，表示您的 Bot 所连接的 Facebook 页面的编号。</p>
+                </li>
+                <li class="bothub-widget-discription__item">
+                    <code>origin</code>
+                    <p>插件加载网址的基域，必填。</p>
+                    <p>指示插件在哪个网站加载，如果不填该项，插件将会无法显示。</p>
+                    <p>在这里我们将其写死成当前网页，作为展示用。</p>
                 </li>
                 <li class="bothub-widget-discription__item">
                     <code>title</code>
@@ -75,9 +82,18 @@
                 <div class="bothub-widget-card" style="width: 400px">
                     <header class="bothub-widget-card__header">
                         <span>预览</span>
-                        <el-button size="small" type="primary" @click="parseWidget">刷新插件</el-button>
+                        <span>
+                            <!-- <el-button size="small" type="primary" @click="clearStorage">清除“勾选后隐藏”</el-button> -->
+                            <el-button size="small" type="primary" @click="parseWidget">刷新插件</el-button>
+                        </span>
                     </header>
                     <article class="bothub-widget-card__article">
+                        <el-row :gutter="10" class="bothub-widget-card__input">
+                            <el-col :span="10" class="bothub-widget-card__input-label">插件加载网址的基域</el-col>
+                            <el-col :span="14">
+                                <el-input :value="location.origin" disabled></el-input>
+                            </el-col>
+                        </el-row>
                         <el-row :gutter="10" class="bothub-widget-card__input">
                             <el-col :span="10" class="bothub-widget-card__input-label">标题</el-col>
                             <el-col :span="14">

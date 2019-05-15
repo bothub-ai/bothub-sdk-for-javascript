@@ -1,0 +1,3 @@
+createVueComponent({
+    id: '',
+});

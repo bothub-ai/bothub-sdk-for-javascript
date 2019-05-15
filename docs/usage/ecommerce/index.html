@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="../../utils.js"></script>
+
+    <!-- 初始化代码 -->
+    <script src="https://storage.googleapis.com/customer_files_uat/Feng's E-commerce Bot/Feng's E-commerce Bot_channel_script_9m49FcRL5K.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>Bothub SDK 电商事件示例</h2>
+        <p>
+            配置商品信息后可通过<code>Checkbox</code>或<code>Send To Messenger</code>插件将订单信息发送到用户的 Messenger 
+            <a href="https://github.com/bothub-ai/bothub-jssdk" target="_blank">查看文档</a>
+        </p>
+
+        <section>
+            <h3>商品添加购物车事件</h3>
+
+            <div id="bothub-widget-8w3"></div>
+
+            <el-button type="primary" size="medium" @click="() => {
+                window.BH.Event.addedToCart();
+            }">加入购物车</el-button>
+        </section>
+
+        <section>
+            <h3>商品订单回执事件</h3>
+
+            <!-- 在这里设置要发送的数据 -->
+            <script>
+                window.bhAsyncInit.push(function() {
+                    window.BH.Widget.setConfig({
+                        id: 'bothub-widget-8w6',
+                        message: {
+                            type: 'recipient',
+                            data: {
+                                "recipient_name":"Stephane Crozatier",
+                                "order_number":"12345678902",
+                                "currency":"USD",
+                                "payment_method":"Visa 2345",        
+                                "order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
+                                "timestamp":"1428444852",         
+                                "address":{
+                                    "street_1":"1 Hacker Way",
+                                    "street_2":"",
+                                    "city":"Menlo Park",
+                                    "postal_code":"94025",
+                                    "state":"CA",
+                                    "country":"US"
+                                },
+                                "summary":{
+                                    "subtotal":75.00,
+                                    "shipping_cost":4.95,
+                                    "total_tax":6.19,
+                                    "total_cost":56.14
+                                },
+                                "adjustments":[
+                                    {
+                                        "name":"New Customer Discount",
+                                        "amount":20
+                                    },
+                                    {
+                                        "name":"$10 Off Coupon",
+                                        "amount":10
+                                    }
+                                ],
+                                "elements":[
+                                    {
+                                        "title":"Classic White T-Shirt",
+                                        "subtitle":"100% Soft and Luxurious Cotton",
+                                        "quantity":2,
+                                        "price":50,
+                                        "currency":"USD",
+                                        "image_url":"https://fakeimg.pl/200x200/"
+                                    },
+                                    {
+                                        "title":"Classic Gray T-Shirt",
+                                        "subtitle":"100% Soft and Luxurious Cotton",
+                                        "quantity":1,
+                                        "price":25,
+                                        "currency":"USD",
+                                        "image_url":"https://fakeimg.pl/200x200/"
+                                    }
+                                ]
+                            },
+                        },
+                    });
+                });
+            </script>
+
+            <div id="bothub-widget-8w6"></div>
+        </section>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

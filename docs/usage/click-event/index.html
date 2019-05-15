@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+    <script src="../../utils.js"></script>
+
+    <!-- 初始化代码 -->
+    <script src="https://storage.googleapis.com/customer_files_uat/Feng's E-commerce Bot/Feng's E-commerce Bot_channel_script_9m49FcRL5K.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>Bothub SDK 事件使用示例</h2>
+        <p>SDK提供了将商品加入购物车、愿望清单、下订单等定制事件，并且可以根据事件推送消息。<a href="https://github.com/bothub-ai/bothub-jssdk" target="_blank">查看文档</a></p>
+        <!-- Checkbox -->
+        <div id="bothub-widget-8w3"></div>
+
+        <section>
+            <h3>标准事件</h3>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.addedToCart({
+                sku: '10005-1',
+                name: 'T-shirt',
+                currency: 'USD',
+                price: 26.99,
+            })">加入购物车</el-button>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.addedToWishlist({
+                sku: '10005-1',
+                name: 'backpack',
+                currency: 'CNY',
+                price: 26.99,
+            })">添加愿望单</el-button>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.purchase({
+                orderNumber: '1',
+                currency: 'USD',
+                totalPrice: 26.99,
+            })">商品支付</el-button>
+        </section>
+
+        <section>
+            <h3>自定义事件</h3>
+            <p>我们创建一个名为“预约面试”的自定义事件：</p>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.logEvent({
+                name: 'scheduled_interview',
+                user_id: 1,
+            })">预约面试</el-button>
+        </section>
+        
+        <section>
+            <h3>定时通知事件</h3>
+            <p>通知事件是自定义事件的一个特殊用法，需要将通知时间的时间戳（<code>trigger_time</code>）作为参数传递出去</p>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.logEvent({
+                name: 'scheduled_interview',
+                trigger_time: Date.parse(new Date()) / 1000,
+            })">面试通知</el-button>
+        </section>
+
+        <section>
+            <h3>定时事件示例 vipkid</h3>
+
+            <div style="margin-bottom: 10px;">
+                <el-select style="width: 200px;" v-model="config.timezone">
+                    <el-option v-for="item in config.timezones" :label="item" :key="item"></el-option>
+                </el-select>
+
+                <el-input v-model="config.datetime" style="width: 200px;"></el-input>
+                <el-input v-model="config.reminder" style="width: 200px;"></el-input>
+            </div>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.logEvent({
+                name: 'have_scheduled_interview',
+                trigger_time: 'timezone=' + config.timezone + '; datetime=' + config.datetime + '; reminder=' + config.reminder,
+            })">定时通知</el-button>
+        </section>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+</html>

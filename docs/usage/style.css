@@ -1,0 +1,9 @@
+.bothub-widget-article {
+    font-size: 16px;
+}
+
+.bothub-widget-article p {
+    /* text-indent: 32px; */
+    margin: 8px 0;
+    line-height: 20px;
+}

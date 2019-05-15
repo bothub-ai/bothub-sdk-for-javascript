@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../style.css">
+
+    <script src="../../utils.js"></script>
+
+    <!-- 强制左对齐 -->
+    <style>
+        .bothub-widget-discount {
+            margin-left: 0 !important;
+        }
+    </style>
+
+    <!-- 初始化代码 -->
+    <script src="https://storage.googleapis.com/customer_files_uat/Feng's E-commerce Bot/Feng's E-commerce Bot_channel_script_9m49FcRL5K.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="bothub-widget-header">插件部署</header>
+        <article class="bothub-widget-article">
+            <p>我们在后台管理页面会看到这样的两段代码：</p>
+            <img src="../../images/code-in-manager.png" />
+            <p>其中<code>Initialization code</code>表示插件的初始化代码，在部署插件的时候需要将这段代码放置到页面的<code>&lt;head&gt;</code>标签内。</p>
+            <p>而<code>HTML code</code>代码则是表示插件本身，你需要将这行代码放置到你需要插件渲染的位置。但是这里有个例外，<code>Customerchat</code>插件在网页中的位置是固定在屏幕右下角的，所以这个插件的<code>HTML code</code>可以放在网页中的任何位置，只是用于表示这个页面需要显示这个插件。</p>
+            <br />
+            <p>下面就是设置好的插件预览。</p>
+            <br />
+            <p>「给我们发消息」插件</p>
+            <div id="bothub-widget-84j"></div>
+            <br />
+            <p>发送消息插件</p>
+            <div id="bothub-widget-8w6"></div>
+            <br />
+            <p>复选框插件</p>
+            <div id="bothub-widget-8w3"></div>
+            <br />
+            <p>优惠券插件</p>
+            <div id="bothub-widget-8w5"></div>
+            <br />
+            <p>聊天插件</p>
+            <p>见右下角</p>
+            <div id="bothub-widget-84n"></div>
+        </article>
+    </div>
+</body>
+</html>

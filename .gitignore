@@ -4,4 +4,4 @@ draft/
 out/
 cert/
 
-gcloud.json
+gcloud*.json

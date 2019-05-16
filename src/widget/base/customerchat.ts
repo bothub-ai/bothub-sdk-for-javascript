@@ -106,7 +106,14 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         addClass(this.$el, fbClass);
         addClass(this.$el, bhClass);
 
-        setAttributes(this.$el, this.fbAttrs);
+        setAttributes(this.$el, {
+            ...this.fbAttrs,
+            ref: 'base64:' + window.btoa(JSON.stringify({
+                gateway: 'engagement',
+                code: this.code,
+                psid: '{{fb_user_id}}',
+            })),
+        });
 
         window.FB.XFBML.parse(warpper, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);

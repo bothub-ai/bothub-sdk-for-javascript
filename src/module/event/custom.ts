@@ -1,9 +1,10 @@
 import { BothubParameter, transformParameter, logEvent } from './core';
 import { facebookReady } from 'src/lib/facebook';
+import { isString } from 'src/lib/assert';
 
 /** bothub 自定义事件名称 */
 export enum BhEventName {
-    purchase = 'bh_purchase',
+    purchase = 'fb_mobile_purchase',
 }
 
 /** 完成购物事件参数 */
@@ -28,4 +29,21 @@ export function purchase(params?: CompletePaymentParams) {
             totalPrice: 'valueToSumKey',
         }),
     ));
+}
+
+/** 自定义事件参数 */
+interface CustomEventParams {
+    name: string;
+    [key: string]: string | number;
+}
+
+/** 自定义事件 */
+export function logCustom(params: CustomEventParams | string) {
+    if (isString(params)) {
+        logEvent(params);
+    }
+    else {
+        const { name, ...rest } = params;
+        logEvent(name, null, rest);
+    }
 }

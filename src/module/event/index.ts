@@ -11,7 +11,5 @@
  *   https://developers.facebook.com/docs/reference/javascript/FB.AppEvents.LogEvent
  */
 
-export { logEvent } from './core';
-
 export * from './standard';
 export * from './custom';

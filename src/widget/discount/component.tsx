@@ -51,26 +51,26 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         };
 
         return (
-            <div id={id} class={WarpperClassName}>
-                <section class={`${bhClass} ${bhClass}__${props.align}`}>
-                    <header class={`${bhClass}__header`}>
-                        <div class={`${bhClass}__title`}>{ data.title }</div>
-                        <div class={`${bhClass}__subtitle`}>{ data.subtitle }</div>
+            <div id={id} className={WarpperClassName}>
+                <section className={`${bhClass} ${bhClass}__${props.align}`}>
+                    <header className={`${bhClass}__header`}>
+                        <div className={`${bhClass}__title`}>{ data.title }</div>
+                        <div className={`${bhClass}__subtitle`}>{ data.subtitle }</div>
                     </header>
-                    <article class={parseClass([`${bhClass}__box`, {
+                    <article className={parseClass([`${bhClass}__box`, {
                         [`${bhClass}__code`]: showCode,
-                        ['shake-box']: shakeBox,
+                        'shake-box': shakeBox,
                     }])}>
                         {showCode
-                            ? <div class={`${bhClass}__tip`} style='color: #33D499'>
-                                <div class={`${bhClass}__msg`}>SUCCESS</div>
+                            ? <div className={`${bhClass}__tip`} style='color: #33D499'>
+                                <div className={`${bhClass}__msg`}>SUCCESS</div>
                             </div>
-                            : <div class={`${bhClass}__tip`} style='color: #FF6969'>
-                                <div class={`${bhClass}__notice`}>{ data.discount }</div>
-                                <div class={`${bhClass}__msg`}>DISCOUNT</div>
+                            : <div className={`${bhClass}__tip`} style='color: #FF6969'>
+                                <div className={`${bhClass}__notice`}>{ data.discount }</div>
+                                <div className={`${bhClass}__msg`}>DISCOUNT</div>
                             </div>
                         }
-                        <div class={`${bhClass}__content`}>
+                        <div className={`${bhClass}__content`}>
                             { loading ? <Loading /> : '' }
                             {/* checkbox 插件元素 */}
                             <div
@@ -81,21 +81,20 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                                     position: 'absolute',
                                 }}
                             />
-                            { showCode ? <div class={`${bhClass}__content-text`}>{ data.discountText }</div> : '' }
-                            { showCode ? <div class={`${bhClass}__content-code`}>{ data.discountCode }</div> : '' }
+                            { showCode ? <div className={`${bhClass}__content-text`}>{ data.discountText }</div> : '' }
+                            { showCode ? <div className={`${bhClass}__content-code`}>{ data.discountCode }</div> : '' }
                         </div>
                     </article>
                     <div
-                        class={`${bhClass}__btn`}
+                        className={`${bhClass}__btn`}
                         onClick={clickButton}
                         disabled={loading}
-                    >{
-                        showCode
+                    >{showCode
                             ? isCopied
                                 ? 'Copied!'
                                 : data.copyCodeBtnText
                             : data.showCodeBtnText
-                    }</div>
+                        }</div>
                 </section>
             </div>
         );

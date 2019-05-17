@@ -112,7 +112,7 @@ async function main() {
         await compile(...file);
     }
 
-    console.log(chalk.cyan(`\nDeploy complete.\n`));
+    console.log(chalk.cyan('\nDeploy complete.\n'));
 }
 
 console.log('\x1Bc');

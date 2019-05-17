@@ -2,7 +2,7 @@ import { isDef } from 'src/lib/assert';
 import { getQueryString } from 'src/lib/http';
 import { InputWidgetData, WidgetData, Widget, setConfig } from 'src/widget';
 
-import * as utils from 'src/lib/utils';
+import * as user from 'src/module/user';
 
 /** 是否是调试模式 */
 export const debug = getQueryString('bothubDebugMode') === 'true';
@@ -16,10 +16,6 @@ export let noFacebookLogEvent = false;
 export let language: 'zh_CN' | 'zh_TW' | 'en_US' = 'en_US';
 /** 是否在初始化后立即渲染 */
 export let renderImmediately = true;
-/** 当前用户的自定义编号 */
-export let customUserId = utils.getCustomUserId();
-/** 当前用户的 Facebook 编号  */
-export let fbUserId = utils.getFacebookUserId();
 
 /** 插件配置原始数据 */
 export const widgetData: WidgetData[] = [];
@@ -33,7 +29,7 @@ interface BothubInitParams {
     /** APP 编号（`debug`选项为`true`时才会生效） */
     appId?: typeof messengerAppId;
     /** 自定义用户编号 */
-    customUserId?: typeof customUserId;
+    customUserId?: typeof user.customUserId;
     /** 是否禁用 Facebook 事件功能 */
     noFacebookLogEvent?: typeof noFacebookLogEvent;
     /** 语言类型 */
@@ -58,8 +54,7 @@ export function setGlobalParams(param: BothubInitParams) {
     }
 
     if (param.customUserId) {
-        customUserId = param.customUserId;
-        utils.setCustomUserId(customUserId);
+        user.setCustomUserId(param.customUserId);
     }
 
     if (isDef(param.renderImmediately)) {

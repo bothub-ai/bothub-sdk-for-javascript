@@ -13,3 +13,15 @@
 
 export * from './standard';
 export * from './custom';
+export * from './core';
+
+import * as Custom from './custom';
+import * as Standard from './standard';
+
+import { shallowCopyExclude } from 'src/lib/object';
+
+export default {
+    ...shallowCopyExclude(Custom, ['BhEventName', 'logCustom']),
+    ...Standard,
+    logEvent: Custom.logCustom,
+};

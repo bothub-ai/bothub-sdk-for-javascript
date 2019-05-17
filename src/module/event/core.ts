@@ -4,6 +4,7 @@ import { isDef } from 'src/lib/assert';
 import { warn } from 'src/lib/print';
 
 import * as store from 'src/store';
+import * as user from 'src/module/user';
 
 import { getEventId } from './utils';
 import { BhEventName } from './custom';
@@ -159,8 +160,8 @@ function logBhEvent(id: string, name: string, params: object) {
         id: getEventId(),
 
         user_agent: UA,
-        fb_user_id: store.fbUserId,
-        custom_user_id: store.customUserId,
+        fb_user_id: user.fbUserId,
+        custom_user_id: user.customUserId,
 
         // checkbox 参数
         gateway: 'engagement',

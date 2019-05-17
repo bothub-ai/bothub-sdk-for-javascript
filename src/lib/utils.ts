@@ -1,48 +1,4 @@
-import uuid from 'uuid';
-
 import { isIOS } from './env';
-import { local } from './cache';
-import { getQueryString } from './http';
-
-/** 获取当前 facebook 用户 ID */
-export function getFacebookUserId() {
-    const key = 'fb_user_id';
-    const fbUserId = getQueryString(key) || local.get(key);
-
-    if (fbUserId) {
-        local.set(key, fbUserId);
-    }
-
-    return fbUserId;
-}
-
-/** 用户自定义编号存储用的键值 */
-export const CustomUserIdKey = 'bothub_custom_user_id';
-
-/** 获取用户编号 */
-export function getCustomUserId() {
-    const originId = getQueryString(CustomUserIdKey) || local.get(CustomUserIdKey);
-
-    if (originId) {
-        return originId;
-    }
-
-    const newId = uuid();
-
-    setCustomUserId(newId);
-
-    return newId;
-}
-
-/** 记录用户编号 */
-export function setCustomUserId(id: string) {
-    local.set(CustomUserIdKey, id);
-}
-
-/** 获取随机的 User Ref */
-export function getUserRef() {
-    return `${location.host}_${uuid()}`.replace(/[\.-]/g, '_');
-}
 
 /** 函数沙箱 */
 export function sandBox<T extends (...args: any[]) => any>(cb: T) {

@@ -1,6 +1,7 @@
 import { BothubParameter, transformParameter, logEvent } from './core';
 import { facebookReady } from 'src/lib/facebook';
 import { isString } from 'src/lib/assert';
+import { shallowCopyExclude } from 'src/lib/object';
 
 /** bothub 自定义事件名称 */
 export enum BhEventName {
@@ -39,11 +40,11 @@ interface CustomEventParams {
 
 /** 自定义事件 */
 export function logCustom(params: CustomEventParams | string) {
-    if (isString(params)) {
-        logEvent(params);
-    }
-    else {
-        const { name, ...rest } = params;
-        logEvent(name, null, rest);
-    }
+    facebookReady.then(() => {
+        const parameter = isString(params)
+            ? [params, null, {}, ''] as const
+            : [params.name, null, shallowCopyExclude(params, ['name']), ''] as const;
+
+        logEvent(...parameter);
+    });
 }

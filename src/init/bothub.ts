@@ -1,5 +1,6 @@
-import * as Widget from 'src/widget';
-import * as Event from 'src/module/event';
+import Widget from 'src/widget';
+import User from 'src/module/user';
+import Event from 'src/module/event';
 
 import * as Store from 'src/store';
 import * as Facebook from 'src/lib/facebook';
@@ -21,6 +22,8 @@ function init(...arg: Parameters<typeof Store.setGlobalParams>) {
 export default {
     /** 初始化函数 */
     init,
+    /** 用户信息 */
+    User: { ...User },
     /** 应用事件 */
     Event: { ...Event },
     /** 插件模块 */

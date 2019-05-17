@@ -1,8 +1,8 @@
 import { log, warn } from 'src/lib/print';
-import { getUserRef } from 'src/lib/utils';
 import { messengerAppId } from 'src/store';
 import { shallowCopy } from 'src/lib/object';
 import { addClass, setAttributes } from 'src/lib/dom';
+import { getUserRef } from 'src/module/user';
 import { CheckboxEvent } from 'typings/facebook';
 
 import { BaseWidget, WidgetDataCommon } from './base';

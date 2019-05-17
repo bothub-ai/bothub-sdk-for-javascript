@@ -10,13 +10,20 @@ import { default as ShareButton, ShareButtonData } from './base/share-button';
 import { default as Customerchat, CustomerchatData } from './base/customerchat';
 import { default as SendToMessenger, SendToMessengerData } from './base/send-to-messenger';
 
-// 分别导出
+export { WidgetType } from './helper';
+
 export {
+    Discount,
     DiscountData,
+    Checkbox,
     CheckboxData,
+    MessageUs,
     MessageUsData,
+    ShareButton,
     ShareButtonData,
+    Customerchat,
     CustomerchatData,
+    SendToMessenger,
     SendToMessengerData,
 };
 
@@ -182,3 +189,9 @@ export function destroy(id?: string) {
     // 销毁插件
     widget.destroy();
 }
+
+export default {
+    setConfig,
+    render,
+    destroy,
+};

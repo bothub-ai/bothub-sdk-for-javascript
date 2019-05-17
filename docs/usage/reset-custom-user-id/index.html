@@ -12,36 +12,31 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script src="../../utils.js"></script>
-
     <!-- 初始化代码 -->
     <script src="https://storage.googleapis.com/customer_files_prod/Bothub Fashion/Bothub Fashion_channel_script_LwMUtHOP1d.js"></script>
 </head>
 <body>
     <div id="app">
-        <h2>Bothub SDK 商家推送示例</h2>
+        <h2>Bothub SDK 商家主动变更用户 Custom User 编号示例</h2>
         <p>使用本功能，商家可主动给用户发送消息</p>
 
         <section>
-            <h3>1. 设置 custom_user_id: </h3>
-            <el-input style="width: 400px;" v-model="userId" placeholder="请输入您想要设置的 custom_user_id" ></el-input>
-            <el-button type="primary" @click="setUserId">设置</el-button>
-        </section>
-        
-        <section>
-            <h3>2. 用户触发自定义事件会将 custom_user_id 与 facebook 账号进行绑定: </h3>
+            <h3>1. 通过 checkbox 向用户发送订单信息</h3>
+
             <div id="bothub-widget-jhk"></div>
-            <div>
-                <span>勾选上方 checkbox 后点击按钮进行绑定：</span>
-                <el-button type="primary" @click="window.BH.Event.logEvent('bind_fb_to_cid')">绑定</el-button>
-            </div>
+
+            <el-button type="primary" @click="() => window.BH.Event.addedToCart({ sku: '14379168759861' })">发送商品信息</el-button>
         </section>
 
         <section>
-            <h3>3. 完成账户绑定后，即可调用 BOTHUB API 向用户推送订单及物流信息</h3>
-            <el-input style="width: 400px;" v-model="testUserId" placeholder="请填写要测试的 custom_user_id" ></el-input>
+            <h3>2. 变更 custom_user_id: </h3>
+            <el-input style="width: 400px;" v-model="userId" placeholder="请输入您想要设置的 custom_user_id"></el-input>
+            <el-button type="primary" @click="setUserId">设置</el-button>
+        </section>
+
+        <section>
+            <h3>3. 通过 Bothub API 向用户发送订单信息</h3>
             <el-button type="primary" @click="sendReceipt">发送订单回执</el-button>
-            <el-button type="primary" @click="sendShippingStatus">发送物流更新</el-button>
         </section>
     </div>
 

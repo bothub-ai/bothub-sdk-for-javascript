@@ -18,6 +18,20 @@ code {
     border-radius: 4px;
 }
 
+pre {
+    padding: 1em;
+    border: none;
+    overflow: auto;
+    line-height: 1.45;
+    max-height: 35em;
+    position: relative;
+    background: #F6F6F6;
+    -moz-background-size: 30px,30px;
+    -o-background-size: 30px,30px;
+    -webkit-background-size: 30px,30px;
+    background-size: 30px,30px;
+}
+
 .bothub-widget-header {
     font-size: 20px;
     line-height: 36px;

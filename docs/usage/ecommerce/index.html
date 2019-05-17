@@ -11,28 +11,28 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
-    <script src="../../utils.js"></script>
-
     <!-- 初始化代码 -->
-    <script src="https://storage.googleapis.com/customer_files_uat/Feng's E-commerce Bot/Feng's E-commerce Bot_channel_script_9m49FcRL5K.js"></script>
+    <script src="https://storage.googleapis.com/customer_files_prod/Bothub Fashion/Bothub Fashion_channel_script_LwMUtHOP1d.js"></script>
 </head>
 <body>
     <div id="app">
         <h2>Bothub SDK 电商事件示例</h2>
+        <p>配置商品信息后可通过<code>Checkbox</code>或<code>Send To Messenger</code>插件将订单信息发送到用户的 Messenger。</p>
         <p>
-            配置商品信息后可通过<code>Checkbox</code>或<code>Send To Messenger</code>插件将订单信息发送到用户的 Messenger 
-            <a href="https://github.com/bothub-ai/bothub-jssdk" target="_blank">查看文档</a>
+            <a href="https://docs.bothub.ai/advanced-tool/ec-bot/order-receipt" target="_blank">推送订单回执</a>
+
+            <a href="https://docs.bothub.ai/advanced-tool/ec-bot/abandoned-cart" target="_blank">购物车召回</a>
         </p>
 
         <section>
             <h3>商品添加购物车事件</h3>
 
-            <div id="bothub-widget-8w3"></div>
+            <div id="bothub-widget-jhk"></div>
 
-            <el-button type="primary" size="medium" @click="() => {
-                window.BH.Event.addedToCart();
-            }">加入购物车</el-button>
+            <el-button type="primary" size="medium" @click="() => window.BH.Event.addedToCart()">加入购物车</el-button>
         </section>
+
+        <br />
 
         <section>
             <h3>商品订单回执事件</h3>
@@ -41,7 +41,8 @@
             <script>
                 window.bhAsyncInit.push(function() {
                     window.BH.Widget.setConfig({
-                        id: 'bothub-widget-8w6',
+                        // 这里的 ID 编号指向下面的插件 ID
+                        id: 'bothub-widget-jhm',
                         message: {
                             type: 'recipient',
                             data: {
@@ -99,7 +100,8 @@
                 });
             </script>
 
-            <div id="bothub-widget-8w6"></div>
+            <!-- 插件渲染在这里 -->
+            <div id="bothub-widget-jhm"></div>
         </section>
     </div>
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bothub SDK - Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- 初始化代码 -->
+    <script src="https://storage.googleapis.com/customer_files_prod/Bothub Fashion/Bothub Fashion_channel_script_LwMUtHOP1d.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>Bothub SDK Checkbox 事件</h2>
+        <p>当页面上存在复数个 Checkbox 时，为了区分触发事件来源不同的 checkbox，此时你就需要在发送事件的时候添加一个<code>widget</code>参数，来指定当前事件是用哪个 checkbox 发送。</p>
+        <p>分别点击两个加入购物车按钮，你可以在“来源管理”的数据统计中看到它们的统计信息。</p>
+
+        <section>
+            <h3>添加购物车 1</h3>
+
+            <div id="bothub-widget-jhk"></div>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.addedToCart({
+                widget: 'bothub-widget-jhk',
+                sku: 14379168759861,
+            })">加入购物车</el-button>
+        </section>
+
+        <section>
+            <h3>添加购物车 2</h3>
+
+            <div id="bothub-widget-jho"></div>
+
+            <el-button type="primary" size="medium" @click="window.BH.Event.addedToCart({
+                widget: 'bothub-widget-jho',
+                sku: 14379168464949,
+            })">加入购物车</el-button>
+        </section>
+    </div>
+
+    <script>new Vue ({ el: '#app' })</script>
+</body>
+</html>

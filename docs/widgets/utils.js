@@ -1,7 +1,7 @@
-// 全局 pageId
-var pageId = getQueryString('pageId') || 374118179628713;
-// 全局 appId
-var appId = getQueryString('appId');
+// 全局 pageId（Bothub Fashion）
+var pageId = getQueryString('pageId') || 2312520908966205;
+// 全局 appId（正式 app）
+var appId = getQueryString('appId') || 985673201550272;
 
 function getQueryString(name) {
     const reg = '(^|&)' + name + '=([^&]*)(&|$)';
@@ -33,7 +33,7 @@ function createVueComponent(data) {
             },
         },
         mounted() {
-            window.BH && window.BH.init({
+            window.BH.init({
                 debug: true,
                 language: "en_US",
                 renderImmediately: true,

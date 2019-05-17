@@ -11,17 +11,17 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
-    <script src="../../utils.js"></script>
-
     <!-- 初始化代码 -->
-    <script src="https://storage.googleapis.com/customer_files_uat/Feng's E-commerce Bot/Feng's E-commerce Bot_channel_script_9m49FcRL5K.js"></script>
+    <script src="https://storage.googleapis.com/customer_files_prod/Bothub Fashion/Bothub Fashion_channel_script_LwMUtHOP1d.js"></script>
 </head>
 <body>
     <div id="app">
         <h2>Bothub SDK 事件使用示例</h2>
         <p>SDK提供了将商品加入购物车、愿望清单、下订单等定制事件，并且可以根据事件推送消息。<a href="https://github.com/bothub-ai/bothub-jssdk" target="_blank">查看文档</a></p>
-        <!-- Checkbox -->
-        <div id="bothub-widget-8w3"></div>
+
+        <br />
+        <p>下面的所有事件都需要用户勾选这个确认框才会生效。</p>
+        <div id="bothub-widget-jhk"></div>
 
         <section>
             <h3>标准事件</h3>
@@ -71,17 +71,17 @@
             <h3>定时事件示例 vipkid</h3>
 
             <div style="margin-bottom: 10px;">
-                <el-select style="width: 200px;" v-model="config.timezone">
-                    <el-option v-for="item in config.timezones" :label="item" :key="item"></el-option>
+                <el-select style="width: 200px;" v-model="timezone">
+                    <el-option v-for="item in timezones" :label="item" :key="item" :value="item"></el-option>
                 </el-select>
 
-                <el-input v-model="config.datetime" style="width: 200px;"></el-input>
-                <el-input v-model="config.reminder" style="width: 200px;"></el-input>
+                <el-input v-model="datetime" style="width: 200px;"></el-input>
+                <el-input v-model="reminder" style="width: 200px;"></el-input>
             </div>
 
             <el-button type="primary" size="medium" @click="window.BH.Event.logEvent({
                 name: 'have_scheduled_interview',
-                trigger_time: 'timezone=' + config.timezone + '; datetime=' + config.datetime + '; reminder=' + config.reminder,
+                trigger_time: getTriggerTime(),
             })">定时通知</el-button>
         </section>
     </div>

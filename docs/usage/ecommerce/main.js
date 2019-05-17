@@ -1,3 +1,3 @@
-createVueComponent({
-    id: '',
+new Vue({
+    el: '#app',
 });

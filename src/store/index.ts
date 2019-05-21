@@ -5,7 +5,8 @@ import { InputWidgetData, WidgetData, Widget, setConfig } from 'src/widget';
 import * as user from 'src/module/user';
 
 /** 是否是调试模式 */
-export const debug = getQueryString('bothubDebugMode') === 'true';
+const debug = getQueryString('bothubDebugMode') === 'true';
+
 /** APP 编号 */
 export let messengerAppId = process.env.appId as string;
 /** 用户连接的 facebook 页面编号 */

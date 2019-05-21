@@ -1,6 +1,7 @@
-import { debug } from 'src/store';
+import { getQueryString } from 'src/lib/http';
 
 const prefix = '(Bothub SDK)';
+const debug = getQueryString('bothubDebugMode') === 'true';
 
 /**
  * 控制台中输出`info`日志

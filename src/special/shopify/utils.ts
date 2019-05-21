@@ -1,6 +1,6 @@
 import Cookie from 'js-cookie';
 
-import { CustomUserIdKey } from 'src/lib/utils';
+import { CustomUserIdKey } from 'src/module/user';
 
 /** 获取用户自定义编号 */
 export function getCustomUserId() {

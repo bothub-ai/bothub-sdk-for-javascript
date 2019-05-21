@@ -1,4 +1,6 @@
 import { log, warn } from 'src/lib/print';
+import { widgets } from 'src/store';
+import { deleteVal } from 'src/lib/array';
 import { addClass, removeDom, setAttributes } from 'src/lib/dom';
 
 import { WidgetType } from '../helper';
@@ -119,6 +121,19 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
             this.isRendered = true;
             this.emit('rendered');
+        });
+    }
+    destroy() {
+        // 聊天插件只需要移除 DOM 元素即可
+        removeDom('div[class*=fb_customer_chat], .fb-customerchat');
+        // 移除插件
+        setTimeout(() => {
+            deleteVal(widgets, this as any);
+
+            // 非内部插件销毁打印日志
+            if (!this.isInside) {
+                log(`Plugin with id ${this.id} has been destroyed`);
+            }
         });
     }
 }

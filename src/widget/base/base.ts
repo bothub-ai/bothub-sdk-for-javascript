@@ -178,18 +178,17 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
             return;
         }
 
-        const warpper = this.$el.parentElement!;
+        const warpper = this.$el;
         const parent = warpper.parentElement!;
 
-        // 是由函数定位的，则直接移除包装器
-        if (this.origin.position) {
-            parent.removeChild(warpper);
-        }
         // 是在网页中用 div 元素定位的
-        else {
+        if (!this.origin.position) {
             const newWarpper = parent.insertBefore(document.createElement('div'), warpper);
             newWarpper.setAttribute('id', this.id);
         }
+
+        // 移除元素
+        parent.removeChild(warpper);
 
         setTimeout(() => {
             deleteVal(widgets, this as any);

@@ -37,10 +37,10 @@ export function fixUrl(url: string) {
 
 /** 当前 Shopify 配置 */
 interface ShopifyConfig {
-    /** 在商品详情页需要渲染的插件编号 */
-    product: string;
-    /** 结账页面需要渲染的插件编号 */
-    checkout: string;
+    /** 商品召回事件的插件编号 */
+    recallWidget: string;
+    /** 发送订单回执的插件编号 */
+    reciptWidget: string;
 }
 
 /** 获取当前插件参数 */
@@ -58,8 +58,8 @@ function getShopifyParams(): ShopifyConfig {
     }
 
     return {
-        product: getQueryString('product', url) || '',
-        checkout: getQueryString('checkout', url) || '',
+        recallWidget: getQueryString('visible_recall_widget', url) || '',
+        reciptWidget: getQueryString('visible_recipt_widget', url) || '',
     };
 }
 

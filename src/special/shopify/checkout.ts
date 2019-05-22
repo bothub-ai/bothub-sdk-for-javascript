@@ -157,12 +157,12 @@ export function logPurchaseEvent() {
 /** Send To Messenger 初始化 */
 export function initSendMessenger() {
     window.BH.Widget.setConfig({
-        id: Config.checkout,
+        id: Config.reciptWidget,
         message: () => ({
             type: 'receipt',
             data: getReceiptData(),
         }),
     } as any);
 
-    insertSendMessengerWarpper(Config.checkout);
+    insertSendMessengerWarpper(Config.reciptWidget);
 }

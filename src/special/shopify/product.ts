@@ -55,15 +55,16 @@ function getAddToCartBtn() {
 
 /** 商品召回初始化 */
 export function initAddToCard() {
-    // 获取页面添加购物车按钮
-    const btn = getAddToCartBtn();
-
+    // 设置商品召回事件的插件
     window.BH.Widget.setConfig({
-        id: Config.product,
+        id: Config.recallWidget,
         origin: location.origin,
         position: getProductForm,
         centerAlign: true,
     } as any);
+
+    // 获取页面添加购物车按钮
+    const btn = getAddToCartBtn();
 
     // 没有找到添加按钮，退出
     if (!btn) {
@@ -90,7 +91,7 @@ export function initAddToCard() {
         }
 
         Event.addedToCart({
-            widget: Config.product,
+            widget: Config.recallWidget,
             sku: skuId,
             name: product!.type,
             currency,

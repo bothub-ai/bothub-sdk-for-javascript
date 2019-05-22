@@ -1,3 +1,5 @@
+import { warn } from 'src/lib/print';
+
 /** 储存类型 */
 const enum StorageType {
     local,
@@ -33,7 +35,7 @@ class StorageWapper {
             result = JSON.parse(value);
         }
         catch (e) {
-            console.warn(e.message);
+            warn(e.message);
             result = value as any;
         }
 

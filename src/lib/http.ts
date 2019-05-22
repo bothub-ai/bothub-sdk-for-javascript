@@ -56,12 +56,14 @@ function getUrl(url: string) {
 
 /**
  * 获取 Url 查询参数
- * @param {stirng} name
+ * @param {stirng} name 参数名称
+ * @param {string} url 待检测的链接
  * @returns {string}
  */
-export function getQueryString(name: string) {
+export function getQueryString(name: string, url = window.location.href) {
     const reg = `(^|&)${name}=([^&]*)(&|$)`;
-    const result = window.location.search.substr(1).match(reg);
+    const search = url.substring(url.indexOf('?'));
+    const result = search.substr(1).match(reg);
 
     return result ? unescape(result[2]) : null;
 }

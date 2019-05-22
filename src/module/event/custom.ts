@@ -18,6 +18,9 @@ interface CompletePaymentParams {
     currency: BothubParameter['currency'];
     /** 此次购物共付款 */
     totalPrice: string | number;
+
+    // 附加参数
+    [key: string]: string | number;
 }
 
 /** 完成购物事件 */
@@ -34,7 +37,9 @@ export function purchase(params?: CompletePaymentParams) {
 
 /** 自定义事件参数 */
 interface CustomEventParams {
+    /** 事件名称 */
     name: string;
+    /** 事件属性 */
     [key: string]: string | number;
 }
 

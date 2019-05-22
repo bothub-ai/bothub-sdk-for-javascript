@@ -11,6 +11,9 @@ interface AddedToCartParams {
     currency: BothubParameter['currency'];
     /** 商品价格 */
     price: string;
+
+    // 附加参数
+    [key: string]: string | number;
 }
 
 /** 添加至购物车事件 */
@@ -35,6 +38,9 @@ interface AddedToWishlistParams {
     currency: BothubParameter['currency'];
     /** 商品价格 */
     price: string;
+
+    // 附加参数
+    [key: string]: string | number;
 }
 
 /** 添加至愿望单事件 */
@@ -63,6 +69,9 @@ interface InitiatedCheckoutParams extends Pick<BothubParameter, 'id' | 'type' | 
     availablity: BothubParameter['paymentAvailable'];
     /** 购物车结算总价格 */
     totalPrice: string;
+
+    // 附加参数
+    [key: string]: string | number;
 }
 
 /** 购物车结算事件 */

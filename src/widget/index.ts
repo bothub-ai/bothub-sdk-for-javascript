@@ -38,9 +38,8 @@ export type WidgetData =
     SendToMessengerData | ShareButtonData;
 
 /** 插件输入数据类型 */
-export interface InputWidgetData extends Omit<WidgetData, 'type' | 'pageId'> {
-    type: WidgetType | keyof typeof WidgetType;
-    pageId?: WidgetData['pageId'];
+export interface InputWidgetData extends Partial<Omit<WidgetData, 'type'>> {
+    type?: WidgetType | keyof typeof WidgetType;
 }
 
 /** 插件类型全部映射到数字 */

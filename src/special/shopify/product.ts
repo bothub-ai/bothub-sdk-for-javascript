@@ -1,4 +1,5 @@
-import { DiscountData } from 'src/widget';
+import { Config } from './utils';
+import { DiscountData, CheckboxData } from 'src/widget';
 
 /** 获取商品表单元素 */
 function getProductForm() {
@@ -52,30 +53,20 @@ function getAddToCartBtn() {
     }
 }
 
-/** Checkbox 初始化 */
-export function initCheckbox() {
+/** 商品召回初始化 */
+export function initAddtoCard() {
     // 获取页面添加购物车按钮
     const btn = getAddToCartBtn();
 
-    // 折扣优惠数据
-    const data: DiscountData = {
-        id: 'bothub-widget-84v',
+    window.BH.Widget.setConfig({
+        id: Config.product,
         origin: location.origin,
-        type: 'Discount' as any,
         position: getProductForm,
-        title: 'Get 5% off from your order',
-        subtitle: 'Reveal discount to our Messenger list',
-        discountText: 'Your discount code:',
-        discountCode: 'GET15',
-        showCodeBtnText: 'Get Your Discount',
-        copyCodeBtnText: 'Copy the code',
-        discount: '5%',
-        align: 'center',
-    };
+    } as any);
 
     // 没有找到添加按钮，退出
     if (!btn) {
-        return data;
+        return;
     }
 
     // 按钮绑定事件
@@ -105,5 +96,5 @@ export function initCheckbox() {
         });
     });
 
-    return data;
+    return;
 }

@@ -1,5 +1,4 @@
-import { SendToMessengerData } from 'src/widget';
-import { fixUrl } from './utils';
+import { fixUrl, Config } from './utils';
 
 /** bothub 订单回执数据结构 */
 interface BothubReceiptData {
@@ -157,20 +156,13 @@ export function logPurchaseEvent() {
 
 /** Send To Messenger 初始化 */
 export function initSendMessenger() {
-    const id = 'bothub-shopify-widget-m';
-    const data: SendToMessengerData = {
-        id,
-        type: 'SendToMessenger' as any,
-        color: 'white',
-        size: 'xlarge',
-        ctaText: 'SEND_ME_UPDATES',
+    window.BH.Widget.setConfig({
+        id: Config.checkout,
         message: () => ({
             type: 'receipt',
             data: getReceiptData(),
         }),
-    };
+    } as any);
 
-    insertSendMessengerWarpper(id);
-
-    return data;
+    insertSendMessengerWarpper(Config.checkout);
 }

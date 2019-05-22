@@ -161,7 +161,7 @@ function logBhEvent(id: string, name: string, params: object) {
 
         user_agent: UA,
         fb_user_id: user.fbUserId,
-        custom_user_id: user.customUserId,
+        custom_user_id: user.getCustomUserId(),
 
         // checkbox 参数
         gateway: 'engagement',

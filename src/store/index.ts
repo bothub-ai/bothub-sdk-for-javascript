@@ -30,7 +30,7 @@ interface BothubInitParams {
     /** APP 编号（`debug`选项为`true`时才会生效） */
     appId?: typeof messengerAppId;
     /** 自定义用户编号 */
-    customUserId?: typeof user.customUserId;
+    customUserId?: ReturnType<typeof user.getCustomUserId>;
     /** 是否禁用 Facebook 事件功能 */
     noFacebookLogEvent?: typeof noFacebookLogEvent;
     /** 语言类型 */

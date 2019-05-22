@@ -6,7 +6,7 @@ import { pageId } from 'src/store';
 import { getQueryString } from 'src/lib/http';
 
 /** 当前用户的自定义编号 */
-export let customUserId: string = getCustomUserId();
+let customUserId: string = getCustomUserId();
 
 /** 用户自定义编号存储用的键值 */
 export const CustomUserIdKey = 'bothub_custom_user_id';

@@ -54,7 +54,7 @@ function getAddToCartBtn() {
 }
 
 /** 商品召回初始化 */
-export function initAddtoCard() {
+export function initAddToCard() {
     // 获取页面添加购物车按钮
     const btn = getAddToCartBtn();
 
@@ -62,6 +62,7 @@ export function initAddtoCard() {
         id: Config.product,
         origin: location.origin,
         position: getProductForm,
+        centerAlign: true,
     } as any);
 
     // 没有找到添加按钮，退出
@@ -89,6 +90,7 @@ export function initAddtoCard() {
         }
 
         Event.addedToCart({
+            widget: Config.product,
             sku: skuId,
             name: product!.type,
             currency,

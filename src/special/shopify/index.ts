@@ -1,10 +1,19 @@
-import { initAddtoCard } from './product';
-import { initSendMessenger, logPurchaseEvent } from './checkout';
+import { initAddToCard } from './product';
+import { logPurchaseEvent } from './checkout';
 
-const widgetType = '{{{widgetType}}}';
+function init() {
+    initAddToCard();
+    logPurchaseEvent();
+}
 
 // 初始化函数
-window.bhAsyncInit = () => {
-    initAddtoCard();
-    logPurchaseEvent();
-};
+if (!window.bhAsyncInit) {
+    window.bhAsyncInit = [init];
+}
+else if (Array.isArray(window.bhAsyncInit)) {
+    window.bhAsyncInit.push(init);
+}
+else {
+    const oldCb = window.bhAsyncInit;
+    window.bhAsyncInit = [oldCb, init];
+}

@@ -51,7 +51,7 @@ function getShopifyParams(): ShopifyConfig {
     for (let i = 0; i < scripts.length; i++) {
         const script = scripts[i];
 
-        if (/bothub[\.a-z-]+\/dist\/special\/shopify\.js/.test(script.src)) {
+        if (/bothub[\.a-z-\/]+\/special\/shopify\.js/.test(script.src)) {
             url = script.src;
             break;
         }

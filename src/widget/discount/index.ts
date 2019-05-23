@@ -75,12 +75,13 @@ export default class Discount extends BaseWidget<DiscountData> {
             'copyCodeBtnText',
             'discountText',
             'discountCode',
+            'getCode',
         ]);
 
         this.off();
         this.on('rendered', origin.rendered);
-        this.on('clickShowCodeBtn', origin.clickShowCodeBtn);
-        this.on('clickCopyCodeBtn', origin.clickCopyCodeBtn);
+        this.on('showCodeBtn', origin.showCodeBtn);
+        this.on('copyCodeBtn', origin.copyCodeBtn);
 
         // checkbox 初始化
         if (!this.widget) {

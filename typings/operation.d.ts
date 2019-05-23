@@ -18,3 +18,6 @@ declare type GetArrayItem<T> = T extends (infer R)[] ? R : never;
 
 /** any object */
 declare type AnyObject<T = any> = { [key: string]: T };
+
+/** get Promise type */
+declare type GetPromise<T> = T extends Promise<infer U> ? Promise<U> : never;

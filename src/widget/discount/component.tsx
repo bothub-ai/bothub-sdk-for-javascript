@@ -4,6 +4,7 @@ import { ComponentProps, bhClass } from './constant';
 
 import { log } from 'src/lib/print';
 import { copy } from 'src/lib/utils';
+import { isFunc } from 'src/lib/assert';
 import { parseClass } from 'src/lib/dom';
 
 import Loading from 'src/widget/components/loading';
@@ -15,6 +16,8 @@ interface State {
     shakeBox: boolean;
     /** 文本是否已复制 */
     isCopied: boolean;
+    /** 远程请求 */
+    getCodeLoading: boolean;
 }
 
 export default class DiscountComponent extends Component<ComponentProps, State> {
@@ -22,11 +25,12 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         showCode: false,
         shakeBox: false,
         isCopied: false,
+        getCodeLoading: false,
     };
 
     render() {
         const { props, state } = this;
-        const { showCode, shakeBox, isCopied } = state;
+        const { showCode, shakeBox, isCopied, getCodeLoading } = state;
         const { id, checkboxId, data, emit, loading, isChecked } = props;
 
         const clickButton = (ev: MouseEvent) => {
@@ -37,12 +41,32 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                 this.setState({ isCopied: true });
                 log(`Copy the code to Clipboard, ${data.discountCode}`);
                 copy(data.discountCode);
-                emit('clickCopyCodeBtn');
+                emit('copyCodeBtn');
             }
             else if (isChecked) {
-                // TODO: 这里的 code 也可能是从后端取过来的
-                this.setState({ showCode: true });
-                emit('clickShowCodeBtn');
+                let result: GetPromise<ReturnType<NonNullable<typeof data.getCode>>>;
+
+                this.setState({ getCodeLoading: true });
+
+                // 如果是用函数拿到的
+                if (data.getCode && isFunc(data.getCode)) {
+                    result = Promise.resolve(data.getCode());
+                }
+                else {
+                    result = Promise.resolve(data);
+                }
+
+                result.then((transform) => {
+                    Object.assign(data, transform);
+
+                    debugger;
+                    this.setState({
+                        showCode: true,
+                        getCodeLoading: false,
+                    });
+
+                    emit('showCodeBtn');
+                });
             }
             else {
                 this.setState({ shakeBox: true });
@@ -85,16 +109,25 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                             { showCode ? <div className={`${bhClass}__content-code`}>{ data.discountCode }</div> : '' }
                         </div>
                     </article>
-                    <div
+                    <button
                         className={`${bhClass}__btn`}
                         onClick={clickButton}
-                        disabled={loading}
-                    >{showCode
-                            ? isCopied
-                                ? 'Copied!'
-                                : data.copyCodeBtnText
-                            : data.showCodeBtnText
-                        }</div>
+                        disabled={getCodeLoading || loading}>
+                        {(() => {
+                            if (getCodeLoading) {
+                                return <Loading />;
+                            }
+                            else if (!showCode) {
+                                return data.showCodeBtnText;
+                            }
+                            else if (isCopied) {
+                                return 'Copied!';
+                            }
+                            else {
+                                return data.copyCodeBtnText;
+                            }
+                        })()}
+                    </button>
                 </section>
             </div>
         );

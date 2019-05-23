@@ -3,10 +3,8 @@ import { WidgetDataCommon } from '../base/base';
 
 import EventController from 'src/lib/event';
 
-/** 砍价插件数据接口 */
-export interface DiscountData extends WidgetDataCommon {
-    /** 确认框插件类型 */
-    type: WidgetType.Discount;
+/** 优惠券插件文本设置 */
+interface DiscountTextData {
     /** 标题 */
     title: string;
     /** 副标题 */
@@ -21,6 +19,12 @@ export interface DiscountData extends WidgetDataCommon {
     copyCodeBtnText: string;
     /** 折扣数量 */
     discount: string;
+}
+
+/** 砍价插件数据接口 */
+export interface DiscountData extends DiscountTextData, WidgetDataCommon {
+    /** 确认框插件类型 */
+    type: WidgetType.Discount;
     /**
      * 插件加载网址的基域
      */
@@ -36,13 +40,16 @@ export interface DiscountData extends WidgetDataCommon {
      */
     align?: 'center' | 'left' | 'right';
 
+    /** 获取优惠码函数 */
+    getCode?(): Partial<DiscountTextData> | Promise<Partial<DiscountTextData>>;
+
     /** 复制优惠码事件 */
-    clickCopyCodeBtn?(): void;
+    copyCodeBtn?(): void;
     /**
      * 点击“获取优惠码按钮”事件
      * @param {boolean} checked 此时勾选框是否被选中
      */
-    clickShowCodeBtn?(checked: boolean): void;
+    showCodeBtn?(checked: boolean): void;
 }
 
 /** 虚拟组件参数 */
@@ -59,7 +66,7 @@ export interface ComponentProps extends Pick<DiscountData, 'align'> {
     data: Pick<
         DiscountData,
         'title' | 'subtitle' | 'showCodeBtnText' | 'discount' |
-        'copyCodeBtnText' | 'discountText' | 'discountCode'
+        'copyCodeBtnText' | 'discountText' | 'discountCode' | 'getCode'
     >;
 
     /** 触发事件 */

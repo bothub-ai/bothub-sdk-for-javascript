@@ -55,6 +55,10 @@ function getAddToCartBtn() {
 
 /** 商品召回初始化 */
 export function initAddToCard() {
+    if (!Config.recallWidget) {
+        return;
+    }
+
     // 设置商品召回事件的插件
     window.BH.Widget.setConfig({
         id: Config.recallWidget,

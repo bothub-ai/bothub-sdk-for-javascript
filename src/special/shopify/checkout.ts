@@ -156,6 +156,10 @@ export function logPurchaseEvent() {
 
 /** Send To Messenger 初始化 */
 export function initSendMessenger() {
+    if (!Config.reciptWidget) {
+        return;
+    }
+
     window.BH.Widget.setConfig({
         id: Config.reciptWidget,
         message: () => ({

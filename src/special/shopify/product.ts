@@ -1,5 +1,5 @@
-import { Config } from './utils';
-import { DiscountData, CheckboxData } from 'src/widget';
+import { get } from 'src/lib/http';
+import { Config, getCustomUserId } from './utils';
 
 /** 获取商品表单元素 */
 function getProductForm() {
@@ -65,6 +65,12 @@ export function initAddToCard() {
         origin: location.origin,
         position: getProductForm,
         centerAlign: true,
+        getCode: () => {
+            return get(`shopify/cartsbot/${Config.shopId}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
+                discountCode: data.data.code,
+                discountText: data.data.text,
+            }));
+        },
     } as any);
 
     // 获取页面添加购物车按钮

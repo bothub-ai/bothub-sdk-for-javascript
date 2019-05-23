@@ -1,26 +1,37 @@
 import Cookie from 'js-cookie';
+import uuid from 'uuid';
 
-import { getQueryString } from 'src/lib/http';
-import { CustomUserIdKey, setCustomUserId } from 'src/module/user';
+/** 当前全局用户在 Shopify 的编号 */
+let shopifyId = '';
 
 /** 获取用户自定义编号 */
 export function getCustomUserId() {
-    const ref = Cookie.get('_shopify_sa_p');
-
-    if (!ref) {
-        return;
+    if (shopifyId) {
+        return shopifyId;
     }
 
-    const index = ref.indexOf(CustomUserIdKey);
+    const ref = Cookie.get('_shopify_sa_p');
+    const key = 'bothub_custom_user_id';
+
+    if (!ref) {
+        shopifyId = `shopify-${uuid()}`;
+        return shopifyId;
+    }
+
+    const index = ref.indexOf(key);
 
     if (index < 0) {
-        return;
+        shopifyId = `shopify-${uuid()}`;
+        return shopifyId;
     }
 
     const id = unescape(ref).substr(index + 22, 32);
 
+    // 全局储存
+    shopifyId = id;
+
     Cookie.remove('_shopify_sa_p');
-    setCustomUserId(id);
+    window.localStorage.setItem(key, JSON.stringify(id));
 
     return id;
 }
@@ -41,25 +52,18 @@ interface ShopifyConfig {
     recallWidget: string;
     /** 发送订单回执的插件编号 */
     reciptWidget: string;
+    /** 当前商店的编号 */
+    shopId: string;
 }
 
 /** 获取当前插件参数 */
 function getShopifyParams(): ShopifyConfig {
-    const scripts = document.getElementsByTagName('script');
-    let url = '';
-
-    for (let i = 0; i < scripts.length; i++) {
-        const script = scripts[i];
-
-        if (/bothub[\.a-z-\/]+\/special\/shopify\.js/.test(script.src)) {
-            url = script.src;
-            break;
-        }
-    }
+    const script = document.getElementById('bothub-sdk-shopify') as HTMLScriptElement;
 
     return {
-        recallWidget: getQueryString('visible_recall_widget', url) || '',
-        reciptWidget: getQueryString('visible_recipt_widget', url) || '',
+        recallWidget: script.getAttribute('data-recall-widget') || '',
+        reciptWidget: script.getAttribute('data-recipt-widget') || '',
+        shopId: script.getAttribute('data-shop-id') || '',
     };
 }
 

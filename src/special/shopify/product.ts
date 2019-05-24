@@ -114,12 +114,11 @@ function initDiscount(config: NonNullable<typeof Config.recall>) {
     const data: Partial<DiscountData> = {
         id: config.id,
         origin: location.origin,
-        getCode: () => {
-            return get(`shopify/cartsbot/${Config.shop_id}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
-                discountCode: data.code,
-                discountText: data.text,
-            }));
-        },
+        getCode: () => get(`shopify/cartsbot/${Config.shop_id}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
+            code: data.code,
+            message: data.text,
+            isSubscribed: Boolean(data.has_subscribed),
+        })),
     };
 
     window.BH.Widget.setConfig(data);

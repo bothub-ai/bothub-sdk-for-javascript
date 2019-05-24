@@ -21,3 +21,6 @@ declare type AnyObject<T = any> = { [key: string]: T };
 
 /** get Promise type */
 declare type GetPromise<T> = T extends Promise<infer U> ? Promise<U> : never;
+
+/** get Promise item */
+declare type GetPromiseType<T> = T extends Promise<infer U> ? U : never;

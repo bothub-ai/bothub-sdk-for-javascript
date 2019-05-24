@@ -54,6 +54,28 @@ function getAddToCartBtn() {
     }
 }
 
+/** 将 DOM 插入至 form 后 */
+function insertDomAfterForm(html: (width: number) => string) {
+    // 页面的表单元素
+    const form = getProductForm();
+
+    if (!form) {
+        return;
+    }
+
+    const formStyle = form.getBoundingClientRect();
+    const warpper = document.createElement('div');
+
+    warpper.innerHTML = html(formStyle.width);
+
+    // 元素本身
+    const dom = warpper.firstElementChild!;
+    // 插入元素
+    form.parentElement!.insertBefore(dom, form.nextElementSibling);
+
+    return dom;
+}
+
 /** checkbox 初始化 */
 function initCheckbox(config: NonNullable<typeof Config.recall>) {
     let isChecked = false;
@@ -64,36 +86,26 @@ function initCheckbox(config: NonNullable<typeof Config.recall>) {
         centerAlign: true,
         check: () => isChecked = true,
         unCheck: () => isChecked = false,
+        rendered: () => {
+            if (dom) {
+                dom.lastElementChild!.textContent = config.intro_text || null;
+            }
+        },
     };
 
     window.BH.Widget.setConfig(data);
 
-    // 页面的表单元素
-    const form = getProductForm();
-    const warpper = document.createElement('div');
-
-    warpper.innerHTML = (
-        '<div style="display: flex; justify-content: center; flex-direction: column;">' +
+    const dom = insertDomAfterForm((width) => (
+        `<div style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
             `<div style="text-align: center;" id="${data.id}"></div>` +
-            `<div style="text-align: center;">${config.intro_text}</div>` +
+            '<div style="text-align: center;"></div>' +
         '</div>'
-    );
-
-    if (!form) {
-        return () => {};
-    }
-
-    // 元素本身
-    const dom = warpper.firstElementChild!;
-    // 插入元素
-    form.parentElement!.insertBefore(dom, form.nextElementSibling);
+    ));
 
     return function ckeckboxSubscribed() {
-        if (!isChecked) {
-            return;
+        if (isChecked && dom) {
+            dom.lastElementChild!.textContent = config.subscribed_text || null;
         }
-
-        dom.lastElementChild!.textContent = config.subscribed_text || null;
     };
 }
 
@@ -102,7 +114,6 @@ function initDiscount(config: NonNullable<typeof Config.recall>) {
     const data: Partial<DiscountData> = {
         id: config.id,
         origin: location.origin,
-        position: getProductForm,
         getCode: () => {
             return get(`shopify/cartsbot/${Config.shop_id}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
                 discountCode: data.code,
@@ -112,6 +123,12 @@ function initDiscount(config: NonNullable<typeof Config.recall>) {
     };
 
     window.BH.Widget.setConfig(data);
+
+    insertDomAfterForm((width) => (
+        `<div style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
+            `<div style="text-align: center;" id="${data.id}"></div>` +
+        '</div>'
+    ));
 }
 
 /** 商品召回初始化 */

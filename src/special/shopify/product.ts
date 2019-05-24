@@ -1,4 +1,5 @@
 import { get } from 'src/lib/http';
+import { CheckboxData, DiscountData } from 'src/widget';
 import { Config, getCustomUserId } from './utils';
 
 /** 获取商品表单元素 */
@@ -53,25 +54,81 @@ function getAddToCartBtn() {
     }
 }
 
+/** checkbox 初始化 */
+function initCheckbox(config: NonNullable<typeof Config.recall>) {
+    let isChecked = false;
+
+    const data: Partial<CheckboxData> = {
+        id: config.id,
+        origin: location.origin,
+        centerAlign: true,
+        check: () => isChecked = true,
+        unCheck: () => isChecked = false,
+    };
+
+    window.BH.Widget.setConfig(data);
+
+    // 页面的表单元素
+    const form = getProductForm();
+    const warpper = document.createElement('div');
+
+    warpper.innerHTML = (
+        '<div style="display: flex; justify-content: center; flex-direction: column;">' +
+            `<div style="text-align: center;" id="${data.id}"></div>` +
+            `<div style="text-align: center;">${config.intro_text}</div>` +
+        '</div>'
+    );
+
+    if (!form) {
+        return () => {};
+    }
+
+    // 元素本身
+    const dom = warpper.firstElementChild!;
+    // 插入元素
+    form.parentElement!.insertBefore(dom, form.nextElementSibling);
+
+    return function ckeckboxSubscribed() {
+        if (!isChecked) {
+            return;
+        }
+
+        dom.lastElementChild!.textContent = config.subscribed_text || null;
+    };
+}
+
+/** discount 初始化 */
+function initDiscount(config: NonNullable<typeof Config.recall>) {
+    const data: Partial<DiscountData> = {
+        id: config.id,
+        origin: location.origin,
+        position: getProductForm,
+        getCode: () => {
+            return get(`shopify/cartsbot/${Config.shop_id}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
+                discountCode: data.code,
+                discountText: data.text,
+            }));
+        },
+    };
+
+    window.BH.Widget.setConfig(data);
+}
+
 /** 商品召回初始化 */
 export function initAddToCard() {
-    if (!Config.recallWidget) {
+    if (!Config.recall) {
         return;
     }
 
-    // 设置商品召回事件的插件
-    window.BH.Widget.setConfig({
-        id: Config.recallWidget,
-        origin: location.origin,
-        position: getProductForm,
-        centerAlign: true,
-        getCode: () => {
-            return get(`shopify/cartsbot/${Config.shopId}/discount-code-for-widget/${getCustomUserId()}`).then(({ data }) => ({
-                discountCode: data.data.code,
-                discountText: data.data.text,
-            }));
-        },
-    } as any);
+    /** 按钮按下的回调函数 */
+    let btnClick = () => {};
+
+    if (Config.recall.type === 'checkbox') {
+        btnClick = initCheckbox(Config.recall);
+    }
+    else if (Config.recall.type === 'discount') {
+        initDiscount(Config.recall);
+    }
 
     // 获取页面添加购物车按钮
     const btn = getAddToCartBtn();
@@ -83,6 +140,10 @@ export function initAddToCard() {
 
     // 按钮绑定事件
     btn.addEventListener('click', () => {
+        // 回调运行
+        btnClick();
+
+        // 搜索当前页面的选中元素
         const skuId = getSelectedVariantId();
 
         if (!skuId) {
@@ -101,7 +162,7 @@ export function initAddToCard() {
         }
 
         Event.addedToCart({
-            widget: Config.recallWidget,
+            widget: Config.recall!.id,
             sku: skuId,
             name: product!.type,
             currency,

@@ -62,13 +62,13 @@ function insertSendMessengerWarpper(id: string) {
     }
 
     div.innerHTML = (
-        `<div class="content-box" data-order-updates="true">
-            <div class="content-box__row">
-                <h2 class="os-step__title">Order updates</h2>
-                <div id="${id}" style="margin-top: 10px; max-height: 70px;">
-                </div>
-            </div>
-        </div>`
+        '<div class="content-box" data-order-updates="true">' +
+            '<div class="content-box__row">' +
+                '<h2 class="os-step__title">Order updates</h2>' +
+                `<div id="${id}" style="margin-top: 10px; max-height: 70px;">` +
+                '</div>' +
+            '</div>' +
+        '</div>'
     );
 
     position.parentElement!.insertBefore(div.children[0], position.nextElementSibling);
@@ -156,17 +156,17 @@ export function logPurchaseEvent() {
 
 /** Send To Messenger 初始化 */
 export function initSendMessenger() {
-    if (!Config.reciptWidget) {
+    if (!Config.recipt) {
         return;
     }
 
     window.BH.Widget.setConfig({
-        id: Config.reciptWidget,
+        id: Config.recipt.id,
         message: () => ({
             type: 'receipt',
             data: getReceiptData(),
         }),
     } as any);
 
-    insertSendMessengerWarpper(Config.reciptWidget);
+    insertSendMessengerWarpper(Config.recipt.id);
 }

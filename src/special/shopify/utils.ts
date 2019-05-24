@@ -48,23 +48,43 @@ export function fixUrl(url: string) {
 
 /** 当前 Shopify 配置 */
 interface ShopifyConfig {
-    /** 商品召回事件的插件编号 */
-    recallWidget: string;
-    /** 发送订单回执的插件编号 */
-    reciptWidget: string;
     /** 当前商店的编号 */
-    shopId: string;
+    shop_id: number;
+    /** 商品召回参数 */
+    recall?: {
+        /** 插件编号 */
+        id: string;
+        /** 插件类型 */
+        type: 'checkbox' | 'discount';
+
+        /** checkbox 文本提示 */
+        intro_text?: string;
+        /** checkbox 订阅文本提示 */
+        subscribed_text?: string;
+    };
+    /** 订单回执参数 */
+    recipt?: {
+        id: string;
+        type: string;
+    };
 }
 
 /** 获取当前插件参数 */
 function getShopifyParams(): ShopifyConfig {
-    const script = document.getElementById('bothub-sdk-shopify') as HTMLScriptElement;
+    const script = document.getElementById('bothub-sdk-cartsbot') as HTMLScriptElement;
+    const dataRef = script.getAttribute('data-config');
 
-    return {
-        recallWidget: script.getAttribute('data-recall-widget') || '',
-        reciptWidget: script.getAttribute('data-recipt-widget') || '',
-        shopId: script.getAttribute('data-shop-id') || '',
-    };
+    if (!dataRef) {
+        return { shop_id: 0 };
+    }
+
+    try {
+        return JSON.parse(window.atob(dataRef));
+    }
+    catch (e) {
+        console.warn('(Bothub SDK Shopify) ' + e.message);
+        return { shop_id: 0 };
+    }
 }
 
 /** 当前脚本的配置 */

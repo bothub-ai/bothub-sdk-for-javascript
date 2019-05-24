@@ -1,6 +1,8 @@
 import Cookie from 'js-cookie';
 import uuid from 'uuid';
 
+import { local } from 'src/lib/cache';
+
 /** 当前全局用户在 Shopify 的编号 */
 let shopifyId = '';
 
@@ -10,30 +12,24 @@ export function getCustomUserId() {
         return shopifyId;
     }
 
-    const ref = Cookie.get('_shopify_sa_p');
     const key = 'bothub_custom_user_id';
+    const ref = Cookie.get('_shopify_sa_p') || '';
+    const index = ref.indexOf('bothub_custom_user_id');
 
-    if (!ref) {
-        shopifyId = `shopify-${uuid()}`;
-        return shopifyId;
+    if (index >= 0) {
+        const id = unescape(ref).substr(index + 22, 32);
+
+        Cookie.remove('_shopify_sa_p');
+
+        shopifyId = id;
+    }
+    else {
+        shopifyId = local.get(key) || `shopify-${uuid()}`
     }
 
-    const index = ref.indexOf(key);
+    local.set(key, shopifyId);
 
-    if (index < 0) {
-        shopifyId = `shopify-${uuid()}`;
-        return shopifyId;
-    }
-
-    const id = unescape(ref).substr(index + 22, 32);
-
-    // 全局储存
-    shopifyId = id;
-
-    Cookie.remove('_shopify_sa_p');
-    window.localStorage.setItem(key, JSON.stringify(id));
-
-    return id;
+    return shopifyId;
 }
 
 /** 修复链接 */

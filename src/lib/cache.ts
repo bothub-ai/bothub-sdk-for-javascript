@@ -35,7 +35,7 @@ class StorageWapper {
             result = JSON.parse(value);
         }
         catch (e) {
-            warn(e.message);
+            warn(`${e.message}; ${value}`);
             result = value as any;
         }
 

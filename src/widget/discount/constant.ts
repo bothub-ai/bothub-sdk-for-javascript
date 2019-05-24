@@ -4,25 +4,17 @@ import { WidgetDataCommon } from '../base/base';
 import EventController from 'src/lib/event';
 
 /** 优惠券插件文本设置 */
-interface DiscountTextData {
-    /** 标题 */
-    title: string;
-    /** 副标题 */
-    subtitle: string;
-    /** 折扣优惠码的提示文本 */
-    discountText: string;
-    /** 折扣的优惠码 */
-    discountCode: string;
-    /** 折扣按钮文本 */
-    showCodeBtnText: string;
-    /** 复制按钮文本 */
-    copyCodeBtnText: string;
-    /** 折扣数量 */
-    discount: string;
+interface GetDiscountCode {
+    /** 当前优惠码 */
+    code: string;
+    /** 错误信息 */
+    message: string;
+    /** 是否已经获取过 */
+    isSubscribed: boolean;
 }
 
 /** 砍价插件数据接口 */
-export interface DiscountData extends DiscountTextData, WidgetDataCommon {
+export interface DiscountData extends WidgetDataCommon {
     /** 确认框插件类型 */
     type: WidgetType.Discount;
     /**
@@ -40,8 +32,23 @@ export interface DiscountData extends DiscountTextData, WidgetDataCommon {
      */
     align?: 'center' | 'left' | 'right';
 
+    /** 标题 */
+    title: string;
+    /** 副标题 */
+    subtitle: string;
+    /** 折扣优惠码的提示文本 */
+    discountText: string;
+    /** 折扣的优惠码 */
+    discountCode: string;
+    /** 折扣按钮文本 */
+    showCodeBtnText: string;
+    /** 复制按钮文本 */
+    copyCodeBtnText: string;
+    /** 折扣数量 */
+    discount: string;
+
     /** 获取优惠码函数 */
-    getCode?(): Partial<DiscountTextData> | Promise<Partial<DiscountTextData>>;
+    getCode?(): GetDiscountCode | Promise<GetDiscountCode>;
 
     /** 复制优惠码事件 */
     copyCodeBtn?(): void;

@@ -59,7 +59,6 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                 result.then((transform) => {
                     Object.assign(data, transform);
 
-                    debugger;
                     this.setState({
                         showCode: true,
                         getCodeLoading: false,

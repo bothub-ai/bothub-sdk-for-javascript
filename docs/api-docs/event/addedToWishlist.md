@@ -1,10 +1,10 @@
-# 记录`添加购物车`事件
+# 记录`添加至愿望单`事件
 
-当用户添加商品至购物车时，触发此事件。  
+当用户添加商品至愿望单时，触发此事件。  
 
 ## 调用
 ```JavaScript
-BH.Event.addedToCart(params);
+BH.Event.addedToWishlist(params);
 ```
 
 ## 参数说明
@@ -20,10 +20,10 @@ BH.Event.addedToCart(params);
 ## 样例
 ```JavaScript
 // 不带参数
-BH.Event.addedToCart();
+BH.Event.addedToWishlist();
 
 // 带参数
-BH.Event.addedToCart({
+BH.Event.addedToWishlist({
     sku: '1000-1',
     name: 'T-shirt',
     currency: 'USD',

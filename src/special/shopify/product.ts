@@ -95,12 +95,16 @@ function initCheckbox(config: NonNullable<typeof Config.recall>) {
 
     window.BH.Widget.setConfig(data);
 
-    const dom = insertDomAfterForm((width) => (
-        `<div style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
-            `<div style="text-align: center;" id="${data.id}"></div>` +
-            '<div style="text-align: center;"></div>' +
-        '</div>'
-    ));
+    let dom: Element | undefined = document.getElementById('bothub-shopify-checkbox-warpper') || undefined;
+
+    if (!dom) {
+        dom = insertDomAfterForm((width) => (
+            `<div id="bothub-shopify-checkbox-warpper" style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
+                `<div style="text-align: center;" id="${data.id}"></div>` +
+                '<div style="text-align: center;"></div>' +
+            '</div>'
+        ));
+    }
 
     return function ckeckboxSubscribed() {
         if (isChecked && dom) {

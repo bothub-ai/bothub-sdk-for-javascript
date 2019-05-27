@@ -65,6 +65,22 @@ interface ShopifyConfig {
     };
 }
 
+/** 对某些网站的特殊处理 */
+const AssertMap: AnyObject<() => Partial<ShopifyConfig>> = {
+    'www.getyourbobblehead.com'() {
+        // 首页强制什么都不显示
+        if (location.pathname === '/') {
+            return {
+                recall: undefined,
+                recipt: undefined,
+            };
+        }
+        else {
+            return {};
+        }
+    },
+};
+
 /** 获取当前插件参数 */
 function getShopifyParams(): ShopifyConfig {
     const script = document.getElementById('bothub-sdk-cartsbot') as HTMLScriptElement;
@@ -75,7 +91,17 @@ function getShopifyParams(): ShopifyConfig {
     }
 
     try {
-        return JSON.parse(window.atob(dataRef));
+        const data: ShopifyConfig = JSON.parse(window.atob(dataRef));
+
+        if (AssertMap[window.location.hostname]) {
+            return {
+                ...data,
+                ...AssertMap[window.location.hostname](),
+            };
+        }
+        else {
+            return data;
+        }
     }
     catch (e) {
         console.warn('(Bothub SDK Shopify) ' + e.message);

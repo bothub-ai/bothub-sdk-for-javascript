@@ -12,22 +12,22 @@
 
 |方法|描述|
 |:--|:--|
-|.User.getCustomUserId()|获取当前的用户自定义编号。|
-|.User.changeCustomUserId()|变更并设置当前用户的自定义编号。|
+|[.User.getCustomUserId()](./user/getCustomUserId.md)|获取当前的用户自定义编号。|
+|[.User.changeCustomUserId()](./user/changeCustomUserId.md)|变更并设置当前用户的自定义编号。|
 
 ## Event 模块
 
 |方法|描述|
 |:--|:--|
-|.Event.addedToCart()|当用户添加商品至购物车时，触发此事件。|
-|.Event.addedToWishlist()|当用户添加商品至愿望单时，触发此事件。|
-|.Event.initiatedCheckout()|当用户添加商品至愿望单时，触发此事件。|
-|.Event.purchase()|当用户完成商品购买时，请触发该事件。|
-|.Event.logEvent()|记录 Bothub 事件，例如当有人完成您的教程时。|
+|[.Event.addedToCart()](./event/addedToCart.md)|当用户添加商品至购物车时，触发此事件。|
+|[.Event.addedToWishlist()](./event/addedToCart.md)|当用户添加商品至愿望单时，触发此事件。|
+|[.Event.initiatedCheckout()](./event/initiatedCheckout.md)|当用户添加商品至愿望单时，触发此事件。|
+|[.Event.purchase()](./event/purchase.md)|当用户完成商品购买时，请触发该事件。|
+|[.Event.logEvent()](./event/logEvent.md)|记录 Bothub 事件，例如当有人完成您的教程时。|
 
 ## Widget 模块
 |方法|描述|
 |:--|:--|
-|.Widget.setConfig()|设置插件属性。|
-|.Widget.render()|立即渲染插件。|
-|.Widget.destroy()|销毁插件。|
+|[.Widget.setConfig()](./widget/setConfig.md)|设置插件属性。|
+|[.Widget.render()](./widget/render.md)|立即渲染插件。|
+|[.Widget.destroy()](./widget/destroy.md)|销毁插件。|

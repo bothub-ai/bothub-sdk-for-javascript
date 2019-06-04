@@ -155,7 +155,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         // 渲染标志位复位
         this.isRendered = false;
         // 更新 user-ref
-        this.fbAttrs.userRef = getUserRef();
+        this.fbAttrs.userRef = `${this.code}_${getUserRef()}`;
 
         const dom = this.$el.firstElementChild!;
 

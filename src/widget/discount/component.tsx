@@ -53,7 +53,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         const { data, emit } = this.props;
 
         let result: GetPromiseType<ReturnType<NonNullable<typeof data.getCode>>> = {
-            code: data.discountText,
+            code: data.discountCode,
             isSubscribed: false,
             message: '',
         };

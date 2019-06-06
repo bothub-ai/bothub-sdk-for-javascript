@@ -30,8 +30,6 @@
 
 ## Widget 模块
 
-Bothub 提供一系列
-
 ### 方法说明
 |方法|描述|
 |:--|:--|
@@ -39,7 +37,7 @@ Bothub 提供一系列
 |[.Widget.render()](./widget/methods/render.md)|立即渲染插件|
 |[.Widget.destroy()](./widget/methods/destroy.md)|销毁插件|
 
-### 插件说明
+### 插件属性说明
 |插件名称|描述|
 |:--|:--|
 |[聊天插件](./widget/configs/customerchat.md)|通过此插件，用户可以直接在页面上与您的 Facebook Page 聊天。|

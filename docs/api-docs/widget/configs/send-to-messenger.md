@@ -1,6 +1,6 @@
 # 聊天插件
 
-[使用预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/widgets/message-us/)
+[使用预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/widgets/send-to-messenger/)
 
 ## 参数属性说明
 
@@ -51,7 +51,7 @@ window.BH.init({
     renderImmediately: true,
     widgets: [
         {
-            "id": "bh-example-customerchat",
+            "id": "bh-example-send-to-messenger",
             "type": "SendToMessenger",
             "color": "bule",
             "enforceLogin": false,
@@ -73,7 +73,7 @@ window.BH.init({
 
 // 手动设置插件属性
 window.BH.Widget.setConfig({
-    "id": "bh-example-customerchat",
+    "id": "bh-example-send-to-messenger",
     "type": "MessageUs",
     "color": "bule",
     message() {

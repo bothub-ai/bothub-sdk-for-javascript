@@ -22,7 +22,7 @@ window.BH.init({
     renderImmediately: true,
     widgets: [
         {
-            "id": "bh-example-customerchat",
+            "id": "bh-example-message-us",
             "type": "MessageUs",
             "color": "bule",
         },
@@ -31,7 +31,7 @@ window.BH.init({
 
 // 手动设置插件属性
 window.BH.Widget.setConfig({
-    "id": "bh-example-customerchat",
+    "id": "bh-example-message-us",
     "type": "MessageUs",
     "color": "bule",
     position() {

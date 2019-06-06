@@ -36,4 +36,3 @@ window.BH.Widget.setConfig({
     "themeColor": "#FF9966",
 });
 ```
-

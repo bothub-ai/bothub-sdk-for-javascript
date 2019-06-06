@@ -6,7 +6,7 @@
 
 ### 主要参数说明
 |属性名称|类型|是否可选|默认值|说明|
-|:--|:--|:--|:--|:--|
+|:--|:--|:--|:--:|:--|
 |id|`string`|必填|-|插件编号|
 |type|`string`|必填|-|插件类型，必填`SendToMessenger`|
 |pageId|`string`|选填|-|当你需要此插件和初始化时设置的页面编号不同时，填入此项|
@@ -15,7 +15,7 @@
 |enforceLogin|`boolean`|选填|`false`|如果为`true`，则点击该按钮时，已登录用户也必须重新登录|
 |ctaText|`string`|选填|-|显示在按钮中的文本，具体内容见下面的列表|
 |position|`function`|选填|-|插件插入页面位置，当你无法在页面中添加对应插件编号的元素时可以使用此函数来定位，插件将会添加在该函数返回元素的后面。|
-|message|`object` \| 'function'|选填|-|点击按钮后向后端发送的数据|
+|message|`object` \| `function`|选填|-|点击按钮后向后端发送的数据|
 |click|`function`|选填|-|点击按钮的回调函数|
 |rendered|`function`|选填|-|渲染完成的回调函数|
 
@@ -86,4 +86,3 @@ window.BH.Widget.setConfig({
     },
 });
 ```
-

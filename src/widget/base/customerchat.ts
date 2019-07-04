@@ -85,10 +85,8 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
             return;
         }
 
-        // 重新渲染时需要移除以前的元素
-        if (this.isRendered) {
-            removeDom('div[class*=fb_customer_chat]');
-        }
+        // 移除页面中已有的全部聊天插件
+        removeDom('div[class*=fb_customer_chat]');
 
         this.isRendered = false;
 

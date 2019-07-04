@@ -40,7 +40,7 @@ function urlEncode(params: object) {
 }
 
 /**
- *  编译请求地址
+ * 编译请求地址
  * @param {string} url 请求地址
  */
 function getUrl(url: string) {

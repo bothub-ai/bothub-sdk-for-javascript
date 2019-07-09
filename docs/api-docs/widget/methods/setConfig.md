@@ -1,12 +1,12 @@
 # 设置插件属性
 
-`Widget.setConfig()`方法用来设定插件的属性。此操作并不会触发插件的重新渲染，需要用户手动调用渲染方法。
+`BH.Widget.setConfig()`方法用来设定插件的属性。此操作并不会触发插件的重新渲染，需要用户手动调用渲染方法。
 1. 如果当前设置的插件编号已经存在，则当前的属性将会和旧有的属性合并，新属性优先。
 2. 如果当前设置的插件编号不存在，则当前设置的插件将会直接添加到插件列表中。
 
 ## 调用
 ```JavaScript
-Widget.setConfig(params);
+BH.Widget.setConfig(params);
 ```
 
 ## 参数说明
@@ -18,7 +18,7 @@ Widget.setConfig(params);
 
 ## 样例
 ```JavaScript
-Widget.setConfig({
+BH.Widget.setConfig({
     id: '{widget-id}',
     color : 'blue',
     rendered() {

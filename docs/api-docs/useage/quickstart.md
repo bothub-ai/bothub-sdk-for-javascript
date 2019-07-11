@@ -30,6 +30,6 @@ window.bhAsyncInit = function() {
 大部分用户可能都是通过 Bothub 后台管理 APP 配置的网页插件，这些用户并不需要上面这样的配置代码的过程，Bothub 会自动帮您配置好。  
 初始化只需要将后台管理相关网页中看到的代码粘贴到网页中就行了。一般而言它们是长这样的：
 
-![初始化代码](../images/code-in-manager.png)
+![初始化代码](../../images/code-in-manager.png)
 
 其中`Initialization code`表示插件的初始化代码，在部署插件的时候需要将这段代码放置到页面的`&lt;head&gt;`标签内，就能完成初始化。

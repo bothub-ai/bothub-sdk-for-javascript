@@ -2,6 +2,9 @@
 
 [使用预览](https://bothub-ai.github.io/bothub-sdk-for-javascript/widgets/send-to-messenger/)
 
+## 使用说明
+要保证此插件的正确渲染，请确保插件加载的网站的域名在您的 Facebook 页面白名单内。
+
 ## 参数属性说明
 
 ### 主要参数说明
@@ -16,7 +19,7 @@
 |ctaText|`string`|选填|-|显示在按钮中的文本，具体内容见下面的列表|
 |position|`function`|选填|-|插件插入页面位置，当你无法在页面中添加对应插件编号的元素时可以使用此函数来定位，插件将会添加在该函数返回元素的后面。|
 |message|`object` \| `function`|选填|-|点击按钮后向后端发送的数据|
-|click|`function`|选填|-|点击按钮的回调函数|
+|click|`function`|选填|-|点击按钮的回调函数。注：此回调和后端发送消息是相互独立的，不存在先后顺序。如果您还未登录 Facebook，点击此按钮也会立即触发此事件。|
 |rendered|`function`|选填|-|渲染完成的回调函数|
 
 ### `ctaText`可填入的值列表

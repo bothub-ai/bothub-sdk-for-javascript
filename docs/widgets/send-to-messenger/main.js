@@ -6,4 +6,7 @@ createVueComponent({
     size: 'large',
     enforceLogin: false,
     ctaText: '',
+    click() {
+        console.log('Click the send-to-messenger');
+    },
 });

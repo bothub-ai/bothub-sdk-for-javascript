@@ -199,6 +199,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                 }
                 else if (ev.event === 'hidden') {
                     this.emit('hidden');
+                    this.isRendered = true;
 
                     const message = `${this.name} Plugin with ID ${this.id} has been hidden`;
 
@@ -210,6 +211,10 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                     }
 
                     warn(message);
+                }
+                // 变更用户登录时，重置重试标志位
+                else if (ev.event === 'not_you') {
+                    this.isRetry = false;
                 }
             });
         }

@@ -1,7 +1,7 @@
 import { UA } from 'src/lib/env';
 import { jsonp } from 'src/lib/http';
 import { isDef } from 'src/lib/assert';
-import { warn } from 'src/lib/print';
+import { log, warn } from 'src/lib/print';
 
 import * as store from 'src/store';
 import * as user from 'src/module/user';
@@ -96,6 +96,9 @@ export function transformParameter(params: AnyObject = {}, map: AnyObject<string
         }
     }
 
+    // 事件附带自定义 id 参数
+    // result['custom_user_id'] = user.getCustomUserId();
+
     return [valueToSum, result, widget] as const;
 }
 
@@ -124,24 +127,17 @@ function logBhEvent(id: string, name: string, params: object) {
             return false;
         }
 
-        // 没有输入 id
-        if (!id) {
-            return true;
-        }
-        else if (id === local) {
-            return true;
-        }
-
-        return false;
+        return (!id || id === local);
     }) as undefined | Discount | Checkbox;
 
     // 未找到指定的 checkbox
     if (!widget) {
         // 指定了插件编号
         if (id) {
-            warn(`Can not find Checkbox with id ${id}`);
+            warn(`Can not find Checkbox with id: ${id}`);
         }
 
+        warn('Can not find any Checkbox in this page, there will not send MessengerCheckboxUserConfirmation event.');
         return;
     }
 
@@ -187,6 +183,7 @@ function logBhEvent(id: string, name: string, params: object) {
     }
     else {
         // 发送 checkbox 确认事件
+        log(`Send MessengerCheckboxUserConfirmation Event, Params: \n${JSON.stringify(MessengerParams, null, 2)}`);
         window.FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, MessengerParams);
     }
 }

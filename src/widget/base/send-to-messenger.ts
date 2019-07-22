@@ -35,6 +35,14 @@ interface MessageMeta {
     data: AnyObject;
 }
 
+/** Send to Messenger 事件名称 */
+enum EventName {
+    click = 'click',
+    login = 'login',
+    notYou = 'notYou',
+    rendered = 'rendered',
+}
+
 /** 发送给 bothub 的完整数据 */
 type BothubMessage = Required<RefData> & MessageMeta & {
     page_id: string;
@@ -73,14 +81,14 @@ export interface SendToMessengerData extends WidgetDataCommon {
     /** 附带的数据 */
     message?: MessageMeta | (() => MessageMeta);
 
-    /**
-     * 点击事件
-     */
-    click?(): void;
-    /**
-     * 渲染完成事件
-     */
-    rendered?(): void;
+    /** 点击事件 */
+    [EventName.click]?(): void;
+    /** 登录完成事件 */
+    [EventName.login]?(): void;
+    /** 更换当前登录账号事件 */
+    [EventName.notYou]?(): void;
+    /** 渲染完成事件 */
+    [EventName.rendered]?(): void;
 }
 
 /** facebook “发送至 Messenger”插件属性 */
@@ -131,8 +139,10 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
         this.fbAttrs = shallowCopy(origin, ['color', 'size', 'enforceLogin', 'ctaText', 'pageId']);
 
         this.off();
-        this.on('click', origin.click);
-        this.on('rendered', origin.rendered);
+        this.on(EventName.click, origin[EventName.click]);
+        this.on(EventName.login, origin[EventName.login]);
+        this.on(EventName.notYou, origin[EventName.notYou]);
+        this.on(EventName.rendered, origin[EventName.rendered]);
 
         // 发送消息之后，状态位赋值
         this.on('click', () => this.sent = true);
@@ -183,10 +193,16 @@ export default class SendToMessenger extends BaseWidget<SendToMessengerData> {
                 if (ev.event === 'rendered' && !this.isRendered) {
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
-                    this.emit('rendered');
+                    this.emit(EventName.rendered);
                 }
                 else if (ev.event === 'clicked') {
-                    this.emit('click');
+                    this.emit(EventName.click);
+                }
+                else if (ev.event === 'not_you') {
+                    this.emit(EventName.notYou);
+                }
+                else if (ev.event === 'opt_in') {
+                    this.emit(EventName.login);
                 }
             });
         }

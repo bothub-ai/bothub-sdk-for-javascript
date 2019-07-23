@@ -13,6 +13,14 @@ interface GetDiscountCode {
     isSubscribed: boolean;
 }
 
+/** Discount 事件名称 */
+export enum EventName {
+    hidden = 'hidden',
+    rendered = 'rendered',
+    copyCodeBtn = 'copyCodeBtn',
+    showCodeBtn = 'copyCodeBtn',
+}
+
 /** 砍价插件数据接口 */
 export interface DiscountData extends WidgetDataCommon {
     /** 确认框插件类型 */

@@ -5,8 +5,16 @@ import { addClass, setAttributes } from 'src/lib/dom';
 import { getUserRef } from 'src/module/user';
 import { CheckboxEvent } from 'typings/facebook';
 
+import { WidgetType } from '../helper';
 import { BaseWidget, WidgetDataCommon } from './base';
-import { WidgetType, checkHiddenTime, setHiddenTime } from '../helper';
+
+/** Checkbox 事件名称 */
+export enum EventName {
+    hidden = 'hidden',
+    check = 'check',
+    uncheck = 'uncheck',
+    rendered = 'rendered',
+}
 
 /** 确认框插件数据接口 */
 export interface CheckboxData extends WidgetDataCommon {
@@ -94,11 +102,6 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         this.check();
     }
 
-    /** “自动隐藏”存储的键名 */
-    get hidenKey() {
-        return `checkbox-hide:${this.id}`;
-    }
-
     init() {
         const { origin } = this;
 
@@ -114,13 +117,15 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         };
 
         this.off();
-        this.on('hidden', origin.hidden);
-        this.on('check', origin.check);
-        this.on('uncheck', origin.unCheck);
-        this.on('rendered', origin.rendered);
+        this.on(EventName.hidden, origin.hidden);
+        this.on(EventName.check, origin.check);
+        this.on(EventName.uncheck, origin.unCheck);
+        this.on(EventName.rendered, origin.rendered);
     }
-    setHiddenTime() {
-        setHiddenTime(this);
+    setHidden() {
+        if (this.hideAfterChecked > 0) {
+            this.insertHiddenData(this.fbAttrs.userRef);
+        }
     }
     check() {
         this.canRender = true;
@@ -138,7 +143,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
         }
 
         // 设置隐藏，且在隐藏时间范围内
-        if (this.hideAfterChecked > 0 && !checkHiddenTime(this)) {
+        if (this.hideAfterChecked > 0 && !this.checkHidden(this.hideAfterChecked)) {
             this.canRender = false;
             return;
         }
@@ -185,20 +190,20 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                 if (ev.event === 'rendered' && !this.isRendered) {
                     log(`${this.name} Plugin with ID ${this.id} has been rendered`);
                     this.isRendered = true;
-                    this.emit('rendered');
+                    this.emit(EventName.rendered);
                 }
                 else if (ev.event === 'checkbox') {
                     if (ev.state === 'checked' && !this.isChecked) {
                         this.isChecked = true;
-                        this.emit('check', ev.user_ref);
+                        this.emit(EventName.check, ev.user_ref);
                     }
                     else if (ev.state === 'unchecked' && this.isChecked) {
                         this.isChecked = false;
-                        this.emit('uncheck', ev.user_ref);
+                        this.emit(EventName.uncheck, ev.user_ref);
                     }
                 }
                 else if (ev.event === 'hidden') {
-                    this.emit('hidden');
+                    this.emit(EventName.hidden);
                     this.isRendered = true;
 
                     const message = `${this.name} Plugin with ID ${this.id} has been hidden`;

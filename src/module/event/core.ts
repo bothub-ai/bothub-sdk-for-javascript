@@ -1,6 +1,7 @@
 import { UA } from 'src/lib/env';
 import { jsonp } from 'src/lib/http';
 import { isDef } from 'src/lib/assert';
+import { local } from 'src/lib/cache';
 import { log, warn } from 'src/lib/print';
 
 import * as store from 'src/store';
@@ -8,11 +9,12 @@ import * as user from 'src/module/user';
 
 import { getEventId } from './utils';
 import { BhEventName } from './custom';
+import { getCodeFromId } from 'src/widget/base/base';
 
 import Discount from 'src/widget/discount';
 import Checkbox from 'src/widget/base/checkbox';
 
-import { WidgetType } from 'src/widget/helper';
+import { WidgetType, HiddenKey, HiddenData } from 'src/widget/helper';
 import { AppEventNames, AppParameterNames } from 'typings/facebook';
 
 /** bothub 标准参数名称 */
@@ -96,10 +98,69 @@ export function transformParameter(params: AnyObject = {}, map: AnyObject<string
         }
     }
 
-    // 事件附带自定义 id 参数
-    // result['custom_user_id'] = user.getCustomUserId();
-
     return [valueToSum, result, widget] as const;
+}
+
+/** 寻找页面中指定的 Checkbox */
+function findCheckbox(assign: string) {
+    /** 匹配 checkbox 和 discount */
+    const isCheckboxDiscount = (id: string, type: WidgetType) => (
+        (type === WidgetType.Checkbox || type === WidgetType.Discount) &&
+        (!assign || assign === id)
+    );
+
+    // 目标插件的原始数据
+    const widgetData = Array.from(document.querySelectorAll('div[id*=bothub-widget]'))
+        .map(({ id }) => store.widgetData.find(({ id: origin }) => origin === id))
+        .filter(isDef)
+        .find(({ id, type }) => isCheckboxDiscount(id, type));
+
+    // 未找到目标插件原始数据
+    if (!widgetData) {
+        const skip = 'skip MessengerCheckboxUserConfirmation event.';
+        log(
+            origin
+                ? `Can not find Checkbox with id: ${origin}, ${skip}`
+                : 'Can not find any Checkbox in this page, ' + skip,
+        );
+
+        return null;
+    }
+
+    // 该插件是够在渲染中
+    const widget = store.widgets.find(({ id }) => widgetData.id) as undefined | Discount | Checkbox;
+
+    // 插件在页面中渲染
+    if (widget) {
+        // 插件被选中则设置隐藏
+        if (widget.isChecked) {
+            widget.setHidden();
+        }
+
+        return widget.type === WidgetType.Checkbox ? widget : widget.widget;
+    }
+    // 插件被隐藏
+    else {
+        // 隐藏时保存的数据
+        const { [widgetData.id]: hiddenData } = local.get<HiddenData>(HiddenKey) || {};
+
+        // 没有找到隐藏数据，则直接退出
+        if (!hiddenData) {
+            warn(`Plugin with id: ${widgetData.id} neither rendered nor hidden`, true);
+            return null;
+        }
+
+        // 返回虚假的插件实体
+        return {
+            code: getCodeFromId(widgetData.id),
+            origin: {
+                pageId: widgetData.pageId || store.pageId,
+            },
+            fbAttrs: {
+                userRef: hiddenData.meta,
+            },
+        } as Checkbox;
+    }
 }
 
 /** 记录 facebook 事件 */
@@ -116,38 +177,17 @@ function logFbEvent(name: string, value: number | null, params: object) {
 
 /**
  * 记录 bothub 事件
- * @param {string} id - 对应的 bothub 插件编号
+ * @param {string} assign - 对应的 bothub 插件编号
  * @param {string} name - 事件名称
  * @param {object} params - 此次 facebook 事件的参数
  */
-function logBhEvent(id: string, name: string, params: object) {
-    const widget = store.widgets.find(({ id: local, type }) => {
-        // 不是 discount 或者 checkbox 就跳过
-        if (type !== WidgetType.Checkbox && type !== WidgetType.Discount) {
-            return false;
-        }
+function logBhEvent(assign: string, name: string, params: object) {
+    // checkbox 插件
+    const checkbox = findCheckbox(assign);
 
-        return (!id || id === local);
-    }) as undefined | Discount | Checkbox;
-
-    // 未找到指定的 checkbox
-    if (!widget) {
-        // 指定了插件编号
-        if (id) {
-            warn(`Can not find Checkbox with id: ${id}`);
-        }
-
-        warn('Can not find any Checkbox in this page, there will not send MessengerCheckboxUserConfirmation event.');
+    if (!checkbox) {
         return;
     }
-
-    // 插件被选中则设置隐藏
-    if (widget.isChecked) {
-        widget.setHiddenTime();
-    }
-
-    // checkbox 插件
-    const checkbox = widget.type === WidgetType.Checkbox ? widget : widget.widget;
 
     // 事件参数
     const event = {

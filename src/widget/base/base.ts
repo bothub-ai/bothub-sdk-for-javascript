@@ -1,10 +1,12 @@
+import { local } from 'src/lib/cache';
 import { log, warn } from 'src/lib/print';
 import { addClass } from 'src/lib/dom';
 import { isUndef } from 'src/lib/assert';
 import { widgets } from 'src/store';
+import { daysOffset } from 'src/lib/time';
 import { get, deleteVal } from 'src/lib/array';
 import { shallowCopyExclude } from 'src/lib/object';
-import { WidgetType, ComponentType } from '../helper';
+import { WidgetType, ComponentType, HiddenKey, HiddenData } from '../helper';
 
 import EventController from 'src/lib/event';
 
@@ -35,6 +37,9 @@ export interface WidgetDataCommon {
      */
     rendered?(): void;
 }
+
+/** 从插件 ID 获取插件的编号 */
+export const getCodeFromId = (id: string) => get(id.split('-'), -1);
 
 /** 插件基类 */
 export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> extends EventController {
@@ -79,7 +84,46 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     }
     /** 插件元素在 bothub 的编号 */
     get code() {
-        return get(this.id.split('-'), -1);
+        return getCodeFromId(this.id);
+    }
+
+    /** 隐藏插件时保存数据 */
+    protected insertHiddenData(label: string) {
+        const data = local.get<HiddenData>(HiddenKey) || {};
+        
+        data[this.id] = {
+            meta: label,
+            time: new Date().getTime(),
+        };
+
+        local.set(HiddenKey, data);
+    }
+    /** 检查是否需要隐藏 */
+    checkHidden(hiddenLimit: number) {
+        const data = local.get<HiddenData>(HiddenKey) || {};
+        const lastHideTime = data[this.id] && data[this.id].time || 0;
+        const offset = daysOffset(new Date(), lastHideTime);
+
+        // 还在隐藏时间范围内
+        if (offset < hiddenLimit) {
+            log(`${this.name} with id ${this.id}, set auto hide, skip`);
+            return false;
+        }
+        // 超过时间范围
+        else {
+            this.removeHiddenData();
+        }
+
+        return true;
+    }
+    /** 移除当前隐藏插件保存的数据 */
+    removeHiddenData() {
+        const {
+            [this.id]: ignore,
+            ...rest
+        } = local.get<HiddenData>(HiddenKey) || {};
+
+        local.set(HiddenKey, rest);
     }
 
     /** 插件属性初始化 */

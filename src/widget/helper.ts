@@ -100,39 +100,15 @@ export function componentWarpper<T extends object>(
     };
 }
 
-/** 可以设定自动隐藏的组件所需要的基础接口 */
-interface HiddenWidget {
-    /** 组件编号 */
-    id: string;
-    /** 组件名称 */
-    name: string;
-    /** 储存隐藏时间的键名 */
-    hidenKey: string;
-    /** 自动隐藏配置 */
-    hideAfterChecked: number;
+/** 自动隐藏的插件存储的数据 */
+export interface HiddenData {
+    [id: string]: {
+        /** 隐藏时候的时间戳 */
+        time: number;
+        /** 当前插件需要保存的数据 */
+        meta: string;
+    };
 }
 
-/** 设置自动隐藏储存数据 */
-export function setHiddenTime(widget: HiddenWidget) {
-    if (widget.hideAfterChecked > 0) {
-        local.set(widget.hidenKey, new Date().getTime());
-    }
-}
-
-/** 检查是否自动隐藏 */
-export function checkHiddenTime(widget: HiddenWidget) {
-    const lastHideTime = local.get<number>(widget.hidenKey) || 0;
-    const offset = daysOffset(new Date(), lastHideTime);
-
-    // 还在隐藏时间范围内
-    if (offset < widget.hideAfterChecked) {
-        log(`${widget.name} with id ${widget.id}, set auto hide, skip`);
-        return false;
-    }
-    // 超过时间范围
-    else {
-        local.remove(widget.hidenKey);
-    }
-
-    return true;
-}
+/** 自动隐藏数据储存 key */
+export const HiddenKey = 'bothub-widget-hide';

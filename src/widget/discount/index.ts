@@ -1,15 +1,16 @@
 import './style.less';
 
+import { local } from 'src/lib/cache';
 import { log } from 'src/lib/print';
 import { delay } from 'src/lib/time';
 import { shallowCopy } from 'src/lib/object';
 
 import { BaseWidget } from '../base/base';
-import { DiscountData, ComponentProps } from './constant';
-import { WidgetType, componentWarpper, ComponentType, checkHiddenTime, setHiddenTime } from '../helper';
+import { DiscountData, ComponentProps, EventName } from './constant';
+import { default as Checkbox, EventName as CheckboxEvent } from '../base/checkbox';
+import { WidgetType, componentWarpper, ComponentType } from '../helper';
 
 import Component from './component';
-import Checkbox from '../base/checkbox';
 
 export { DiscountData };
 
@@ -49,10 +50,6 @@ export default class Discount extends BaseWidget<DiscountData> {
         this.check();
     }
 
-    /** “自动隐藏”存储的键名 */
-    get hidenKey() {
-        return `discount-hide:${this.id}`;
-    }
     /** 内部 checkbox 编号 */
     get checkboxId() {
         return `bothub-discount-inside-checkbox-${this.code}`;
@@ -79,9 +76,9 @@ export default class Discount extends BaseWidget<DiscountData> {
         ]);
 
         this.off();
-        this.on('rendered', origin.rendered);
-        this.on('showCodeBtn', origin.showCodeBtn);
-        this.on('copyCodeBtn', origin.copyCodeBtn);
+        this.on(EventName.rendered, origin.rendered);
+        this.on(EventName.showCodeBtn, origin.showCodeBtn);
+        this.on(EventName.copyCodeBtn, origin.copyCodeBtn);
 
         // checkbox 初始化
         if (!this.widget) {
@@ -98,7 +95,7 @@ export default class Discount extends BaseWidget<DiscountData> {
                 size: window.innerWidth < 768 ? 'small' : 'large',
             });
 
-            this.widget.on('rendered', async () => {
+            this.widget.on(CheckboxEvent.rendered, async () => {
                 // 渲染显示之后可能会被隐藏，延迟判断
                 await delay(2500);
 
@@ -111,18 +108,18 @@ export default class Discount extends BaseWidget<DiscountData> {
                 }
             });
 
-            this.widget.on('hidden', async () => {
+            this.widget.on(CheckboxEvent.hidden, async () => {
                 this.isRendered = false;
                 this.$component!.update({
                     loading: true,
                 });
             });
 
-            this.widget.on('check', () => {
+            this.widget.on(CheckboxEvent.check, () => {
                 this.$component!.update({ isChecked: this.isChecked });
             });
 
-            this.widget.on('uncheck', () => {
+            this.widget.on(CheckboxEvent.uncheck, () => {
                 this.$component!.update({ isChecked: this.isChecked });
             });
         }
@@ -144,13 +141,15 @@ export default class Discount extends BaseWidget<DiscountData> {
         }
 
         // 设置隐藏，且在隐藏时间范围内
-        if (this.hideAfterChecked > 0 && !checkHiddenTime(this)) {
+        if (this.hideAfterChecked > 0 && !this.checkHidden(this.hideAfterChecked)) {
             this.canRender = false;
             return;
         }
     }
-    setHiddenTime() {
-        setHiddenTime(this);
+    setHidden() {
+        if (this.hideAfterChecked > 0) {
+            this.insertHiddenData(this.widget.fbAttrs.userRef);
+        }
     }
     parse(focus = false) {
         if ((!focus && this.isRendered) || !this.canRender || !this.$el) {

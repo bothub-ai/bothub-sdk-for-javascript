@@ -42,7 +42,7 @@ class StorageWapper {
         return result as T;
     }
 
-    set(key: string, value: any) {
+    set<T = any>(key: string, value: T) {
         this.storage.setItem(key, JSON.stringify(value));
     }
 

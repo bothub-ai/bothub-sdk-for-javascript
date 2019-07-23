@@ -1,6 +1,6 @@
 {
   "name": "bothub-sdk-for-javascript",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "bothub sdk",
   "private": true,
   "main": "sdk.js",

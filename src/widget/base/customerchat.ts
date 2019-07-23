@@ -38,6 +38,7 @@ export type FbCustomerchatAttrs = Omit<CustomerchatData, 'id' | 'type'>;
 
 const fbClass = 'fb-customerchat';
 const bhClass = 'bothub-customerchat';
+const domSelector = 'div.fb_dialog[class*=fb_customer_chat]';
 
 /**
  * [顾客聊天插件](https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/)
@@ -86,8 +87,12 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         }
 
         // 移除页面中已有的全部聊天插件
-        removeDom('div[class*=fb_customer_chat]');
+        removeDom(domSelector);
 
+        /** 是否是重复渲染 */
+        const alreadyRender = this.isRendered;
+
+        // 渲染标志位复位
         this.isRendered = false;
 
         let warpper: Element | undefined = void 0;
@@ -115,11 +120,20 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
             })),
         });
 
-        window.FB.XFBML.parse(warpper, () => {
+        window.FB.XFBML.parse(undefined, () => {
             log(`${this.name} Plugin with ID ${this.id} has been rendered`);
+
             this.isRendered = true;
             this.emit('rendered');
         });
+
+        // 首次渲染，全局监控渲染事件
+        if (!alreadyRender) {
+            // 删除多余的对话框
+            window.FB.Event.subscribe('customerchat.load', () => {
+                setTimeout(() => removeDom(domSelector), 1500);
+            });
+        }
     }
     destroy() {
         // 聊天插件只需要移除 DOM 元素即可
@@ -128,7 +142,7 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         setTimeout(() => {
             deleteVal(widgets, this as any);
 
-            // 非内部插件销毁打印日志
+            // 非内部插件打印销毁日志
             if (!this.isInside) {
                 log(`Plugin with id ${this.id} has been destroyed`);
             }

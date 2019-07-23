@@ -70,14 +70,20 @@ export function setAttributes<
 }
 
 /** 由 css 选择器移除元素 */
-export function removeDom(select: string) {
+export function removeDom(select: string, rest?: Element | null) {
     const nodes = document.querySelectorAll(select);
 
     for (let i = 0; i < nodes.length; i++) {
         const el = nodes[i];
         const parent = el.parentElement;
 
-        if (parent) {
+        // 父元素不存在，则跳过
+        if (!parent) {
+            continue;
+        }
+
+        // rest 不存在或者是 rest 等于当前元素
+        if (!rest || rest !== el) { 
             parent.removeChild(el);
         }
     }

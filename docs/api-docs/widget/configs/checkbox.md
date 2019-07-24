@@ -17,7 +17,7 @@
 |position|`function`|选填|-|插件插入页面位置，当你无法在页面中添加对应插件编号的元素时可以使用此函数来定位，插件将会添加在该函数返回元素的后面。|
 |check|`function`|选填|-|用户勾选复选框时的回调函数，回调函数将会把当前的`userRef`传入|
 |unCheck|`function`|选填|-|用户去除选中复选框时的回调函数，回调函数将会把当前的`userRef`传入|
-|hidden|`function`|选填|-|插件被隐藏时的回调，这里的隐藏可能是用户启用了`hideAfterChecked`功能，也可能是因为出错导致`facebook`拒绝显示该插件|
+|hidden|`function`|选填|-|插件被隐藏时的回调，用户启用了`hideAfterChecked`功能被隐藏时，将会传入`{type: "auto_hidden"}`参数；是因为插件渲染出错导致`facebook`拒绝显示该插件时，将会传入`{type: "facebook_error"}`参数|
 |rendered|`function`|选填|-|渲染完成的回调函数|
 
 ## 调用示例

@@ -144,6 +144,7 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
 
         // 设置隐藏，且在隐藏时间范围内
         if (this.hideAfterChecked > 0 && !this.checkHidden(this.hideAfterChecked)) {
+            this.emit(EventName.hidden, { type: 'auto_hidden' });
             this.canRender = false;
             return;
         }
@@ -203,8 +204,11 @@ export default class Checkbox extends BaseWidget<CheckboxData> {
                     }
                 }
                 else if (ev.event === 'hidden') {
-                    this.emit(EventName.hidden);
                     this.isRendered = true;
+
+                    if (this.isRetry) {
+                        this.emit(EventName.hidden, { type: 'facebook_error' });
+                    }
 
                     const message = `${this.name} Plugin with ID ${this.id} has been hidden`;
 

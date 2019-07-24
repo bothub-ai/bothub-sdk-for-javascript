@@ -51,15 +51,15 @@ const isFunctional = <U extends object>(x: AnyComponent<U>): x is FunctionalComp
 /** preact 组件包装器 */
 export function componentWarpper<T extends object>(
     component: FunctionalComponent<T> | ComponentConstructor<T, object>,
-    warpperEle: Element,
+    wrapperEle: Element,
     firstProps: T,
 ): ComponentType<T> {
     /** 当前属性暂存 */
     let storeProps = firstProps;
     /** 当前包装器的编号 */
-    const id = warpperEle.getAttribute('id')!;
+    const id = wrapperEle.getAttribute('id')!;
     /** 当前包装器的父级元素 */
-    const parent = warpperEle.parentElement!;
+    const parent = wrapperEle.parentElement!;
     /** 是否是函数式组件 */
     const isFunction = isFunctional(component);
 
@@ -69,18 +69,18 @@ export function componentWarpper<T extends object>(
 
         // 函数式组件
         if (isFunction) {
-            render((component as FunctionalComponent)(storeProps), parent, warpperEle);
+            render((component as FunctionalComponent)(storeProps), parent, wrapperEle);
         }
         // 类组件
         else {
             // FIXME: 真的能这样刷新？
-            render(h(component as any, storeProps), parent, warpperEle);
+            render(h(component as any, storeProps), parent, wrapperEle);
         }
     }
 
     /** 销毁组件 */
     function destroy() {
-        const parentEle = warpperEle.parentElement;
+        const parentEle = wrapperEle.parentElement;
 
         if (!parentEle) {
             return;
@@ -90,8 +90,8 @@ export function componentWarpper<T extends object>(
 
         newEle.setAttribute('id', id);
 
-        parentEle.insertBefore(newEle, warpperEle);
-        parentEle.removeChild(warpperEle);
+        parentEle.insertBefore(newEle, wrapperEle);
+        parentEle.removeChild(wrapperEle);
     }
 
     return {

@@ -64,12 +64,12 @@ function insertDomAfterForm(html: (width: number) => string) {
     }
 
     const formStyle = form.getBoundingClientRect();
-    const warpper = document.createElement('div');
+    const wrapper = document.createElement('div');
 
-    warpper.innerHTML = html(formStyle.width);
+    wrapper.innerHTML = html(formStyle.width);
 
     // 元素本身
-    const dom = warpper.firstElementChild!;
+    const dom = wrapper.firstElementChild!;
     // 插入元素
     form.parentElement!.insertBefore(dom, form.nextElementSibling);
 
@@ -95,11 +95,11 @@ function initCheckbox(config: NonNullable<typeof Config.recall>) {
 
     window.BH.Widget.setConfig(data);
 
-    let dom: Element | undefined = document.getElementById('bothub-shopify-checkbox-warpper') || undefined;
+    let dom: Element | undefined = document.getElementById('bothub-shopify-checkbox-wrapper') || undefined;
 
     if (!dom) {
         dom = insertDomAfterForm((width) => (
-            `<div id="bothub-shopify-checkbox-warpper" style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
+            `<div id="bothub-shopify-checkbox-wrapper" style="display: flex; justify-content: center; flex-direction: column; width: ${width}px">` +
                 `<div style="text-align: center;" id="${data.id}"></div>` +
                 '<div style="text-align: center;"></div>' +
             '</div>'

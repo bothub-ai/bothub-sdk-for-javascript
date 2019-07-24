@@ -95,17 +95,17 @@ export default class Customerchat extends BaseWidget<CustomerchatData> {
         // 渲染标志位复位
         this.isRendered = false;
 
-        let warpper: Element | undefined = void 0;
+        let wrapper: Element | undefined = void 0;
 
         if (!this.$el) {
             // 首次加载需要一个临时的包装器
-            warpper = document.body.appendChild(document.createElement('div'));
-            this.$el = warpper.appendChild(document.createElement('div'));
+            wrapper = document.body.appendChild(document.createElement('div'));
+            this.$el = wrapper.appendChild(document.createElement('div'));
         }
 
         // 之后的刷新过程，这个包装器并非我们在首次加载时手动加上的
-        if (!warpper) {
-            warpper = this.$el.parentElement!;
+        if (!wrapper) {
+            wrapper = this.$el.parentElement!;
         }
 
         addClass(this.$el, fbClass);

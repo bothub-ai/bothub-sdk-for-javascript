@@ -11,7 +11,7 @@ import { WidgetType, ComponentType, HiddenKey, HiddenData } from '../helper';
 import EventController from 'src/lib/event';
 
 /** 包装 DOM 的 class 名称 */
-export const WarpperClassName = 'bothub-widget-warpper';
+export const WarpperClassName = 'bothub-widget-wrapper';
 
 /** 插件数据公共接口 */
 export interface WidgetDataCommon {
@@ -156,7 +156,7 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
     }
     /** 获取并创建本体以及包装 */
     renderWarpperById() {
-        let warpper = document.getElementById(this.id);
+        let wrapper = document.getElementById(this.id);
 
         const elNotFound = () => {
             if (!this.isInside) {
@@ -165,7 +165,7 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
         };
 
         // 未找到包装的 DOM
-        if (!warpper) {
+        if (!wrapper) {
             if (!this.origin.position) {
                 elNotFound();
                 return;
@@ -180,27 +180,27 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
             }
 
             // 创建包装器
-            warpper = el.parentElement!.insertBefore(
+            wrapper = el.parentElement!.insertBefore(
                 document.createElement('div'),
                 el.nextElementSibling,
             );
         }
 
-        if (!warpper && !this.origin.position) {
+        if (!wrapper && !this.origin.position) {
             elNotFound();
             return;
         }
 
         // 只有顶层器件才能添加包装器 class 名称
         if (!this.isInside) {
-            addClass(warpper, WarpperClassName);
+            addClass(wrapper, WarpperClassName);
         }
 
-        if (!warpper.firstElementChild) {
-            warpper.appendChild(document.createElement('div'));
+        if (!wrapper.firstElementChild) {
+            wrapper.appendChild(document.createElement('div'));
         }
 
-        return warpper;
+        return wrapper;
     }
 
     /**
@@ -222,17 +222,17 @@ export abstract class BaseWidget<T extends WidgetDataCommon = WidgetDataCommon> 
             return;
         }
 
-        const warpper = this.$el;
-        const parent = warpper.parentElement!;
+        const wrapper = this.$el;
+        const parent = wrapper.parentElement!;
 
         // 是在网页中用 div 元素定位的
         if (!this.origin.position) {
-            const newWarpper = parent.insertBefore(document.createElement('div'), warpper);
+            const newWarpper = parent.insertBefore(document.createElement('div'), wrapper);
             newWarpper.setAttribute('id', this.id);
         }
 
         // 移除元素
-        parent.removeChild(warpper);
+        parent.removeChild(wrapper);
 
         setTimeout(() => {
             deleteVal(widgets, this as any);

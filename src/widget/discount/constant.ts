@@ -18,7 +18,7 @@ export enum EventName {
     hidden = 'hidden',
     rendered = 'rendered',
     copyCodeBtn = 'copyCodeBtn',
-    showCodeBtn = 'copyCodeBtn',
+    showCodeBtn = 'showCodeBtn',
 }
 
 /** 砍价插件数据接口 */

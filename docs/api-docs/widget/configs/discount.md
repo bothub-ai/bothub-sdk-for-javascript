@@ -22,8 +22,8 @@
 |hideAfterChecked|`number`|选填|`-1`|用户勾选确认后多少天内自动隐藏，默认为`-1`，意为不使用此功能|
 |position|`function`|选填|-|插件插入页面位置，当你无法在页面中添加对应插件编号的元素时可以使用此函数来定位，插件将会添加在该函数返回元素的后面。|
 |getCode|`function`|选填|-|获取优惠码函数，允许返回`Promise`|
-|copyCodeBtn|`function`|选填|-|用户点击复制优惠码按钮时的事件|
-|showCodeBtn|`function`|选填|-|用户点击“获取优惠码按钮”事件，复选框此时是否被选中会当做参数传入|
+|copyCodeBtn|`function`|选填|-|用户点击**复制**优惠码按钮时的事件|
+|showCodeBtn|`function`|选填|-|用户点击**获取**优惠码按钮时的事件，用户此时是否勾选确认框将会作为参数传入此回调|
 |rendered|`function`|选填|-|渲染完成的回调函数|
 
 ### `getCode`函数说明

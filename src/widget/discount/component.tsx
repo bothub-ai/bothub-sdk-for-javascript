@@ -50,7 +50,7 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
 
     /** 获取优惠码文本 */
     async getCode() {
-        const { data, emit } = this.props;
+        const { data } = this.props;
 
         let result: GetPromiseType<ReturnType<NonNullable<typeof data.getCode>>> = {
             code: data.discountCode,
@@ -72,8 +72,6 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         });
 
         data.discountCode = result.isSubscribed ? result.message : result.code;
-
-        emit('showCodeBtn');
     }
 
     /** 按钮回调函数 */
@@ -84,11 +82,16 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
         if (this.state.showCode) {
             this.copyCode();
         }
-        else if (this.props.isChecked) {
-            this.getCode();
-        }
         else {
-            this.shakeBox();
+            // 触发“获取优惠码按钮”点击事件
+            this.props.emit('showCodeBtn', this.props.isChecked);
+
+            if (this.props.isChecked) {
+                this.getCode();
+            }
+            else {
+                this.shakeBox();
+            }
         }
     }
 
@@ -162,8 +165,9 @@ export default class DiscountComponent extends Component<ComponentProps, State> 
                     </article>
                     { codeSubscribed ? '' :<button
                         className={`${bhClass}__btn`}
-                        onClick={this.btnClickHandler}
-                        disabled={getCodeLoading || loading}>
+                        onClick={this.btnClickHandler}>
+                            
+                        {/* disabled={getCodeLoading || loading} */}
                         { this.btnText }
                     </button>}
                 </section>

@@ -108,7 +108,7 @@ export default class Discount extends BaseWidget<DiscountData> {
                 }
             });
 
-            this.widget.on(CheckboxEvent.hidden, async () => {
+            this.widget.on(CheckboxEvent.hidden, () => {
                 this.isRendered = false;
                 this.$component!.update({
                     loading: true,
@@ -168,7 +168,7 @@ export default class Discount extends BaseWidget<DiscountData> {
             checkboxId: this.checkboxId,
             loading: false,
             isChecked: false,
-            emit: (name: string) => this.emit(name),
+            emit: (...args: [string, any]) => this.emit(...args),
         };
 
         // 初次渲染

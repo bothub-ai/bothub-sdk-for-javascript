@@ -86,6 +86,16 @@ interface EventSubscription {
      * @link https://developers.facebook.com/docs/messenger-platform/discovery/send-to-messenger-plugin/
      */
     (name: 'send_to_messenger', callback: (event: any) => void): void;
+    /**
+     * This function provides the ability to subscribe to the plugin load event.
+     * It is emitted when the Facebook JavaScript SDK has been initialized and the plugin is about to load.
+     * The callback function is a required parameter.
+     * @link https://developers.facebook.com/docs/messenger-platform/discovery/customer-chat-plugin/sdk
+     */
+    (name: 'customerchat.load', callback: () => void): void;
+    (name: 'customerchat.show', callback: () => void): void;
+    (name: 'customerchat.hide', callback: () => void): void;
+    (name: 'customerchat.dialogShow', callback: () => void): void;
 }
 
 /** 解除事件订阅函数接口 */

@@ -21,7 +21,7 @@ new Vue ({
                     "template_name": "Order Receipt Push"
                 },
                 "recipient": {
-                    "username": window.test_custom_user_id.value
+                    "username": this.testUserId
                 },
                 "params": {
                     "receipt": {
@@ -111,7 +111,7 @@ new Vue ({
                     "template_name": "Shipping Status Update Push"
                 },
                 "recipient": {
-                    "username": window.test_custom_user_id.value
+                    "username": this.testUserId
                 },
                 "params": {
                     "package_number": "gJOGmhwD3EuF46Kt",
